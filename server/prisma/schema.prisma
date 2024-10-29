@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model departments {
+  id                                     String  @id @default(uuid())
+  name                                   String  @db.VarChar(255)
+  head_user_id                           String
+  users_departments_head_user_idTousers  users   @relation("departments_head_user_idTousers", fields: [head_user_id], references: [id], onUpdate: Restrict, map: "FK_HEAD_USER_DEPARTMENT")
+  users_users_department_idTodepartments users[] @relation("users_department_idTodepartments")
+
+  @@index([head_user_id], map: "FK_HEAD_USER_DEPARTMENT")
+}
+
+model notifications {
+  id          String               @id @default(uuid())
+  title       String               @db.VarChar(255)
+  description String               @db.VarChar(255)
+  type        notifications_type
+  date        DateTime             @default(now()) @db.DateTime(6)
+  status      notifications_status
+  task_id     String?              @db.VarChar(36)
+  user_id     String
+  event_id    String?              @db.VarChar(36)
+  users       users                @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_USER_NOTIFICATION")
+
+  @@index([user_id], map: "FK_USER_NOTIFICATION")
+}
+
+model users {
+  id                                           String          @id @default(uuid())
+  name                                         String          @db.VarChar(255)
+  email                                        String          @db.VarChar(255)
+  password                                     String          @db.VarChar(255)
+  department_id                                String
+  departments_departments_head_user_idTousers  departments[]   @relation("departments_head_user_idTousers")
+  notifications                                notifications[]
+  departments_users_department_idTodepartments departments     @relation("users_department_idTodepartments", fields: [department_id], references: [id], onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
+
+  @@index([department_id], map: "FK_USER_DEPARTMENT")
+}
+
+model locations {
+  id          String @id @default(uuid())
+  name        String @db.VarChar(255)
+  description String @db.VarChar(255)
+  address     String @db.VarChar(255)
+}
+
+enum notifications_type {
+  deadline
+  addedToTask
+}
+
+enum notifications_status {
+  open
+  close
+}
