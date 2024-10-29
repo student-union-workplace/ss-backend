@@ -4,9 +4,11 @@ import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class NotificationsService {
+  // в сервисе объяволяем клиент prisma
   constructor(private prisma: PrismaService) {}
 
   create(createNotificationDto: CreateNotificationDto) {
+    // обращаясь к prisma, она сама подсказывает все возможные таблицы базы данных
     return this.prisma.notifications.create({
       data: createNotificationDto,
     });
