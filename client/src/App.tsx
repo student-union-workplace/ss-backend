@@ -8,7 +8,7 @@ import {AuthRouter} from "./utils/routes/AuthRouter.tsx";
 import {NotAuthRouter} from "./utils/routes/NotAuthRouter.tsx";
 
 function App() {
-    const auth = true
+    const auth = false
 
     return (
         <>

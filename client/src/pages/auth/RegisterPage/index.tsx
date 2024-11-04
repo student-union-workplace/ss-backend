@@ -1,3 +1,5 @@
+import {Typography} from "@mui/material";
+
 export const RegisterPage = () => {
-    return <p>Это страница регистрации</p>
+    return <Typography>Это страница регистрации</Typography>
 }
