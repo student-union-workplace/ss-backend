@@ -4,16 +4,16 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(private readonly notificationsService: NotificationsService) { }
 
-  @Post()
+  @Post('qq')
   // декоратор @Body() указывает на то, что переменная createNotificationDto содержит данные, которые передают через тело (body) запроса
   // используем описанный класс CreateNotificationDto для описания списка полей и их типов, которые должны нам прийти
   create(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.create(createNotificationDto);
   }
 
-  @Get()
+  @Get('qw')
   findAll() {
     return this.notificationsService.findAll();
   }
