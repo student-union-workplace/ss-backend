@@ -9,6 +9,8 @@ import {PasswordInput} from "../../../components/controls/PasswordInput.tsx";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
+import {useState} from "react";
+import {ErrorSnackbar} from "../../../components/snackbars/ErrorSnackbar.tsx";
 
 export const LoginPage = () => {
     const validation = useValidation();
@@ -17,6 +19,7 @@ export const LoginPage = () => {
         defaultValues: LOGIN_INITIAL_VALUES,
         resolver: yupResolver(validation)
     });
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true)
 
     const loginHandler = async (values: Login) => {
         try {
@@ -24,6 +27,7 @@ export const LoginPage = () => {
             navigate(RoutesName.Main)
         } catch (error) {
             console.log(error)
+            setOpenErrorSnackbar(true)
         }
     }
 
@@ -53,5 +57,6 @@ export const LoginPage = () => {
                 </Paper>
             </form>
         </Box>
+        <ErrorSnackbar open={openErrorSnackbar} setOpen={setOpenErrorSnackbar} message={'Данные введены неврно'} />
     </Box>)
 }
