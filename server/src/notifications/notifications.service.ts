@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma.service';
 @Injectable()
 export class NotificationsService {
   // в сервисе объяволяем клиент prisma
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   create(createNotificationDto: CreateNotificationDto) {
     // обращаясь к prisma, она сама подсказывает все возможные таблицы базы данных
@@ -14,13 +14,16 @@ export class NotificationsService {
     });
   }
 
-  // написать запрос для получения всех уведомлений, используя prisma
+  //запрос для получения всех уведомлений
   findAll() {
-    return `Этот запрос должен возвращать все уведомления`;
+
+    return this.prisma.notifications.findMany();
   }
 
-  // написать запрос для удаления уведомления по его id
+  //запрос для удаления уведомления по его id
   remove(id: string) {
-    return `Этот запрос должен удалять уведомление в системе по его id = ${id}`;
+    return this.prisma.notifications.delete({
+      where: { id }
+    });
   }
 }
