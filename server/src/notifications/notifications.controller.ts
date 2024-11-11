@@ -13,7 +13,7 @@ export class NotificationsController {
     return this.notificationsService.create(createNotificationDto);
   }
 
-  @Get('call')
+  @Get()
   findAll() {
     return this.notificationsService.findAll();
   }
