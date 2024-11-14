@@ -8,56 +8,162 @@ datasource db {
 }
 
 model departments {
-  id                                     String  @id @default(uuid())
-  name                                   String  @db.VarChar(255)
-  head_user_id                           String
-  users_departments_head_user_idTousers  users   @relation("departments_head_user_idTousers", fields: [head_user_id], references: [id], onUpdate: Restrict, map: "FK_HEAD_USER_DEPARTMENT")
-  users_users_department_idTodepartments users[] @relation("users_department_idTodepartments")
+  id                                     String   @id @default(uuid())
+  name                                   String   @db.VarChar(255)
+  created_at                             DateTime @default(now()) @db.DateTime(6)
+  updated_at                             DateTime @updatedAt @db.DateTime(6)
+  head_user_id                           String?
+  users_departments_head_user_idTousers  users?   @relation("departments_head_user_idTousers", fields: [head_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_HEAD_USER_DEPARTMENT")
+  users_users_department_idTodepartments users[]  @relation("users_department_idTodepartments")
 
   @@index([head_user_id], map: "FK_HEAD_USER_DEPARTMENT")
 }
 
 model notifications {
-  id          String               @id @default(uuid())
-  title       String               @db.VarChar(255)
-  description String               @db.VarChar(255)
+  id          String             @id @default(uuid())
+  title       String             @db.VarChar(255)
+  description String             @db.VarChar(255)
   type        notifications_type
-  date        DateTime             @default(now()) @db.DateTime(6)
-  status      notifications_status
-  task_id     String?              @db.VarChar(36)
+  date        DateTime           @default(now()) @db.DateTime(6)
+  created_at  DateTime           @default(now()) @db.DateTime(6)
+  updated_at  DateTime           @updatedAt @db.DateTime(6)
+  task_id     String?            @db.VarChar(36)
   user_id     String
-  event_id    String?              @db.VarChar(36)
-  users       users                @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_USER_NOTIFICATION")
+  event_id    String?            @db.VarChar(36)
+  activity_id String?
+  activities  activities?        @relation(fields: [activity_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_NOTIFICATION")
+  events      events?            @relation(fields: [event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_NOTIFICATION")
+  users       users              @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_USER_NOTIFICATION")
 
   @@index([user_id], map: "FK_USER_NOTIFICATION")
+  @@index([activity_id], map: "FK_ACTIVITY_NOTIFICATION")
+  @@index([event_id], map: "FK_EVENT_NOTIFICATION")
 }
 
 model users {
-  id                                           String          @id @default(uuid())
-  name                                         String          @db.VarChar(255)
-  email                                        String          @db.VarChar(255)
-  password                                     String          @db.VarChar(255)
+  id                                           String             @id @default(uuid())
+  name                                         String             @db.VarChar(255)
+  email                                        String             @db.VarChar(255)
+  password                                     String             @db.VarChar(255)
+  created_at                                   DateTime           @default(now()) @db.DateTime(6)
+  updated_at                                   DateTime           @updatedAt @db.DateTime(6)
   department_id                                String
-  departments_departments_head_user_idTousers  departments[]   @relation("departments_head_user_idTousers")
+  activities                                   activities[]
+  activities_users                             activities_users[]
+  departments_departments_head_user_idTousers  departments[]      @relation("departments_head_user_idTousers")
+  events_managers                              events_managers[]
+  events_users                                 events_users[]
   notifications                                notifications[]
-  departments_users_department_idTodepartments departments     @relation("users_department_idTodepartments", fields: [department_id], references: [id], onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
+  departments_users_department_idTodepartments departments        @relation("users_department_idTodepartments", fields: [department_id], references: [id], onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
 
   @@index([department_id], map: "FK_USER_DEPARTMENT")
 }
 
 model locations {
-  id          String @id @default(uuid())
-  name        String @db.VarChar(255)
-  description String @db.VarChar(255)
-  address     String @db.VarChar(255)
+  id               String             @id @default(uuid())
+  name             String             @db.VarChar(255)
+  description      String             @db.VarChar(255)
+  address          String             @db.VarChar(255)
+  created_at       DateTime           @default(now()) @db.DateTime(6)
+  updated_at       DateTime           @updatedAt @db.DateTime(6)
+  activities       activities[]
+  events_locations events_locations[]
+}
+
+model activities {
+  id               String             @id
+  name             String             @db.VarChar(255)
+  description      String?
+  date             DateTime?          @db.DateTime(0)
+  created_at       DateTime           @default(now()) @db.DateTime(6)
+  updated_at       DateTime           @updatedAt @db.DateTime(6)
+  location_id      String?
+  created_by_id    String?
+  is_completed     Boolean?           @default(false)
+  users            users?             @relation(fields: [created_by_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_CREATED_BY_USER")
+  locations        locations?         @relation(fields: [location_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_LOCATION")
+  activities_users activities_users[]
+  notifications    notifications[]
+
+  @@index([created_by_id], map: "FK_ACTIVITY_CREATED_BY_USER")
+  @@index([location_id], map: "FK_ACTIVITY_LOCATION")
+}
+
+model activities_users {
+  id          String     @id
+  activity_id String
+  user_id     String
+  activities  activities @relation(fields: [activity_id], references: [id], onUpdate: Restrict, map: "FK_ACTIVITY_USER_CONNECTION")
+  users       users      @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_USER_ACTIVITY_CONNECTION")
+
+  @@index([activity_id], map: "FK_ACTIVITY_USER_CONNECTION")
+  @@index([user_id], map: "FK_USER_ACTIVITY_CONNECTION")
+}
+
+model event_themes {
+  id     String   @id
+  name   String   @db.VarChar(255)
+  events events[]
+}
+
+model events {
+  id                 String             @id
+  name               String?            @db.VarChar(255)
+  description        String?            @db.VarChar(255)
+  date               DateTime?          @db.DateTime(0)
+  is_archived        Boolean?           @default(false)
+  created_at         DateTime           @default(now()) @db.DateTime(6)
+  updated_at         DateTime           @updatedAt @db.DateTime(6)
+  prev_same_event_id String?
+  theme_id           String?
+  event_themes       event_themes?      @relation(fields: [theme_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_THEME")
+  events             events?            @relation("eventsToevents", fields: [prev_same_event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_PREVIOUS_EVENT")
+  other_events       events[]           @relation("eventsToevents")
+  events_locations   events_locations[]
+  events_managers    events_managers[]
+  events_users       events_users[]
+  notifications      notifications[]
+
+  @@index([theme_id], map: "FK_EVENT_THEME")
+  @@index([prev_same_event_id], map: "FK_PREVIOUS_EVENT")
+}
+
+model events_locations {
+  id          String    @id
+  event_id    String
+  location_id String
+  events      events    @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_LOCATION")
+  locations   locations @relation(fields: [location_id], references: [id], onUpdate: Restrict, map: "FK_LOCATION_EVENT")
+
+  @@index([event_id], map: "FK_EVENT_LOCATION")
+  @@index([location_id], map: "FK_LOCATION_EVENT")
+}
+
+model events_managers {
+  id       String @id
+  event_id String
+  user_id  String
+  events   events @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_MANAGER")
+  users    users  @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_MANAGER_EVENT")
+
+  @@index([event_id], map: "FK_EVENT_MANAGER")
+  @@index([user_id], map: "FK_MANAGER_EVENT")
+}
+
+model events_users {
+  id       String @id
+  event_id String
+  user_id  String
+  events   events @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_USER_CONNECTION")
+  users    users  @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_USER_EVENT_CONNECTION")
+
+  @@index([event_id], map: "FK_EVENT_USER_CONNECTION")
+  @@index([user_id], map: "FK_USER_EVENT_CONNECTION")
 }
 
 enum notifications_type {
   deadline
-  addedToTask
-}
-
-enum notifications_status {
-  open
-  close
+  task
+  event
+  activity
 }

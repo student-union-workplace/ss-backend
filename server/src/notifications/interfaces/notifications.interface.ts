@@ -1,4 +1,4 @@
-import { notifications_status, notifications_type } from '@prisma/client';
+import { activities, events, notifications_type, users } from '@prisma/client';
 
 // описание интерфейса уведомления - указываются все возможные поля и типы данных
 // ? означает, что поле небязательно
@@ -9,8 +9,13 @@ export interface INotification {
   description: string;
   type: notifications_type;
   date: Date;
-  status: notifications_status;
+  created_at: Date;
+  updated_at: Date;
   task_id?: string;
-  event_id?: string;
   user_id: string;
+  event_id?: string;
+  activity_id: string;
+  activities?: activities;
+  events?: events;
+  users?: users;
 }
