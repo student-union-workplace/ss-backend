@@ -8,7 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import type { TextInputProps } from './types';
 
 export const TextInput = memo<TextInputProps>(({
- name, control, label, placeholder, type = 'text', startText, endText, disabled = false 
+ name, control, label, placeholder, type = 'text', startText, endText, disabled = false, multiline = false, rows
 }) => {
   return (
     <Controller
@@ -22,13 +22,15 @@ export const TextInput = memo<TextInputProps>(({
           fullWidth
           label={label}
           type={type}
-          variant={'standard'}
+          variant={'outlined'}
           size={'small'}
           autoComplete='off'
           aria-autocomplete='none'
           aria-readonly='true'
           placeholder={placeholder}
           error={Boolean(errors[name])}
+          multiline={multiline}
+          rows={rows}
           helperText={errors?.[name] && (errors[name]?.message as string)}
           InputProps={{
             startAdornment: startText ? <InputAdornment position='start'>{startText}</InputAdornment> : undefined,

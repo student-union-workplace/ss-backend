@@ -15,6 +15,8 @@ export type TextInputProps = ControlProps & {
   type?: 'text' | 'password';
   startText?: string;
   endText?: string;
+  multiline?: boolean;
+  rows?: number
 };
 
 export type PasswordInputProps = ControlProps & {

@@ -9,7 +9,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#16E7FF',
+            main: '#1DB8CA',
             contrastText: '#FFF'
         },
         secondary: {
@@ -29,7 +29,11 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: ['Manrope'].join(',')
+        fontFamily: ['Manrope'].join(','),
+        body2: {
+            fontSize: '24px'
+        },
+
     }
 });
 

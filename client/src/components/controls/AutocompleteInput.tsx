@@ -1,10 +1,10 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 
 import { Controller } from 'react-hook-form';
 
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import {AutocompleteProps, OptionValue} from "./types.ts";
 
-import type { AutocompleteProps, OptionValue } from '@components/controls/types';
 
 const defaultFilterOptions = createFilterOptions<OptionValue>({
   matchFrom: 'any',
@@ -53,8 +53,9 @@ export const AutocompleteInput = memo<AutocompleteProps>(
                 autoComplete='off'
                 aria-autocomplete='none'
                 error={!!errors[name]}
-                helperText={!!errors[name] ?? errors[name]?.message}
+                helperText={errors?.[name] && (errors[name]?.message as string)}
                 placeholder={placeholder}
+                sx={{fontSize: '16px'}}
               />
             )}
           ></Autocomplete>
