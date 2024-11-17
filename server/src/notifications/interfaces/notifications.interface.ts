@@ -17,5 +17,4 @@ export interface INotification {
   activity_id: string;
   activities?: activities;
   events?: events;
-  users?: users;
 }

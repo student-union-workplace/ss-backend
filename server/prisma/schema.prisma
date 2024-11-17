@@ -71,7 +71,7 @@ model locations {
 }
 
 model activities {
-  id               String             @id
+  id               String             @id @default(uuid())
   name             String             @db.VarChar(255)
   description      String?
   date             DateTime?          @db.DateTime(0)
@@ -90,7 +90,7 @@ model activities {
 }
 
 model activities_users {
-  id          String     @id
+  id          String     @id @default(uuid())
   activity_id String
   user_id     String
   activities  activities @relation(fields: [activity_id], references: [id], onUpdate: Restrict, map: "FK_ACTIVITY_USER_CONNECTION")

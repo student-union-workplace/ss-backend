@@ -14,6 +14,9 @@ export class NotificationsService {
     });
   }
 
+  // createMany(createActivityDto: CreateNotificationDto) {
+
+  // }
   //запрос для получения всех уведомлений
   findAll() {
 
