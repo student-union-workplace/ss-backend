@@ -16,6 +16,7 @@
     font-size: var(--body1);
     padding-block: 10px;
     padding-inline: 25px;
+    cursor: pointer;
 }
 
 .active-item {

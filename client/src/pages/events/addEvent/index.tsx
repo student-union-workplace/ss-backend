@@ -57,7 +57,7 @@ export const AddEvent = () => {
                     </Box>
                     <Divider orientation="vertical" variant="middle" flexItem
                              sx={{borderWidth: '2px', borderColor: '#1FD4E9'}}/>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', minWidth: '365px', alignItems: 'end'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', width: '365px', alignItems: 'end'}}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', minWidth: '365px'}}>
                             <Typography variant={'body2'}>Дата, место, рабочка</Typography>
                             <CustomControl

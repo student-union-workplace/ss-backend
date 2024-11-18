@@ -1,7 +1,7 @@
 import type { ControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
+import {CustomControlType} from "./types.ts";
 
-import type { CustomControlType } from '@components/controls/CustomControl/types';
 
 export const CustomControl = ({ control, name, Component, dictionary }: CustomControlType) => {
   const render: ControllerProps['render'] = ({
