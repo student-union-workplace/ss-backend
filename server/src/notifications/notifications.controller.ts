@@ -13,6 +13,13 @@ export class NotificationsController {
     return this.notificationsService.create(createNotificationDto);
   }
 
+  // @Post()
+  // // декоратор @Body() указывает на то, что переменная createNotificationDto содержит данные, которые передают через тело (body) запроса
+  // // используем описанный класс CreateNotificationDto для описания списка полей и их типов, которые должны нам прийти
+  // createMany(@Body() createNotificationDto: CreateNotificationDto) {
+  //   return this.notificationsService.createMany(createNotificationDto);
+  // }
+
   @Get()
   findAll() {
     return this.notificationsService.findAll();
