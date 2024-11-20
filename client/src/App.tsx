@@ -13,7 +13,7 @@ function App() {
 
     return (
         <>
-            <Header />
+            {auth && <Header/>}
             <Routes>
                 <Route path={RoutesName.Main} element={<AuthRouter isAuth={auth}><MainPage/></AuthRouter>}/>
                 <Route path={RoutesName.Login} element={<NotAuthRouter isAuth={auth}><LoginPage/></NotAuthRouter>}/>

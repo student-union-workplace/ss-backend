@@ -7,13 +7,12 @@ import {RoutesName} from "../../enums/routes";
 export const Header = () => {
     const navigate = useNavigate()
     return (
-        <Box sx={{
+        <Box className={'content'} sx={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             marginBlock: '25px',
-
         }}>
             <Box onClick={() => navigate(RoutesName.Main)} sx={{cursor: 'pointer'}}>
                 <Typography variant={'h4'}>ПБитрикс</Typography>

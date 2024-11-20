@@ -36,7 +36,7 @@ export const AddEvent = () => {
         console.log(values)
     }
     return (
-        <Box>
+        <Box className={'content'}>
             <Typography variant={'h4'} sx={{textAlign: 'center'}}>Создание мероприятия</Typography>
             <form onSubmit={handleSubmit(createHandler)}>
                 <Box sx={{
