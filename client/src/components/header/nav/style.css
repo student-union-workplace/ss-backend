@@ -17,11 +17,6 @@
     padding-block: 10px;
     padding-inline: 25px;
     cursor: pointer;
-
-    a {
-        font-family: Arial, sans-serif;
-        line-height: 1;
-    }
 }
 
 .active-item {
