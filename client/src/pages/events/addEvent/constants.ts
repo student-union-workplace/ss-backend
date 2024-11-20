@@ -5,7 +5,7 @@ export const ADD_EVENT_INITIAL_VALUE: EventFormValues = {
     title: '',
     theme: '',
     description: '',
-    date: new Date(),
+    date: null,
     place: [],
     responsible: [],
     team: []

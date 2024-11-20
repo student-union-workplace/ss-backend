@@ -3,7 +3,7 @@ export type EventFormValues = {
     title: string,
     theme: string,
     description: string,
-    date: Date,
+    date: Date | null,
     place: string[],
     responsible: string[],
     team: string[]

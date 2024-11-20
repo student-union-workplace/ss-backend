@@ -1,4 +1,4 @@
-import {Avatar, Box, Chip, Divider, Typography} from "@mui/material";
+import { Box, Divider, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {EventFormValues} from "../../../types/events";
 import {ADD_EVENT_INITIAL_VALUE} from "./constants.ts";
@@ -13,7 +13,7 @@ import {TeamControl} from "./components/TeamControl.tsx";
 import Button from "@mui/material/Button";
 
 export const AddEvent = () => {
-    const {control, watch, handleSubmit} = useForm<EventFormValues>({
+    const {control, handleSubmit} = useForm<EventFormValues>({
         defaultValues: ADD_EVENT_INITIAL_VALUE,
     });
 
@@ -30,6 +30,7 @@ export const AddEvent = () => {
             {label: 'Музыкалка', value: '2'},
         ]
     }, [])
+
 
     const createHandler = async(values: EventFormValues) => {
         console.log(values)
@@ -50,7 +51,7 @@ export const AddEvent = () => {
                         <AutocompleteInput name={'lastEvent'} label={'Прошлогоднее мероприятие'} control={control}
                                            options={lastEventOptions}/>
                         <TextInput name={'title'} control={control} label={'Название мероприятия'}/>
-                        <AutocompleteInput name={'theme'} label={'Тема мероприятия'} control={control}
+                        <AutocompleteInput name={'theme'} label={'Тема мероприятия*'} control={control}
                                            options={themeOptions}/>
                         <TextInput name={'description'} control={control} label={'Описание мероприятия'} multiline
                                    rows={7}/>
@@ -80,13 +81,7 @@ export const AddEvent = () => {
                                 control={control}
                                 Component={TeamControl}
                             />
-                            <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '1rem'}}>
-                                {watch('team').map((user) => {
-                                    return <Chip label={user} avatar={<Avatar>{user.split('')[0]}</Avatar>}
-                                                 onDelete={() => {
-                                                 }}/>
-                                })}
-                            </Box>
+
                         </Box>
                         <Button variant={'contained'} sx={{width: '200px', textAlign: 'end'}} type={'submit'}>Создать</Button>
                     </Box>

@@ -1,61 +1,73 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
-import { TextField } from '@mui/material';
-import {OptionValue} from "../../../../components/controls/types.ts";
-
+import {Avatar, Box, Chip, TextField} from '@mui/material';
 
 export type AutocompleteControlProps = {
-  value: string[];
-  onChange: (value: string[]) => void;
+    value: string[];
+    onChange: (value: string[]) => void;
 };
 
 export const TeamControl = ({value, onChange}: AutocompleteControlProps) => {
+    const users = useMemo(() => {
+        return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {
+            name: 'Максим Живцов',
+            id: '3'
+        }, {name: 'Роман Гареев', id: '4'}, {name: 'Екатерина Поварнина', id: '5'}, {
+            name: 'Анастасия Бахарева',
+            id: '6'
+        }, {name: 'Алексей Задевалов', id: '7'}, {name: 'Валерия Карпенкова', id: '8'}, {name: 'Арсений Виноградов', id: '9'}]
+    }, []);
 
+    const usersValues = useMemo(() => {
+        return users.filter(place => value.indexOf(place.id) !== -1) ?? [];
+    }, [users, value]);
 
-  const numbersValues = useMemo(() => {
-    return value?.map((place: string) => ({ label: place, value: place })) ?? [];
-  }, [ value]);
+    const onChangeTeam = (_: React.SyntheticEvent, newValue: { name: string, id: string }[]) => {
+        if (!newValue) {
+            return;
+        }
 
-  const onChangeNumbers = (_: React.SyntheticEvent, newValue: OptionValue[]) => {
-    if (!newValue) {
-      return;
+        value = newValue.map(user => user.id);
+        onChange(value);
+    };
+
+    const handleDelete = (id: string) => {
+        value = value.filter((value) => value !== id)
+        onChange(value)
     }
 
-    value = newValue.map(number => number.value);
-    console.log(value);
-    onChange(value);
-  };
+    return (
+        usersValues && (
+            <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px'}}>
+                <Autocomplete
+                    renderInput={params => (
+                        <TextField
+                            {...params}
+                            label={'Рабочка*'}
+                            autoComplete='off'
+                            aria-autocomplete='none'
+                        />
+                    )}
+                    options={users ?? []}
+                    value={usersValues}
+                    size={'small'}
+                    fullWidth
+                    getOptionLabel={(option) => option.name}
+                    multiple={true}
+                    onChange={onChangeTeam}
+                    noOptionsText={'Ничего не найдено'}
+                    limitTags={0}
+                />
 
-  const lineOptions = useMemo(() => {
-    return [
-      {label: 'Маша', value: 'Маша'},
-      {label: 'Даша', value: 'Даша'},
-      {label: 'Миша', value: 'Миша'},
-    ]
-  }, []);
+                <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '242px', overflowY: 'scroll'}}>
+                    {usersValues.map((user) => {
+                        return <Chip label={user.name} avatar={<Avatar>{user.name.split('')[0]}</Avatar>}
+                                     onDelete={() => handleDelete(user.id)}  variant={'outlined'}/>
+                    })}
+                </Box>
+            </Box>
 
-  return (
-    numbersValues && (
-      <Autocomplete
-        renderInput={params => (
-          <TextField
-            {...params}
-            label={'Рабочка'}
-            autoComplete='off'
-            aria-autocomplete='none'
-          />
-        )}
-        options={lineOptions ?? []}
-        value={numbersValues}
-        size={'small'}
-        fullWidth
-
-        multiple={true}
-        onChange={onChangeNumbers}
-        noOptionsText={'Ничего не найдено'}
-        limitTags={0}
-      />
-    )
-  );
+        )
+    );
 };

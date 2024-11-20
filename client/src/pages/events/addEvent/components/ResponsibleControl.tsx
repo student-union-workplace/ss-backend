@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
-import { TextField } from '@mui/material';
-import {OptionValue} from "../../../../components/controls/types.ts";
+import {Avatar, Chip, TextField} from '@mui/material';
 
 
 export type AutocompleteControlProps = {
@@ -12,46 +11,49 @@ export type AutocompleteControlProps = {
 
 export const ResponsibleControl = ({value, onChange}: AutocompleteControlProps) => {
 
+  const users = useMemo(() => {
+    return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {name: 'Максим Живцов', id: '3'}, {name: 'Роман Гареев', id: '4'}]
+  }, []);
 
-  const numbersValues = useMemo(() => {
-    return value?.map((place: string) => ({ label: place, value: place })) ?? [];
-  }, [ value]);
+  const usersValues = useMemo(() => {
+    return users.filter(place => value.indexOf(place.id) !== -1) ?? [];
+  }, [users, value]);
 
-  const onChangeNumbers = (_: React.SyntheticEvent, newValue: OptionValue[]) => {
+  const onChangeResponsible = (_: React.SyntheticEvent, newValue: {name: string, id: string}[]) => {
     if (!newValue) {
       return;
     }
 
-    value = newValue.map(number => number.value);
-    console.log(value);
+    value = newValue.map(user => user.id);
     onChange(value);
   };
 
-  const lineOptions = useMemo(() => {
-    return [
-      {label: 'Сеня К.', value: 'Сеня К.'},
-      {label: 'Вера Б.', value: 'Вера Б.'},
-    ]
-  }, []);
-
   return (
-    numbersValues && (
+      usersValues && (
       <Autocomplete
         renderInput={params => (
           <TextField
             {...params}
-            label={'Ответственные'}
+            label={'Ответственные*'}
             autoComplete='off'
             aria-autocomplete='none'
           />
         )}
-        options={lineOptions ?? []}
-        value={numbersValues}
+        options={users ?? []}
+        getOptionLabel={(option) => option.name}
+        value={usersValues}
         size={'small'}
         fullWidth
         multiple={true}
-        onChange={onChangeNumbers}
+        onChange={onChangeResponsible}
         noOptionsText={'Ничего не найдено'}
+        renderTags={(value, getTagProps) => value.map((option, index) => {
+          const {key, ...tagProps} = getTagProps({index})
+          const label = option.name.split(' ')[0] + ' ' + option.name.split(' ')[1].split('')[0] + '.'
+          return(
+              <Chip variant={'outlined'} label={label} key={key} {...tagProps} avatar={<Avatar>OP</Avatar>} size={'small'}/>
+          )
+        })}
       />
     )
   );

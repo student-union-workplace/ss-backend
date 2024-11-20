@@ -1,58 +1,59 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
-import { TextField } from '@mui/material';
-import {OptionValue} from "../../../../components/controls/types.ts";
+import {Chip, TextField} from '@mui/material';
 
 
 export type AutocompleteControlProps = {
-  value: string[];
-  onChange: (value: string[]) => void;
+    value: string[];
+    onChange: (value: string[]) => void;
 };
 
 export const PlaceControl = ({value, onChange}: AutocompleteControlProps) => {
 
+    const places = useMemo(() => {
+        return [{title: 'Р-044', id: '1'}, {title: 'Р-025', id: '2'}, {title: 'Р-325', id: '3'}]
+    }, []);
 
-  const numbersValues = useMemo(() => {
-    return value?.map((place: string) => ({ label: place, value: place })) ?? [];
-  }, [ value]);
+    const placesValues = useMemo(() => {
+        return places.filter(place => value.indexOf(place.id) !== -1) ?? [];
+    }, [places, value]);
 
-  const onChangeNumbers = (_: React.SyntheticEvent, newValue: OptionValue[]) => {
-    if (!newValue) {
-      return;
-    }
+    const onChangePlaces = (_: React.SyntheticEvent, newValue: {title: string, id: string}[]) => {
+        if (!newValue) {
+            return;
+        }
 
-    value = newValue.map(number => number.value);
-    console.log(value);
-    onChange(value);
-  };
+        value = newValue.map(number => number.id);
+        onChange(value);
+    };
 
-  const lineOptions = useMemo(() => {
-    return [
-      {label: 'P-044', value: 'P-044'},
-      {label: 'P-025', value: 'P-025'},
-    ]
-  }, []);
-
-  return (
-    numbersValues && (
-      <Autocomplete
-        renderInput={params => (
-          <TextField
-            {...params}
-            label={'Место проведения'}
-            autoComplete='off'
-            aria-autocomplete='none'
-          />
-        )}
-        options={lineOptions ?? []}
-        value={numbersValues}
-        size={'small'}
-        fullWidth
-        multiple={true}
-        onChange={onChangeNumbers}
-        noOptionsText={'Ничего не найдено'}
-      />
-    )
-  );
+    return (
+        placesValues && (
+            <Autocomplete
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        label={'Место проведения'}
+                        autoComplete='off'
+                        aria-autocomplete='none'
+                    />
+                )}
+                options={places ?? []}
+                getOptionLabel={(option) => option.title}
+                value={placesValues}
+                size={'small'}
+                fullWidth
+                multiple={true}
+                onChange={onChangePlaces}
+                noOptionsText={'Ничего не найдено'}
+                renderTags={(value, getTagProps) => value.map((option, index) => {
+                    const {key, ...tagProps} = getTagProps({index})
+                    return (
+                        <Chip variant={'outlined'} label={option.title} key={key} {...tagProps} size={'small'}/>
+                    )
+                })}
+            />
+        )
+    );
 };
