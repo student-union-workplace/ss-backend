@@ -6,5 +6,6 @@ export enum RoutesName {
     Events = '/events',
     AddEvent = 'events/add',
     Users = '/users',
-    Calendar = '/calendar'
+    Calendar = '/calendar',
+    Event = '/event/:id',
 }

@@ -33,6 +33,11 @@ const theme = createTheme({
         body2: {
             fontSize: '24px'
         },
+        subtitle1: {
+            fontSize: '14px',
+            lineHeight: '24px',
+            fontWeight: '500',
+        }
 
     }
 });
