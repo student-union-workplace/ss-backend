@@ -36,10 +36,15 @@ export class ActivitiesController {
     return this.activitiesService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
-  //   return this.activitiesService.update(id, updateActivityDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
+    return this.activitiesService.update(id, updateActivityDto);
+  }
+
+  @Patch(':id/com')
+  compliter(@Param('id') id: string) {
+    return this.activitiesService.compliter(id);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

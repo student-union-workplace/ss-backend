@@ -115,14 +115,55 @@ export class ActivitiesService {
 
     });
   }
-  // update(id: string, updateActivityDto: UpdateActivityDto) {
-  //   return this.prisma.activities.update({
-  //     where: { id },
-  //     data: updateActivityDto,
-  //   });
-  // }
 
-  remove(id: string) {
-    return `This action removes a #${id} activity`;
+  update(id: string, updateActivityDto: UpdateActivityDto) {
+    return this.prisma.activities.update({
+      where: { id },
+      data: {
+        name: updateActivityDto.name,
+        description: updateActivityDto.description,
+        date: updateActivityDto.date,
+        location_id: updateActivityDto.location_id,
+        created_by_id: updateActivityDto.created_by_id,
+        is_completed: updateActivityDto.is_complited,
+      },
+    });
   }
+
+  compliter(id: string) {
+    return this.prisma.activities.update({
+      where: { id },
+      data: {
+        is_completed: true,
+      },
+    });
+  }
+
+  async remove(id: string) {
+    await this.prisma.$transaction(async () => {
+      // Удаляем связанные записи из activities_users
+      await this.prisma.activities_users.deleteMany({
+        where: { activity_id: id },
+      });
+
+      // Удаляем связанные записи из notifications
+      await this.prisma.notifications.deleteMany({
+        where: { activity_id: id },
+      });
+
+      // Удаляем саму activity
+      await this.prisma.activities.delete({
+        where: { id },
+      });
+    });
+
+    return true; // Если транзакция прошла успешно, возвращаем true
+  }
+  // await this.prisma.activities_users.delete({
+  //   where: { id },
+  // })
+  // return this.prisma.activities.delete({
+  //   where: { id },
+  // });
 }
+
