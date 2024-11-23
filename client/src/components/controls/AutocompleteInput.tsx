@@ -22,7 +22,7 @@ export const AutocompleteInput = memo<AutocompleteProps>(
     noOptionsText = 'Не найдено',
     disabled,
     isLoading,
-    filterOptions
+    filterOptions, onBlur
   }) => {
     if (isLoading) {
       return <TextField disabled fullWidth label={label} value='Загрузка списка...' />;
@@ -58,6 +58,7 @@ export const AutocompleteInput = memo<AutocompleteProps>(
                 sx={{fontSize: '16px'}}
               />
             )}
+            onBlur={onBlur}
           ></Autocomplete>
         )}
       />

@@ -8,5 +8,6 @@ export const ADD_EVENT_INITIAL_VALUE: EventFormValues = {
     date: null,
     place: [],
     responsible: [],
-    team: []
+    team: [],
+    status: false
 }

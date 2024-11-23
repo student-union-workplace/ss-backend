@@ -9,6 +9,7 @@ export type ControlProps = {
   label: string;
   placeholder?: string;
   disabled?: boolean;
+  onBlur?: () => void
 };
 
 export type TextInputProps = ControlProps & {
@@ -37,6 +38,7 @@ export type AutocompleteProps = ControlProps & {
   isLoading?: boolean;
   placeholder?: string;
   filterOptions?: MuiAutocompleteProps<any, any, any, any>['filterOptions'];
+  onBlur?: () => void
 };
 
 export type SelectValue = {

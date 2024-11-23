@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import {CustomControlType} from "./types.ts";
 
 
-export const CustomControl = ({ control, name, Component, dictionary }: CustomControlType) => {
+export const CustomControl = ({ control, name, Component, label, onBlur}: CustomControlType) => {
   const render: ControllerProps['render'] = ({
     field: { onChange, value, name },
     formState: { errors }
@@ -13,8 +13,9 @@ export const CustomControl = ({ control, name, Component, dictionary }: CustomCo
         onChange={onChange}
         value={value}
         error={!!errors[name]}
-        dictionary={dictionary}
         name={name}
+        onBlur={onBlur}
+        label={label}
       />
     );
   };

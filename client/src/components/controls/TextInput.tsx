@@ -8,7 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import type { TextInputProps } from './types';
 
 export const TextInput = memo<TextInputProps>(({
- name, control, label, placeholder, type = 'text', startText, endText, disabled = false, multiline = false, rows
+ name, control, label, placeholder, type = 'text', startText, endText, disabled = false, multiline = false, rows, onBlur
 }) => {
   return (
     <Controller
@@ -37,6 +37,7 @@ export const TextInput = memo<TextInputProps>(({
             endAdornment: endText ? <InputAdornment position='end'>{endText}</InputAdornment> : undefined
           }}
           disabled={disabled}
+          onBlur={onBlur}
         />
       )}
     />

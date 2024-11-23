@@ -7,14 +7,15 @@ import { ru } from 'date-fns/locale'
 export type AutocompleteControlProps = {
     value?: Date | null;
     onChange: (date: Date | null) => void;
+    onBlur?: () => void
 };
 
-export const DateControl = ({value, onChange}: AutocompleteControlProps) => {
+export const DateControl = ({value, onChange,onBlur }: AutocompleteControlProps) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru}>
             <DemoContainer components={['DateTimePicker']}>
                 <DateTimePicker value={value} onChange={onChange} slotProps={{textField: {size: 'small',  placeholder: 'ДД.ММ.ГГГГ ЧЧ:ММ' }}}
-                                ampm={false} format={'dd.MM.yyyy HH:mm'} />
+                                ampm={false} format={'dd.MM.yyyy HH:mm'} onBlur={onBlur} />
             </DemoContainer>
         </LocalizationProvider>
     );

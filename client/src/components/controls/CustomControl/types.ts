@@ -9,8 +9,10 @@ export type CustomControlType = {
     onChange: any;
     error: boolean;
     value: any;
-    dictionary: any;
+    onBlur?: () => void;
     name?: string;
+    label?: string
   }>;
-  dictionary?: any;
+  onBlur?: () => void;
+  label?: string
 };

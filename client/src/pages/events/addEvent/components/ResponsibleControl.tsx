@@ -7,9 +7,11 @@ import {Avatar, Chip, TextField} from '@mui/material';
 export type AutocompleteControlProps = {
   value: string[];
   onChange: (value: string[]) => void;
+  onBlur: () => void;
+  label: string
 };
 
-export const ResponsibleControl = ({value, onChange}: AutocompleteControlProps) => {
+export const ResponsibleControl = ({value, onChange, onBlur, label}: AutocompleteControlProps) => {
 
   const users = useMemo(() => {
     return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {name: 'Максим Живцов', id: '3'}, {name: 'Роман Гареев', id: '4'}]
@@ -34,9 +36,10 @@ export const ResponsibleControl = ({value, onChange}: AutocompleteControlProps) 
         renderInput={params => (
           <TextField
             {...params}
-            label={'Ответственные*'}
+            label={label}
             autoComplete='off'
             aria-autocomplete='none'
+            onBlur={onBlur}
           />
         )}
         options={users ?? []}

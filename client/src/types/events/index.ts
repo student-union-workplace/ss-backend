@@ -6,5 +6,6 @@ export type EventFormValues = {
     date: Date | null,
     place: string[],
     responsible: string[],
-    team: string[]
+    team: string[],
+    status: boolean
 }
