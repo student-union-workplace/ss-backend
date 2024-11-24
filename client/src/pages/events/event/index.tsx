@@ -1,6 +1,7 @@
 import {Avatar, Box, Chip, Divider, IconButton, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import AddIcon from '@mui/icons-material/Add';
 import {useForm} from "react-hook-form";
 import {EventFormValues} from "../../../types/events";
 import {ADD_EVENT_INITIAL_VALUE} from "../addEvent/constants.ts";
@@ -13,6 +14,9 @@ import {PlaceControl} from "../addEvent/components/PlaceControl.tsx";
 import {ResponsibleControl} from "../addEvent/components/ResponsibleControl.tsx";
 import {TeamControl} from "../addEvent/components/TeamControl.tsx";
 import {SwitchControl} from "../../../components/controls/SwitchControl.tsx";
+import {GoogleDocument} from "./components/GoogleDocument.tsx";
+import {OtherDocument} from "./components/OtherDocument.tsx";
+import {AddDocumentModal} from "./components/AddDocumentModal.tsx";
 
 export const Event = () => {
     const [isEditTitle, setIsEditTitle] = useState(false)
@@ -22,7 +26,8 @@ export const Event = () => {
     const [isEditDate, setIsEditDate] = useState(false)
     const [isEditPlace, setIsEditPlace] = useState(false)
     const [isEditResponsible, setIsEditResponsible] = useState(false)
-    const [isEditTeame, setIsEditTeame] = useState(false)
+    const [isEditTeam, setIsEditTeam] = useState(false)
+    const [openAddDocumentModal, setOpenAddDocumentModal] = useState(false)
 
     const {control, reset, watch} = useForm<EventFormValues>({
         defaultValues: ADD_EVENT_INITIAL_VALUE,
@@ -59,6 +64,25 @@ export const Event = () => {
         }]
     }, []);
 
+    const documents = useMemo(() => {
+        return {
+            google: [{type: 'doc', title: 'Сценарий для ведущих', link: '/'}, {
+                type: 'xls',
+                title: 'Эксель для гугла вот такой вот',
+                link: '/'
+            }, {
+                type: 'xls',
+                title: 'Эксель для гугла вот такой вот',
+                link: '/'
+            }],
+            other: [{type: 'ppt', title: 'Презентация, загруженная прямо из компьютера', link: '/'}, {
+                type: 'xlsx',
+                title: 'Эксель табличка настоящая',
+                link: '/'
+            }]
+        }
+    }, []);
+
     useEffect(() => {
         reset({
             place: ['1'],
@@ -80,7 +104,8 @@ export const Event = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <Typography variant={'h4'} sx={{textAlign: 'center'}}>Карточка мероприятия</Typography>
+                <Typography variant={'h4'}
+                            sx={{textAlign: 'center'}}>{watch('title') ?? 'Карточка мероприятия'}</Typography>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -186,8 +211,43 @@ export const Event = () => {
                          sx={{borderWidth: '2px', borderColor: '#1FD4E9'}}/>
                 <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', width: '365px'}}>
                     <Box>
-                        <Typography variant={'subtitle1'} color={'textSecondary'}>Рабочие документы</Typography>
-                        <Box sx={{width: '400px', height: '350px', backgroundColor: '#1FD4E9'}}>
+                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                            <Typography variant={'subtitle1'} color={'textSecondary'}>Рабочие документы</Typography>
+                            <IconButton size={'small'} color={'primary'} onClick={() => setOpenAddDocumentModal(true)}>
+                                <AddIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '400px',
+                            maxHeight: '270px',
+                            backgroundColor: '#F4FEFF',
+                            paddingBlock: '5px',
+                            paddingInline: '10px',
+                            borderRadius: '20px',
+                            gap: '20px',
+                            overflowY: 'scroll'
+                        }}>
+                            <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                <Typography variant={'caption'}>Google</Typography>
+                                <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                    {documents.google.map((doc) => {
+                                            return <GoogleDocument doc={doc}/>
+                                        }
+                                    )}
+                                </Box>
+                            </Box>
+                            <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                <Typography variant={'caption'}>Дополнительные файлы</Typography>
+                                <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                    {documents.other.map((doc) => {
+                                            return <OtherDocument doc={doc}/>
+                                        }
+                                    )}
+                                </Box>
+                            </Box>
                         </Box>
                     </Box>
                     {isEditResponsible ? <CustomControl
@@ -218,12 +278,12 @@ export const Event = () => {
                             </Box>
 
                         </Box>}
-                    {isEditTeame ? <CustomControl
+                    {isEditTeam ? <CustomControl
                             name={'team'}
                             control={control}
                             Component={TeamControl}
                             label={'Команда'}
-                            onBlur={() => setIsEditTeame(false)}
+                            onBlur={() => setIsEditTeam(false)}
                         />
                         : <Box>
                             <Typography variant={'subtitle1'} color={'textSecondary'}>Команда</Typography>
@@ -233,9 +293,10 @@ export const Event = () => {
                                 flexWrap: 'wrap',
                                 gap: '0.5rem',
                                 maxHeight: '242px',
-                                overflowY: 'scroll'
+                                overflowY: 'scroll',
+                                width: '420px'
                             }}
-                                 onDoubleClick={() => setIsEditTeame(true)}
+                                 onDoubleClick={() => setIsEditTeam(true)}
                             >
                                 {users.filter(user => watch('team').indexOf(user.id) !== -1).map((user) => {
                                     return <Chip label={user.name} avatar={<Avatar>{user.name.split('')[0]}</Avatar>}
@@ -245,6 +306,7 @@ export const Event = () => {
                         </Box>}
                 </Box>
             </Box>
+            <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} control={control} name={'docs'} />
         </Box>
     )
 };
