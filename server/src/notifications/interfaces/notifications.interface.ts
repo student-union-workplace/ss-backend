@@ -14,7 +14,7 @@ export interface INotification {
   task_id?: string;
   user_id: string;
   event_id?: string;
-  activity_id: string;
+  activity_id?: string;
   activities?: activities;
   events?: events;
 }

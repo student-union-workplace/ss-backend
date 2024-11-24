@@ -107,7 +107,7 @@ model event_themes {
 }
 
 model events {
-  id                 String             @id
+  id                 String             @id @default(uuid())
   name               String?            @db.VarChar(255)
   description        String?            @db.VarChar(255)
   date               DateTime?          @db.DateTime(0)
@@ -129,7 +129,7 @@ model events {
 }
 
 model events_locations {
-  id          String    @id
+  id          String    @id @default(uuid())
   event_id    String
   location_id String
   events      events    @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_LOCATION")
@@ -140,7 +140,7 @@ model events_locations {
 }
 
 model events_managers {
-  id       String @id
+  id       String @id @default(uuid())
   event_id String
   user_id  String
   events   events @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_MANAGER")
@@ -151,7 +151,7 @@ model events_managers {
 }
 
 model events_users {
-  id       String @id
+  id       String @id @default(uuid())
   event_id String
   user_id  String
   events   events @relation(fields: [event_id], references: [id], onUpdate: Restrict, map: "FK_EVENT_USER_CONNECTION")
