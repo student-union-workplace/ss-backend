@@ -102,7 +102,7 @@ export const Event = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'end',
             }}>
                 <Typography variant={'h4'}
                             sx={{textAlign: 'center'}}>{watch('title') ?? 'Карточка мероприятия'}</Typography>
