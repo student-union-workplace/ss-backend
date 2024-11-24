@@ -41,9 +41,9 @@ export class ActivitiesController {
     return this.activitiesService.update(id, updateActivityDto);
   }
 
-  @Patch(':id/com')
-  compliter(@Param('id') id: string) {
-    return this.activitiesService.compliter(id);
+  @Patch(':id/changeStatus')
+  statusChanger(@Param('id') id: string) {
+    return this.activitiesService.statusChanger(id);
   }
 
   @Delete(':id')

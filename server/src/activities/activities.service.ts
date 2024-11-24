@@ -29,7 +29,7 @@ export class ActivitiesService {
 
 
     const userNotification = createActivityDto.users.map(userId => ({
-      title: 'Вас добавили к событию:' + createActivityDto.name,
+      title: 'Вас добавили к событию: ' + createActivityDto.name,
       description: createActivityDto.description,
       type: notifications_type.activity,
       date: new Date(),
@@ -116,8 +116,8 @@ export class ActivitiesService {
     });
   }
 
-  update(id: string, updateActivityDto: UpdateActivityDto) {
-    return this.prisma.activities.update({
+  async update(id: string, updateActivityDto: UpdateActivityDto) {
+    const updatedActivity = await this.prisma.activities.update({
       where: { id },
       data: {
         name: updateActivityDto.name,
@@ -128,13 +128,53 @@ export class ActivitiesService {
         is_completed: updateActivityDto.is_complited,
       },
     });
+    if (updateActivityDto.users) {
+      // Обновляем записи в таблице activities_users
+      // Удаляем старые связи
+      await this.prisma.activities_users.deleteMany({
+        where: { activity_id: id },
+      });
+
+      // Создаем новые связи
+      const newActivityUsers = updateActivityDto.users.map(userId => ({
+        activity_id: id,
+        user_id: userId,
+      }));
+
+      await this.prisma.activities_users.createMany({
+        data: newActivityUsers,
+      });
+
+      // Создаем уведомления для пользователей
+      // const notifications = updateActivityDto.users.map(userId => ({
+      //   title: 'Данные события "' + updateActivityDto.name + '" обновлены.',
+      //   description: 'Обновленное описание: ' + updateActivityDto.description,
+      //   type: notifications_type.activity,
+      //   date: new Date(),
+      //   user_id: userId,
+      //   activity_id: id
+      // }));
+
+      // await this.prisma.notifications.createMany({
+      //   data: notifications,
+      // });
+    }
+    return updatedActivity;
   }
 
-  compliter(id: string) {
+  async statusChanger(id: string) {
+    const currentActivity = await this.prisma.activities.findUnique({
+      where: { id },
+      select: {
+        is_completed: true,
+      }
+    })
+
+    const inverseActivity = !currentActivity.is_completed;
     return this.prisma.activities.update({
       where: { id },
       data: {
-        is_completed: true,
+        is_completed: inverseActivity,
       },
     });
   }
@@ -159,11 +199,5 @@ export class ActivitiesService {
 
     return true; // Если транзакция прошла успешно, возвращаем true
   }
-  // await this.prisma.activities_users.delete({
-  //   where: { id },
-  // })
-  // return this.prisma.activities.delete({
-  //   where: { id },
-  // });
 }
 
