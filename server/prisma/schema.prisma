@@ -43,7 +43,11 @@ model notifications {
 model users {
   id                                           String             @id @default(uuid())
   name                                         String             @db.VarChar(255)
+  phone_number                                 String?            @db.VarChar(20)
   email                                        String             @db.VarChar(255)
+  vk_link                                      String?            @db.VarChar(255)
+  tg_link                                      String?            @db.VarChar(255)
+  role                                         users_role
   password                                     String             @db.VarChar(255)
   created_at                                   DateTime           @default(now()) @db.DateTime(6)
   updated_at                                   DateTime           @updatedAt @db.DateTime(6)
@@ -166,4 +170,10 @@ enum notifications_type {
   task
   event
   activity
+}
+
+enum users_role {
+  admin
+  member
+  old
 }
