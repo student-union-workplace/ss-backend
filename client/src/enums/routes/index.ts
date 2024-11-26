@@ -4,7 +4,7 @@ export enum RoutesName {
     Register = '/register',
     Kanban = '/kanban',
     Events = '/events',
-    AddEvent = 'events/add',
+    AddEvent = '/events/add',
     Users = '/users',
     Calendar = '/calendar',
     Event = '/event/:id',

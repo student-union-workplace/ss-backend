@@ -10,10 +10,11 @@ const theme = createTheme({
     palette: {
         primary: {
             main: '#1DB8CA',
+            light: '#F4FEFF',
             contrastText: '#FFF'
         },
         secondary: {
-            main: '#9C27B0',
+            main: '#F4FEFF',
         },
         error: {
             main: '#D32F2F',
@@ -30,15 +31,15 @@ const theme = createTheme({
     },
     typography: {
         fontFamily: ['Manrope'].join(','),
-        body2: {
-            fontSize: '24px'
-        },
         subtitle1: {
             fontSize: '14px',
             lineHeight: '24px',
-            fontWeight: '500',
+        },
+        subtitle2: {
+            fontSize: '14px',
+            lineHeight: '24px',
+            fontWeight: '600',
         }
-
     }
 });
 

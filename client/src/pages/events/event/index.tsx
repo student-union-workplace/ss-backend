@@ -128,7 +128,7 @@ export const Event = () => {
                 <Box sx={{display: 'flex', flexDirection: 'column', gap: '40px', minWidth: '365px'}}>
                     {isEditTitle ? <TextInput name={'title'} control={control} label={'Название мероприятия'}
                                               onBlur={() => setIsEditTitle(false)}/> : <Box>
-                        <Typography variant={'subtitle1'} color={'textSecondary'}>Название</Typography>
+                        <Typography variant={'subtitle2'} color={'textSecondary'}>Название</Typography>
                         <Typography
                             variant={'body2'}
                             onDoubleClick={() => setIsEditTitle(true)}
@@ -137,14 +137,14 @@ export const Event = () => {
                         </Typography>
                     </Box>}
                     <Box>
-                        <Typography variant={'subtitle1'} color={'textSecondary'}>Канбан-доска</Typography>
+                        <Typography variant={'subtitle2'} color={'textSecondary'}>Канбан-доска</Typography>
                         <Button variant={'contained'} size={'small'} color={'primary'}>Перейти</Button>
                     </Box>
                     {isEditLastEvent ?
                         <AutocompleteInput name={'lastEvent'} label={'Прошлогоднее мероприятие'} control={control}
                                            options={lastEventOptions}/>
                         : <Box>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Прошлогоднее меро</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Прошлогоднее меро</Typography>
                             <Box sx={{display: 'flex', flexDirection: 'row', gap: '20px', alignItems: 'center'}}>
                                 <Typography
                                     variant={'body2'}
@@ -162,7 +162,7 @@ export const Event = () => {
                     {isEditTheme ? <AutocompleteInput name={'theme'} label={'Тема мероприятия*'} control={control}
                                                       options={themeOptions} onBlur={() => setIsEditTheme(false)}/>
                         : <Box>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Тема мероприятия</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Тема мероприятия</Typography>
                             <Typography variant={'body2'}
                                         onDoubleClick={() => setIsEditTheme(true)}>{themeOptions?.filter((event) => event.value === watch('theme'))[0]?.label ?? '-'}</Typography>
                         </Box>
@@ -171,7 +171,7 @@ export const Event = () => {
                         <TextInput name={'description'} control={control} label={'Описание мероприятия'} multiline
                                    rows={7} onBlur={() => setIsEditDescription(false)}/>
                         : <Box sx={{maxWidth: '327px'}}>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Описание</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Описание</Typography>
                             <Typography
                                 onDoubleClick={() => setIsEditDescription(true)}>{watch('description') ?? '-'}</Typography>
                         </Box>
@@ -182,7 +182,7 @@ export const Event = () => {
                         Component={DateControl}
                         onBlur={() => setIsEditDate(false)}
                     /> : <Box>
-                        <Typography variant={'subtitle1'} color={'textSecondary'}>Дата и время проведения</Typography>
+                        <Typography variant={'subtitle2'} color={'textSecondary'}>Дата и время проведения</Typography>
                         <Typography variant={'body2'} onDoubleClick={() => setIsEditDate(true)}>24.11.2024
                             17:00</Typography>
                     </Box>}
@@ -194,7 +194,7 @@ export const Event = () => {
                             label={'Место'}
                         />
                         : <Box>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Место</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Место</Typography>
                             <Box sx={{display: 'flex', gap: '10px', maxWidth: '264px', flexWrap: 'wrap'}}
                                  onDoubleClick={() => setIsEditPlace(true)}>
                                 {
@@ -212,7 +212,7 @@ export const Event = () => {
                 <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', width: '365px'}}>
                     <Box>
                         <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Рабочие документы</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Рабочие документы</Typography>
                             <IconButton size={'small'} color={'primary'} onClick={() => setOpenAddDocumentModal(true)}>
                                 <AddIcon />
                             </IconButton>
@@ -258,7 +258,7 @@ export const Event = () => {
                             onBlur={() => setIsEditResponsible(false)}
                         />
                         : <Box>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Ответственный</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Ответственный</Typography>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
@@ -286,7 +286,7 @@ export const Event = () => {
                             onBlur={() => setIsEditTeam(false)}
                         />
                         : <Box>
-                            <Typography variant={'subtitle1'} color={'textSecondary'}>Команда</Typography>
+                            <Typography variant={'subtitle2'} color={'textSecondary'}>Команда</Typography>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',

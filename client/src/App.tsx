@@ -8,6 +8,7 @@ import {NotAuthRouter} from "./utils/routes/NotAuthRouter.tsx";
 import {Header} from "./components/header";
 import {AddEvent} from "./pages/events/addEvent";
 import {Event} from "./pages/events/event";
+import {Events} from "./pages/events/events";
 
 function App() {
     const auth = true
@@ -21,6 +22,7 @@ function App() {
                 <Route path={RoutesName.Register} element={<NotAuthRouter isAuth={auth}><RegisterPage/></NotAuthRouter>}/>
                 <Route path={RoutesName.AddEvent} element={<AuthRouter isAuth={auth}><AddEvent /></AuthRouter>}/>
                 <Route path={RoutesName.Event} element={<AuthRouter isAuth={auth}><Event /></AuthRouter>}/>
+                <Route path={RoutesName.Events} element={<AuthRouter isAuth={auth}><Events /></AuthRouter>}/>
             </Routes>
         </>
     )

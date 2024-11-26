@@ -70,16 +70,19 @@ export const AddEvent = () => {
                                 name={'place'}
                                 control={control}
                                 Component={PlaceControl}
+                                label={'Место'}
                             />
                             <CustomControl
                                 name={'responsible'}
                                 control={control}
                                 Component={ResponsibleControl}
+                                label={"Ответственные"}
                             />
                             <CustomControl
                                 name={'team'}
                                 control={control}
                                 Component={TeamControl}
+                                label={"Команда"}
                             />
 
                         </Box>
