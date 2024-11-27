@@ -3,6 +3,9 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PrismaService } from '../prisma.service';
 import { notifications_type } from '@prisma/client';
+import { PageDto } from 'src/pagination/dto/page.dto';
+import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
+import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
 
 
 
@@ -65,41 +68,31 @@ export class EventsService {
       this.prisma.events_locations.createMany({
         data: eventLocations
       }),
-      this.prisma.notifications.createMany({
-        data: userNotification
-      }),
-      this.prisma.notifications.createMany({
-        data: managerNotification
+      await this.prisma.notifications.createMany({
+        data: [...userNotification, ...managerNotification],
       })
     ]);
     return event;
   }
 
-  async findAll(query: { is_archived?: boolean; name?: string; theme?: string; page?: number; pageSize?: number }) {
-    const {
-      is_archived,  // Это теперь boolean
-      name,
-      theme,
-      page = 1,
-      pageSize = 10,
-    } = query;
+  async findAll(query: PageOptionsDto, isArchived?: string, name?: string, theme?: string): Promise<PageDto<any>> {
+    const isArchivedFilter = isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
 
-    const skip = (page - 1) * pageSize; // Параметры для пагинации
+    // Считаем общее количество записей для пагинации
+    const itemCount = await this.prisma.events.count({
+      where: {
+        is_archived: isArchivedFilter,
+        name: name ? { contains: name } : undefined,
+        theme_id: theme ? { contains: theme } : undefined,
+      },
+    });
 
-    // Обработка фильтрации по is_archived
-    const isArchivedFilter =
-      is_archived === true
-        ? true // Если is_archived = true, фильтруем только архивированные
-        : is_archived === false || is_archived === undefined
-          ? { not: true } // Если false или undefined, фильтруем только неархивированные
-          : undefined; // Если значение некорректно, игнорируем фильтр
-
-    // Выполняем запрос к базе данных
+    // Получаем данные с учетом пагинации и фильтров
     const events = await this.prisma.events.findMany({
       where: {
-        is_archived: isArchivedFilter, // Фильтр по архиву
-        name: name ? { contains: name } : undefined, // Фильтр по имени
-        theme_id: theme ? { contains: theme } : undefined, // Фильтр по теме
+        is_archived: isArchivedFilter,
+        name: name ? { contains: name } : undefined,
+        theme_id: theme ? { contains: theme } : undefined,
       },
       include: {
         events_users: {
@@ -119,28 +112,17 @@ export class EventsService {
         },
       },
       orderBy: {
-        date: 'asc', // Сортировка по дате
+        date: 'asc',
       },
-      skip,
-      take: pageSize,
+      skip: query.skip,
+      take: query.take,
     });
 
-    // Считаем общее количество записей для текущего фильтра
-    const total = await this.prisma.events.count({
-      where: {
-        is_archived: isArchivedFilter,
-        name: name ? { contains: name } : undefined,
-        theme_id: theme ? { contains: theme } : undefined,
-      },
-    });
+    // Создаем мета-данные для пагинации
+    const pageMeta = new PageMetaDto({ pageOptionsDto: query, itemCount });
 
-    // Формируем ответ с пагинацией
-    return {
-      total, // Общее количество записей
-      page,
-      pageSize,
-      data: events, // Список событий
-    };
+    // Возвращаем результат в формате пагинации
+    return new PageDto(events, pageMeta);
   }
 
   async findOne(id: string) {
@@ -168,7 +150,6 @@ export class EventsService {
         },
       },
     });
-
     // Если есть ID предыдущего мероприятия, делаем дополнительный запрос
     let prevSameEvent = null;
     if (event.prev_same_event_id) {
@@ -193,7 +174,6 @@ export class EventsService {
         },
       });
     }
-
     // Возвращаем основной объект и данные о предыдущем мероприятии
     return { ...event, prev_same_event: prevSameEvent };
   }

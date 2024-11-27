@@ -125,7 +125,7 @@ export class ActivitiesService {
         date: updateActivityDto.date,
         location_id: updateActivityDto.location_id,
         created_by_id: updateActivityDto.created_by_id,
-        is_completed: updateActivityDto.is_complited,
+        is_completed: updateActivityDto.is_completed,
       },
     });
     if (updateActivityDto.users) {

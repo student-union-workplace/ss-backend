@@ -1,8 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
+import { PageDto } from 'src/pagination/dto/page.dto';
 
+@ApiTags('events')
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) { }
@@ -14,22 +18,12 @@ export class EventsController {
 
   @Get()
   async findAll(
-    @Query('is_archived') isArchived?: string,  // Получаем параметр как строку
+    @Query() pageOptionsDto: PageOptionsDto,
+    @Query('isArchived') isArchived?: string,
     @Query('name') name?: string,
     @Query('theme') theme?: string,
-    @Query('page') page: number = 1,
-    @Query('pageSize') pageSize: number = 10,
-  ) {
-    // Преобразуем строку в boolean: если 'true', то true, иначе false или undefined
-    const isArchivedBoolean = isArchived === 'true'; // Преобразование из строки в boolean
-
-    return this.eventsService.findAll({
-      is_archived: isArchivedBoolean, // Передаем значение как boolean
-      name,
-      theme,
-      page,
-      pageSize,
-    });
+  ): Promise<PageDto<any>> {
+    return this.eventsService.findAll(pageOptionsDto, isArchived, name, theme);
   }
 
   @Get(':id')
