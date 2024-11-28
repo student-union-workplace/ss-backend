@@ -28,6 +28,9 @@ const theme = createTheme({
         success: {
             main: '#2E7D32',
         },
+        action: {
+            hover: '#F4FEFF'
+        }
     },
     typography: {
         fontFamily: ['Manrope'].join(','),

@@ -18,7 +18,7 @@ export const Navbar = () => {
             </Box>
             <Box className={`menu-item ${activeItem === RoutesName.AddEvent && 'active-item'}`} onClick={() => setActiveItem(RoutesName.AddEvent)}>
                 <WorkIcon/>
-                <Link to={RoutesName.AddEvent}>меро</Link>
+                <Link to={RoutesName.Events}>меро</Link>
             </Box>
             <Box className={`menu-item ${activeItem === RoutesName.Users && 'active-item'}`} onClick={() => setActiveItem(RoutesName.Users)}>
                 <PeopleIcon/>

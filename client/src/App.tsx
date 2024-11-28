@@ -21,7 +21,7 @@ function App() {
                 <Route path={RoutesName.Login} element={<NotAuthRouter isAuth={auth}><LoginPage/></NotAuthRouter>}/>
                 <Route path={RoutesName.Register} element={<NotAuthRouter isAuth={auth}><RegisterPage/></NotAuthRouter>}/>
                 <Route path={RoutesName.AddEvent} element={<AuthRouter isAuth={auth}><AddEvent /></AuthRouter>}/>
-                <Route path={RoutesName.Event} element={<AuthRouter isAuth={auth}><Event /></AuthRouter>}/>
+                <Route path={`${RoutesName.Event}:id`} element={<AuthRouter isAuth={auth}><Event /></AuthRouter>}/>
                 <Route path={RoutesName.Events} element={<AuthRouter isAuth={auth}><Events /></AuthRouter>}/>
             </Routes>
         </>

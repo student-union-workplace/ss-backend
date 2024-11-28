@@ -10,6 +10,7 @@ import {
     Typography
 } from "@mui/material";
 
+
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {useMemo, useState} from "react";
@@ -17,12 +18,17 @@ import * as fns from 'date-fns';
 import {ru} from 'date-fns/locale';
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from '@mui/icons-material/Search';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [dateSort, setDateSort] = useState('ASC')
     const nav = useNavigate()
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -46,7 +52,7 @@ export const Events = () => {
             theme: 'Музыкалка',
             date: new Date(),
             responsible: ['4', '6'],
-            status: 'В работе'
+            status: 'Завершено'
         }, {
             title: 'Козырный втуз',
             theme: 'Музыкалка',
@@ -64,7 +70,7 @@ export const Events = () => {
             theme: 'Музыкалка',
             date: new Date(),
             responsible: ['4', '6'],
-            status: 'В работе'
+            status: 'Архив'
         }, {
             title: 'Козырный втуз',
             theme: 'Музыкалка',
@@ -76,19 +82,19 @@ export const Events = () => {
             theme: 'Музыкалка',
             date: new Date(),
             responsible: ['4', '6'],
-            status: 'В работе'
+            status: 'Архив'
         }, {
             title: 'Козырный втуз',
             theme: 'Музыкалка',
             date: new Date(),
             responsible: ['4', '6'],
-            status: 'В работе'
+            status: 'Архив'
         }, {
             title: 'Козырный втуз',
             theme: 'Музыкалка',
             date: new Date(),
             responsible: ['4', '6'],
-            status: 'В работе'
+            status: 'Завершено'
         }, {
             title: 'Козырный втуз',
             theme: 'Музыкалка',
@@ -105,10 +111,20 @@ export const Events = () => {
     }, [])
 
     const columns = useMemo(() => {
-        return [{id: 'title', name: 'Название'}, {id: 'theme', name: 'Тема'}, {
+        return [{id: 'title', name: 'Название', sorting: false, filter: false}, {
+            id: 'theme',
+            name: 'Тема',
+            sorting: false,
+            filter: false
+        }, {
             id: 'date',
-            name: 'Дата и время'
-        }, {id: 'responsible', name: 'Ответственный'}, {id: 'status', name: 'Статус'}]
+            name: 'Дата и время', sorting: true, filter: false
+        }, {id: 'responsible', name: 'Ответственный', sorting: false, filter: false}, {
+            id: 'status',
+            name: 'Статус',
+            sorting: false,
+            filter: true
+        }]
     }, [])
 
     const users = useMemo(() => {
@@ -124,7 +140,18 @@ export const Events = () => {
         }]
     }, []);
 
-
+    const getChipStatusColor = (status: string) => {
+        switch (status) {
+            case 'В работе':
+                return 'success';
+            case 'Завершено':
+                return 'info';
+            case 'Архив':
+                return 'warning';
+            default:
+                return
+        }
+    }
     return (
         <Box className={'content'} sx={{marginInline: '150px'}}>
             <Box sx={{
@@ -136,24 +163,17 @@ export const Events = () => {
             }}>
                 <TextField label={'Поиск мероприятия'} size={'small'} sx={{width: '340px'}} InputProps={{
                     startAdornment:
-
                         <InputAdornment position='start'>
-
                             <SearchIcon/>
                         </InputAdornment>
-
                 }}/>
-                <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '230px'}}
+                <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '210px'}}
                         onClick={() => nav(RoutesName.AddEvent)}>Создать
                     мероприятие</Button>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center',}}>
                 <TableContainer sx={{minWidth: '1024'}}>
-                    <Table stickyHeader aria-label="sticky table" size="small" sx={{
-                        maxWidth: '1024', "& .MuiTableRow-root:hover": {
-                            backgroundColor: "secondary.main"
-                        }
-                    }}>
+                    <Table stickyHeader aria-label="sticky table" size="small">
                         <TableHead>
                             <TableRow>
                                 {columns.map((column) => (
@@ -161,8 +181,17 @@ export const Events = () => {
                                         key={column.id}
                                         /*align={column.align}
                                         style={{minWidth: column.minWidth}}*/
+                                        onClick={() => setDateSort(dateSort === 'ASC' ? 'DESK' : 'ASC')}
                                     >
-                                        <Typography variant={'subtitle2'}>{column.name}</Typography>
+                                        <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer', alignItems:'center'}}>
+                                            {column.sorting && (
+                                                dateSort === 'ASC' ? <ArrowDownwardIcon color={'action'}/> :
+                                                    <ArrowUpwardIcon color={'action'}/>
+                                            )}
+                                            <Typography variant={'subtitle2'}>{column.name}</Typography>
+                                            {column.filter && <FilterListIcon color={'action'} fontSize={'small'} />}
+                                        </Box>
+
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -172,9 +201,24 @@ export const Events = () => {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.title}>
-                                            <TableCell><Typography
-                                                variant={'subtitle1'}>{row.title}</Typography></TableCell>
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.title} sx={{
+                                            "& .MuiTableRow-root:hover": {
+                                                backgroundColor: "primary.light"
+                                            }
+                                        }}>
+                                            <TableCell>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    gap: '3px',
+                                                    cursor: 'pointer'
+                                                }} onClick={() => nav(`${RoutesName.Event}1`)}>
+                                                    <Typography
+                                                        variant={'subtitle1'}>{row.title}</Typography>
+                                                    <OpenInNewIcon fontSize={'small'}/>
+                                                </Box>
+                                            </TableCell>
                                             <TableCell><Typography
                                                 variant={'subtitle1'}>{row.theme}</Typography></TableCell>
                                             <TableCell><Typography
@@ -195,8 +239,10 @@ export const Events = () => {
                                                     })}
                                                 </Box>
                                             </TableCell>
-                                            <TableCell><Typography
-                                                variant={'subtitle1'}>{row.status}</Typography></TableCell>
+                                            <TableCell>
+                                                <Chip label={row.status} color={getChipStatusColor(row.status)}
+                                                      size={'small'}/>
+                                            </TableCell>
                                         </TableRow>
                                     )
                                         ;
@@ -212,7 +258,7 @@ export const Events = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    labelRowsPerPage={'Показывать по:'}
+                    labelRowsPerPage={'Количество строк на странице'}
                     labelDisplayedRows={
                         ({from, to, count}) => {
                             return '' + from + '-' + to + ' из ' + count
