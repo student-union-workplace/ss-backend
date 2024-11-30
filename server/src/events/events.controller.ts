@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EventsService } from './events.service';
@@ -14,13 +15,19 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
 import { PageDto } from 'src/pagination/dto/page.dto';
+import { Roles } from '../decorators/roles.decorator';
+import { users_role } from '@prisma/client';
+import { RolesGuard } from '../guards/roles.guard';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard, RolesGuard) // пример добавления обязательной авторизации ко всем запросам контроллера и ограничения ролей
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
+  @Roles(users_role.member) // создавать мероприятия могут пользователи с уровнем доступа не менее member (песок не может)
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);
   }
