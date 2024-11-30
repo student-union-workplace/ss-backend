@@ -10,8 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
     // Хэширование пароля
@@ -26,7 +25,7 @@ export class UsersService {
         password: hashedPassword,
         department_id: createUserDto.department_id,
         created_at: createUserDto.created_at,
-        updated_at: createUserDto.updated_at
+        updated_at: createUserDto.updated_at,
       },
     });
 
@@ -40,7 +39,10 @@ export class UsersService {
       where: { email: loginUserDto.email },
     });
 
-    const isPasswordValid = bcrypt.compareSync(loginUserDto.password, user.password);
+    const isPasswordValid = bcrypt.compareSync(
+      loginUserDto.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new Error('Неверный пароль');
@@ -52,17 +54,16 @@ export class UsersService {
 
   async findAll(filterDto: GetUsersFilterDto): Promise<PageDto<any>> {
     const { name, departmentName, role, skip, take } = filterDto;
-
     const where: any = {
       AND: [
         name ? { name: { contains: name } } : undefined,
         role ? { role: { equals: role } } : undefined,
         departmentName
           ? {
-            department: {
-              name: { contains: departmentName },
-            },
-          }
+              department: {
+                name: { contains: departmentName },
+              },
+            }
           : undefined,
       ].filter(Boolean),
     };
@@ -70,18 +71,16 @@ export class UsersService {
     const users = await this.prisma.users.findMany({
       where,
       skip,
-      take,
+      take: +take,
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
-        department_id: true
-
+        department_id: true,
       },
       orderBy: { name: 'asc' },
     });
-
 
     // Запрашиваем все департаменты с полем head_user_id
     const departments = await this.prisma.departments.findMany({
@@ -125,27 +124,15 @@ export class UsersService {
         role: true,
         department_id: true,
         created_at: true,
-        updated_at: true
+        updated_at: true,
       },
-    })
+    });
   }
 
   findOneEmail(email: string) {
     return this.prisma.users.findUnique({
-      where: { email: email },
-      select: {
-        id: true,
-        name: true,
-        phone_number: true,
-        email: true,
-        vk_link: true,
-        tg_link: true,
-        role: true,
-        department_id: true,
-        created_at: true,
-        updated_at: true
-      },
-    })
+      where: { email },
+    });
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
@@ -166,13 +153,12 @@ export class UsersService {
         role: true,
         department_id: true,
         created_at: true,
-        updated_at: true
-      }
+        updated_at: true,
+      },
     });
   }
 
   async remove(id: string) {
-
     const department = await this.prisma.departments.findUnique({
       where: { head_user_id: id },
     });
@@ -185,7 +171,7 @@ export class UsersService {
       });
     }
     return this.prisma.users.delete({
-      where: { id }
+      where: { id },
     });
   }
 }

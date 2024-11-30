@@ -1,26 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
-import { CreateNotificationDto } from 'src/notifications/dto/create-notification.dto';
 
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) { }
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post()
-  create(@Body() createActivityDto: CreateActivityDto, createNotificationDto: CreateNotificationDto) {
-    return this.activitiesService.create(createActivityDto, createNotificationDto);
+  create(@Body() createActivityDto: CreateActivityDto) {
+    return this.activitiesService.create(createActivityDto);
   }
 
   @Get()
   async findAll(
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
-    @Query('year') year?: string
+    @Query('year') year?: string,
   ) {
     if (!year && !startDate && !endDate) {
-      throw new BadRequestException('At least year or date range must be provided.');
+      throw new BadRequestException(
+        'At least year or date range must be provided.',
+      );
     }
     {
       return this.activitiesService.findAll({
@@ -37,7 +48,10 @@ export class ActivitiesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateActivityDto: UpdateActivityDto,
+  ) {
     return this.activitiesService.update(id, updateActivityDto);
   }
 

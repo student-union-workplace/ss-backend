@@ -4,7 +4,7 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) { }
+  constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
   // декоратор @Body() указывает на то, что переменная createNotificationDto содержит данные, которые передают через тело (body) запроса

@@ -7,12 +7,9 @@ import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
 
-
-
 @Injectable()
 export class EventsService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createEventDto: CreateEventDto) {
     const event = await this.prisma.events.create({
@@ -23,60 +20,66 @@ export class EventsService {
         is_archived: createEventDto.is_archived,
         prev_same_event_id: createEventDto.prev_same_event_id,
         theme_id: createEventDto.theme_id,
-      }
+      },
     });
-    const eventUsers = createEventDto.event_users.map(userId => ({
+    const eventUsers = createEventDto.event_users.map((userId) => ({
       event_id: event.id,
       user_id: userId,
     }));
 
-    const eventManagers = createEventDto.event_managers.map(userId => ({
+    const eventManagers = createEventDto.event_managers.map((userId) => ({
       event_id: event.id,
       user_id: userId,
     }));
 
-    const eventLocations = createEventDto.event_locations.map(locId => ({
+    const eventLocations = createEventDto.event_locations.map((locId) => ({
       event_id: event.id,
       location_id: locId,
     }));
 
-    const userNotification = createEventDto.event_users.map(userId => ({
+    const userNotification = createEventDto.event_users.map((userId) => ({
       title: 'Вас добавили в мероприятие: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
       date: new Date(),
       user_id: userId,
-      event_id: event.id
+      event_id: event.id,
     }));
 
-    const managerNotification = createEventDto.event_managers.map(userId => ({
+    const managerNotification = createEventDto.event_managers.map((userId) => ({
       title: 'Вы теперь руководитель мероприятия: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
       date: new Date(),
       user_id: userId,
-      event_id: event.id
+      event_id: event.id,
     }));
 
     await Promise.all([
       this.prisma.events_managers.createMany({
-        data: eventManagers
+        data: eventManagers,
       }),
       this.prisma.events_users.createMany({
-        data: eventUsers
+        data: eventUsers,
       }),
       this.prisma.events_locations.createMany({
-        data: eventLocations
+        data: eventLocations,
       }),
       await this.prisma.notifications.createMany({
         data: [...userNotification, ...managerNotification],
-      })
+      }),
     ]);
     return event;
   }
 
-  async findAll(query: PageOptionsDto, isArchived?: string, name?: string, theme?: string): Promise<PageDto<any>> {
-    const isArchivedFilter = isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
+  async findAll(
+    query: PageOptionsDto,
+    isArchived?: string,
+    name?: string,
+    theme?: string,
+  ): Promise<PageDto<any>> {
+    const isArchivedFilter =
+      isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
 
     // Считаем общее количество записей для пагинации
     const itemCount = await this.prisma.events.count({
@@ -115,7 +118,7 @@ export class EventsService {
         date: 'asc',
       },
       skip: query.skip,
-      take: query.take,
+      take: +query.take,
     });
 
     // Создаем мета-данные для пагинации
@@ -306,8 +309,8 @@ export class EventsService {
       where: { id },
       select: {
         is_archived: true,
-      }
-    })
+      },
+    });
 
     const inversEvent = !currentEvent.is_archived;
 

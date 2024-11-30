@@ -5,8 +5,7 @@ import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class LocationsService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   create(createLocationDto: CreateLocationDto) {
     return this.prisma.locations.create({
@@ -20,7 +19,7 @@ export class LocationsService {
 
   findOne(id: string) {
     return this.prisma.locations.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -33,7 +32,7 @@ export class LocationsService {
 
   remove(id: string) {
     return this.prisma.locations.delete({
-      where: { id }
+      where: { id },
     });
   }
 }

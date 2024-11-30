@@ -2,16 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { PrismaService } from '../prisma.service';
-import { CreateNotificationDto } from 'src/notifications/dto/create-notification.dto';
 import { notifications_type } from '@prisma/client';
-
 
 @Injectable()
 export class ActivitiesService {
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private prisma: PrismaService) { }
-
-  async create(createActivityDto: CreateActivityDto, createNotificationDto: CreateNotificationDto) {
+  async create(createActivityDto: CreateActivityDto) {
     const activity = await this.prisma.activities.create({
       data: {
         name: createActivityDto.name,
@@ -19,34 +16,32 @@ export class ActivitiesService {
         date: createActivityDto.date,
         location_id: createActivityDto.location_id,
         created_by_id: createActivityDto.created_by_id,
-        is_completed: createActivityDto.is_complited,
-      }
-    })
-    const userActivityEntries = createActivityDto.users.map(userId => ({
+        is_completed: createActivityDto.is_completed,
+      },
+    });
+    const userActivityEntries = createActivityDto.users.map((userId) => ({
       activity_id: activity.id,
       user_id: userId,
     }));
 
-
-    const userNotification = createActivityDto.users.map(userId => ({
+    const userNotification = createActivityDto.users.map((userId) => ({
       title: 'Вас добавили к событию: ' + createActivityDto.name,
       description: createActivityDto.description,
       type: notifications_type.activity,
       date: new Date(),
       user_id: userId,
-      activity_id: activity.id
+      activity_id: activity.id,
     }));
 
     await Promise.all([
       this.prisma.activities_users.createMany({
-        data: userActivityEntries
+        data: userActivityEntries,
       }),
       this.prisma.notifications.createMany({
-        data: userNotification
-      })
+        data: userNotification,
+      }),
     ]);
     return activity;
-
   }
 
   async findAll(params: { startDate?: Date; endDate?: Date; year?: number }) {
@@ -112,7 +107,6 @@ export class ActivitiesService {
           },
         },
       },
-
     });
   }
 
@@ -136,7 +130,7 @@ export class ActivitiesService {
       });
 
       // Создаем новые связи
-      const newActivityUsers = updateActivityDto.users.map(userId => ({
+      const newActivityUsers = updateActivityDto.users.map((userId) => ({
         activity_id: id,
         user_id: userId,
       }));
@@ -167,8 +161,8 @@ export class ActivitiesService {
       where: { id },
       select: {
         is_completed: true,
-      }
-    })
+      },
+    });
 
     const inverseActivity = !currentActivity.is_completed;
     return this.prisma.activities.update({
@@ -200,4 +194,3 @@ export class ActivitiesService {
     return true; // Если транзакция прошла успешно, возвращаем true
   }
 }
-

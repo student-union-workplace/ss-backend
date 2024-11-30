@@ -6,9 +6,17 @@ import { LocationsModule } from './locations/locations.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [NotificationsModule, LocationsModule, ActivitiesModule, EventsModule, UsersModule],
+  imports: [
+    NotificationsModule,
+    LocationsModule,
+    ActivitiesModule,
+    EventsModule,
+    UsersModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
