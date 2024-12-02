@@ -20,17 +20,18 @@ const theme = createTheme({
             main: '#D32F2F',
         },
         warning: {
-            main: '#EF6C00',
+            main: '#FF8520',
         },
         info: {
-            main: '#0288D1',
+            main: '#36A6FF',
         },
         success: {
-            main: '#2E7D32',
+            main: '#73C922',
         },
         action: {
             hover: '#F4FEFF'
-        }
+        },
+
     },
     typography: {
         fontFamily: ['Manrope'].join(','),
@@ -42,8 +43,12 @@ const theme = createTheme({
             fontSize: '14px',
             lineHeight: '24px',
             fontWeight: '600',
+        },
+        h6: {
+            fontSize: '24px',
+            fontWeight: '400'
         }
-    }
+    },
 });
 
 createRoot(document.getElementById('root')!).render(

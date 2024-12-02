@@ -47,7 +47,7 @@ export const AddEvent = () => {
                     paddingTop: '40px'
                 }}>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', minWidth: '365px'}}>
-                        <Typography variant={'body2'}>Описание меро</Typography>
+                        <Typography variant={'h6'}>Описание меро</Typography>
                         <AutocompleteInput name={'lastEvent'} label={'Прошлогоднее мероприятие'} control={control}
                                            options={lastEventOptions}/>
                         <TextInput name={'title'} control={control} label={'Название мероприятия'}/>
@@ -60,7 +60,7 @@ export const AddEvent = () => {
                              sx={{borderWidth: '2px', borderColor: '#1FD4E9'}}/>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', width: '365px', alignItems: 'end'}}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: '45px', minWidth: '365px'}}>
-                            <Typography variant={'body2'}>Дата, место, рабочка</Typography>
+                            <Typography variant={'h6'}>Дата, место, рабочка</Typography>
                             <CustomControl
                                 name={'date'}
                                 control={control}
@@ -76,13 +76,13 @@ export const AddEvent = () => {
                                 name={'responsible'}
                                 control={control}
                                 Component={ResponsibleControl}
-                                label={"Ответственные"}
+                                label={"Ответственный*"}
                             />
                             <CustomControl
                                 name={'team'}
                                 control={control}
                                 Component={TeamControl}
-                                label={"Команда"}
+                                label={"Команда*"}
                             />
 
                         </Box>

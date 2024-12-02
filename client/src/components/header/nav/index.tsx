@@ -1,10 +1,10 @@
 import {Box} from "@mui/material";
 import {Link} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import WorkIcon from '@mui/icons-material/Work';
-import PeopleIcon from '@mui/icons-material/People';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import './style.css'
 import {useState} from "react";
 
@@ -13,19 +13,19 @@ export const Navbar = () => {
     return (
         <Box className={'menu'}>
             <Box className={`menu-item ${activeItem === RoutesName.Kanban && 'active-item'}`} onClick={() => setActiveItem(RoutesName.Kanban)}>
-                <DateRangeIcon/>
+                <CalendarMonthOutlinedIcon/>
                 <Link to={RoutesName.Kanban}>канбан</Link>
             </Box>
             <Box className={`menu-item ${activeItem === RoutesName.AddEvent && 'active-item'}`} onClick={() => setActiveItem(RoutesName.AddEvent)}>
-                <WorkIcon/>
+                <WorkOutlineOutlinedIcon/>
                 <Link to={RoutesName.Events}>меро</Link>
             </Box>
             <Box className={`menu-item ${activeItem === RoutesName.Users && 'active-item'}`} onClick={() => setActiveItem(RoutesName.Users)}>
-                <PeopleIcon/>
+                <PeopleAltOutlinedIcon/>
                 <Link to={RoutesName.Users}>пбшки</Link>
             </Box>
             <Box className={`menu-item ${activeItem === RoutesName.Calendar && 'active-item'}`} onClick={() => setActiveItem(RoutesName.Calendar)}>
-                <CalendarTodayIcon/>
+                <CalendarTodayOutlinedIcon/>
                 <Link to={RoutesName.Calendar}>календарь</Link>
             </Box>
         </Box>

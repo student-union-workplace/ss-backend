@@ -1,6 +1,6 @@
 import {
     Avatar,
-    Box, Chip, Table,
+    Box, Chip, IconButton, Table,
     TableBody,
     TableCell,
     TableContainer,
@@ -9,7 +9,6 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -24,12 +23,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import {StatusPopover} from "./components/StatusPopover.tsx";
+import {getChipFontColor, getChipStatusColor} from "./utils.ts";
 
 export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [dateSort, setDateSort] = useState('ASC')
     const nav = useNavigate()
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -140,18 +146,7 @@ export const Events = () => {
         }]
     }, []);
 
-    const getChipStatusColor = (status: string) => {
-        switch (status) {
-            case 'В работе':
-                return 'success';
-            case 'Завершено':
-                return 'info';
-            case 'Архив':
-                return 'warning';
-            default:
-                return
-        }
-    }
+
     return (
         <Box className={'content'} sx={{marginInline: '150px'}}>
             <Box sx={{
@@ -179,19 +174,29 @@ export const Events = () => {
                                 {columns.map((column) => (
                                     <TableCell
                                         key={column.id}
-                                        /*align={column.align}
-                                        style={{minWidth: column.minWidth}}*/
-                                        onClick={() => setDateSort(dateSort === 'ASC' ? 'DESK' : 'ASC')}
                                     >
-                                        <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer', alignItems:'center'}}>
-                                            {column.sorting && (
-                                                dateSort === 'ASC' ? <ArrowDownwardIcon color={'action'}/> :
-                                                    <ArrowUpwardIcon color={'action'}/>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            cursor: 'pointer',
+                                            alignItems: 'center'
+                                        }}>
+                                            {column.sorting && (<IconButton
+                                                    onClick={() => setDateSort(dateSort === 'ASC' ? 'DESK' : 'ASC')}>
+                                                    {dateSort === 'ASC' ? <ArrowDownwardIcon color={'action'}/> :
+                                                        <ArrowUpwardIcon color={'action'}/>}
+                                                </IconButton>
+
                                             )}
                                             <Typography variant={'subtitle2'}>{column.name}</Typography>
-                                            {column.filter && <FilterListIcon color={'action'} fontSize={'small'} />}
+                                            {column.filter && <Box>
+                                                <IconButton onClick={handleClick}>
+                                                    <FilterListIcon color={'action'} fontSize={'small'}/>
+                                                </IconButton>
+                                                <StatusPopover open={open} anchorEl={anchorEl}
+                                                               setAnchorEl={setAnchorEl}/>
+                                            </Box>}
                                         </Box>
-
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -235,12 +240,16 @@ export const Events = () => {
                                                         const label = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].split('')[0] + '.'
                                                         return <Chip label={label}
                                                                      avatar={<Avatar>{"ОР"}</Avatar>}
-                                                                     variant={'outlined'} size={'small'}/>
+                                                                     variant={'outlined'} size={'small'}
+                                                        />
                                                     })}
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip label={row.status} color={getChipStatusColor(row.status)}
+                                                <Chip label={row.status} sx={{
+                                                    backgroundColor: getChipStatusColor(row.status),
+                                                    color: getChipFontColor(row.status)
+                                                }}
                                                       size={'small'}/>
                                             </TableCell>
                                         </TableRow>

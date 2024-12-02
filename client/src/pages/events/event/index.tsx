@@ -130,7 +130,7 @@ export const Event = () => {
                                               onBlur={() => setIsEditTitle(false)}/> : <Box>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Название</Typography>
                         <Typography
-                            variant={'body2'}
+                            variant={'h6'}
                             onDoubleClick={() => setIsEditTitle(true)}
                         >
                             {watch('title') ?? '-'}
@@ -147,7 +147,7 @@ export const Event = () => {
                             <Typography variant={'subtitle2'} color={'textSecondary'}>Прошлогоднее меро</Typography>
                             <Box sx={{display: 'flex', flexDirection: 'row', gap: '20px', alignItems: 'center'}}>
                                 <Typography
-                                    variant={'body2'}
+                                    variant={'h6'}
                                     onDoubleClick={() => setIsEditLastEvent(true)}
                                 >
                                     {lastEventOptions?.filter((event) => event.value === watch('lastEvent'))[0]?.label ?? '-'}
@@ -163,7 +163,7 @@ export const Event = () => {
                                                       options={themeOptions} onBlur={() => setIsEditTheme(false)}/>
                         : <Box>
                             <Typography variant={'subtitle2'} color={'textSecondary'}>Тема мероприятия</Typography>
-                            <Typography variant={'body2'}
+                            <Typography variant={'h6'}
                                         onDoubleClick={() => setIsEditTheme(true)}>{themeOptions?.filter((event) => event.value === watch('theme'))[0]?.label ?? '-'}</Typography>
                         </Box>
                     }
@@ -183,7 +183,7 @@ export const Event = () => {
                         onBlur={() => setIsEditDate(false)}
                     /> : <Box>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Дата и время проведения</Typography>
-                        <Typography variant={'body2'} onDoubleClick={() => setIsEditDate(true)}>24.11.2024
+                        <Typography variant={'h6'} onDoubleClick={() => setIsEditDate(true)}>24.11.2024
                             17:00</Typography>
                     </Box>}
                     {isEditPlace ? <CustomControl
