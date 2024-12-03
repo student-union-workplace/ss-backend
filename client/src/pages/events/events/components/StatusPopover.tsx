@@ -7,7 +7,7 @@ type StatusPopoverProps = {
     setAnchorEl: (anchorEl: HTMLButtonElement | null) => void;
     open: boolean
 }
-export const StatusPopover = ({ setAnchorEl, open}: StatusPopoverProps) => {
+export const StatusPopover = ({ setAnchorEl, open, anchorEl}: StatusPopoverProps) => {
     const id = open ? 'simple-popover' : undefined;
     const handleClose = () => {
         setAnchorEl(null);
@@ -25,10 +25,12 @@ export const StatusPopover = ({ setAnchorEl, open}: StatusPopoverProps) => {
                 vertical: 'bottom',
                 horizontal: 'left',
             }}
-            anchorReference="anchorPosition"
-            anchorPosition={{ top: 245, left: 1050 }}
+            anchorEl={anchorEl}
+            /*sx={{position: 'absolute', top: "-10rem", left: "1050px"}}*/
+            /*anchorReference="anchorPosition"*/
+            /*anchorPosition={{ top: 245, left: 1050 }}*/
         >
-            <Box sx={{paddingLeft: '20px', paddingBlock: '10px', width: '160px'}}>
+            <Box sx={{paddingLeft: '20px', paddingBlock: '10px', width: '160px', }}>
                 <FormGroup>
                     <FormControlLabel control={<Checkbox checked={active} onChange={(_, value) => setActive(value)}/>} label="В работе"  />
                     <FormControlLabel control={<Checkbox checked={done} onChange={(_, value) => setDone(value)}/>} label="Завершено"  />

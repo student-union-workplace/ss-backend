@@ -174,6 +174,7 @@ export const Events = () => {
                                 {columns.map((column) => (
                                     <TableCell
                                         key={column.id}
+                                        align={'center'}
                                     >
                                         <Box sx={{
                                             display: 'flex',
@@ -181,6 +182,8 @@ export const Events = () => {
                                             cursor: 'pointer',
                                             alignItems: 'center'
                                         }}>
+
+                                            <Typography variant={'subtitle2'}>{column.name}</Typography>
                                             {column.sorting && (<IconButton
                                                     onClick={() => setDateSort(dateSort === 'ASC' ? 'DESK' : 'ASC')}>
                                                     {dateSort === 'ASC' ? <ArrowDownwardIcon color={'action'}/> :
@@ -188,8 +191,7 @@ export const Events = () => {
                                                 </IconButton>
 
                                             )}
-                                            <Typography variant={'subtitle2'}>{column.name}</Typography>
-                                            {column.filter && <Box>
+                                            {column.filter && <Box sx={{position: 'relative'}}>
                                                 <IconButton onClick={handleClick}>
                                                     <FilterListIcon color={'action'} fontSize={'small'}/>
                                                 </IconButton>
@@ -226,7 +228,7 @@ export const Events = () => {
                                             </TableCell>
                                             <TableCell><Typography
                                                 variant={'subtitle1'}>{row.theme}</Typography></TableCell>
-                                            <TableCell><Typography
+                                            <TableCell align={'left'}><Typography
                                                 variant={'subtitle1'}>{fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru})}</Typography></TableCell>
                                             <TableCell>
                                                 <Box sx={{
