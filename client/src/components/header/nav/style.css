@@ -12,16 +12,16 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    /*gap: 0.5rem;*/
     font-size: var(--body1);
-    padding-block: 10px;
-    padding-inline: 25px;
+    padding-block: 6px;
+    padding-inline: 20px;
     cursor: pointer;
 }
 
 .active-item {
     background-color: var(--primary);
-    padding-inline: 25px;
+    /*padding-inline: 20px;*/
     border-radius: 50px;
     color: white;
 

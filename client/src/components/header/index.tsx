@@ -14,7 +14,7 @@ export const Header = () => {
             alignItems: 'center',
             marginBlock: '25px',
         }}>
-            <Box onClick={() => navigate(RoutesName.Main)} sx={{cursor: 'pointer'}}>
+            <Box onClick={() => navigate(RoutesName.Kanban)} sx={{cursor: 'pointer'}}>
                 <Typography variant={'h4'}>ПБитрикс</Typography>
             </Box>
             <Navbar/>
