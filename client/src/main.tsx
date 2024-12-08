@@ -31,7 +31,6 @@ const theme = createTheme({
         action: {
             hover: '#F4FEFF'
         },
-
     },
     typography: {
         fontFamily: ['Manrope'].join(','),
@@ -48,7 +47,7 @@ const theme = createTheme({
             fontSize: '24px',
             fontWeight: '400'
         }
-    },
+    }
 });
 
 createRoot(document.getElementById('root')!).render(

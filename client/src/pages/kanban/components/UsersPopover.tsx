@@ -7,7 +7,7 @@ type StatusPopoverProps = {
     setAnchorEl: (anchorEl: HTMLButtonElement | null) => void;
     open: boolean
 }
-export const StatusPopover = ({ setAnchorEl, open, anchorEl}: StatusPopoverProps) => {
+export const UsersPopover = ({ setAnchorEl, open, anchorEl}: StatusPopoverProps) => {
     const id = open ? 'simple-popover' : undefined;
     const handleClose = () => {
         setAnchorEl(null);
@@ -15,7 +15,7 @@ export const StatusPopover = ({ setAnchorEl, open, anchorEl}: StatusPopoverProps
     const [active, setActive] = useState(false)
     const [done, setDone] = useState(false)
     const [archive, setArchive] = useState(false)
-
+    console.log(active)
     return (
         <Popover
             id={id}
@@ -27,11 +27,11 @@ export const StatusPopover = ({ setAnchorEl, open, anchorEl}: StatusPopoverProps
             }}
             anchorEl={anchorEl}
         >
-            <Box sx={{paddingLeft: '20px', paddingBlock: '10px', width: '160px', }}>
+            <Box sx={{paddingLeft: '20px', paddingBlock: '10px' }}>
                 <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={active} onChange={(_, value) => setActive(value)}/>} label="В работе"  />
-                    <FormControlLabel control={<Checkbox checked={done} onChange={(_, value) => setDone(value)}/>} label="Завершено"  />
-                    <FormControlLabel control={<Checkbox checked={archive} onChange={(_, value) => setArchive(value)}/>} label="Архив"  />
+                    <FormControlLabel control={<Checkbox checked={active} onChange={(_, value) => setActive(value)}/>} label="Катя Поварнина"  />
+                    <FormControlLabel control={<Checkbox checked={done} onChange={(_, value) => setDone(value)}/>} label="Роман Гареев"  />
+                    <FormControlLabel control={<Checkbox checked={archive} onChange={(_, value) => setArchive(value)}/>} label="Даша Фролова"  />
                 </FormGroup>
             </Box>
         </Popover>
