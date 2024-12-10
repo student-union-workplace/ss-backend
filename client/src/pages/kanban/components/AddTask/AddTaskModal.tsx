@@ -65,7 +65,7 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
                 user_id: task.user_id
             })
         }
-    }, []);
+    }, [reset, task]);
 
 
     return (
@@ -80,26 +80,40 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
                     alignItems: 'start',
                     gap: '30px',
                     width :'100%',
-                    minWidth: '600px'
                 }}>
                     <Typography sx={{fontSize: '24px'}}>
                         Задача
                     </Typography>
-                    <TextInput name={'title'} control={control} label={'Текст задачи'} />
+
+                    <Box sx={{ display: 'flex',
+                        flexDirection: 'row',
+                        gap: '30px', width :'100%',}}>
+                        <TextInput name={'title'} control={control} label={'Текст задачи*'} />
+                        <CustomControl
+                            name={'user_id'}
+                            control={control}
+                            Component={ResponsibleControl}
+                            label={"Выполняющий*"}
+                        />
+
+                    </Box>
                     <TextInput name={'description'} control={control} label={'Описание задачи'} multiline={true} rows={5}/>
-                    <CustomControl
-                        name={'deadline'}
-                        control={control}
-                        Component={DateControl}
-                    />
-                    <CustomControl
-                        name={'user_id'}
-                        control={control}
-                        Component={ResponsibleControl}
-                        label={"Выполняющий"}
-                    />
-                    <AutocompleteInput name={'status'} control={control} label={'Статус задачи'} options={statusOptions} />
-                    <Button variant={'contained'} sx={{width: '250px'}} onClick={() => setOpen(false)}>Создать</Button>
+                    <Box sx={{ display: 'flex',
+                        flexDirection: 'row',
+                        gap: '30px',width :'100%',}}>
+                        <Box sx={{width: '100%'}}>
+                            <CustomControl
+                                name={'deadline'}
+                                control={control}
+                                Component={DateControl}
+                            />
+                        </Box>
+
+
+                        <AutocompleteInput name={'status'} control={control} label={'Статус задачи*'} options={statusOptions} />
+                    </Box>
+
+                    <Button variant={'contained'} sx={{width: '100%'}} onClick={() => setOpen(false)}>{task? 'Сохранить' : 'Создать'}</Button>
                 </Box>
 
             </Box>

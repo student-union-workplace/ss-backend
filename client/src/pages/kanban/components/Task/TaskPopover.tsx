@@ -10,13 +10,13 @@ type EventPopoverProps = {
     anchorEl: HTMLButtonElement | null;
     setAnchorEl: (anchorEl: HTMLButtonElement | null) => void;
     open: boolean;
-    task: {
-        title: string;
-        user_id: string;
-        deadline: Date;
-        status: 'open' | 'at_work' | 'review' | 'closed',
-        description?: ''
-    },
+        task: {
+            title: string;
+            user_id: string;
+            deadline: Date;
+            status: 'open' | 'at_work' | 'review' | 'closed',
+            description?: ''
+        },
     color: string
 }
 
@@ -72,7 +72,7 @@ export const TaskPopover = ({setAnchorEl, open, anchorEl, task, color}: EventPop
 
                 <Box sx={{display: 'flex', flexDirection: 'column'}}>
                     <Typography sx={{fontSize: '12px'}}>Описание задачи</Typography>
-                    <Box sx={{maxHeight: '130px', overflowY: 'scroll'}}>
+                    <Box sx={{maxHeight: '130px', overflowY: 'auto'}}>
                         <Typography variant={'subtitle1'} color={'textPrimary'}>{task.description}</Typography>
                     </Box>
                 </Box>

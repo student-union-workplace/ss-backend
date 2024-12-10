@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import {Avatar, Chip, TextField} from '@mui/material';
 
 
 export type AutocompleteControlProps = {
-  value: string[];
-  onChange: (value: string[]) => void;
+  value: string | null;
+  onChange: (value: string| null) => void;
   onBlur: () => void;
   label: string
 };
@@ -21,14 +21,6 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
     return users.filter(place => value?.indexOf(place.id) !== -1) ?? [];
   }, [users, value]);
 
-  const onChangeResponsible = (_: React.SyntheticEvent, newValue: {name: string, id: string}[]) => {
-    if (!newValue) {
-      return;
-    }
-
-    value = newValue.map(user => user.id);
-    onChange(value);
-  };
 
   return (
       usersValues && (
@@ -44,11 +36,12 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
         )}
         options={users ?? []}
         getOptionLabel={(option) => option.name}
-        value={usersValues}
+        value={users.find(item => item.id == value) ?? null}
         size={'small'}
         fullWidth
-        multiple={true}
-        onChange={onChangeResponsible}
+        onChange={(_, newValue) => {
+          onChange(newValue?.id ?? null);
+        }}
         noOptionsText={'Ничего не найдено'}
         renderTags={(value, getTagProps) => value.map((option, index) => {
           const {key, ...tagProps} = getTagProps({index})

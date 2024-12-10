@@ -1,5 +1,5 @@
 import {Avatar, Box, Chip, IconButton, Paper, Typography} from "@mui/material";
-import { useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined';
@@ -12,10 +12,11 @@ type EventProps = {
     item: {
         title: string;
         user_id: string;
+        id: string;
         deadline: Date;
         status: 'open' | 'at_work' | 'review' | 'closed'
     },
-    color: string
+    color: string;
 }
 
 export const Task = ({item, color}: EventProps) => {
@@ -55,9 +56,9 @@ export const Task = ({item, color}: EventProps) => {
                 gap: '6px',
                 marginRight: '12px',
                 borderRadius: '10px',
-                cursor: 'pointer'
-            }}
-            onClick={(e) => handleClick(e)}>
+                cursor: 'pointer',
+                maxWidth: '230px'
+            }}>
             <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <Typography sx={{fontWeight: '500'}}>{item.title}</Typography>
                 <IconButton onClick={(e: React.MouseEvent<HTMLElement>) => handleClickEdit(e)}>
@@ -68,13 +69,14 @@ export const Task = ({item, color}: EventProps) => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'start', gap: '12px',
-            }}>
+            }}
+                 onClick={(e) => handleClick(e)}>
                 <Chip variant={'outlined'} label={labelChip} avatar={<Avatar>{labelAvatar}</Avatar>} size={'small'}/>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px'}}>
 
-                    <CalendarMonthOutlinedIcon/>
+                    <CalendarMonthOutlinedIcon color={item.deadline.getTime() < Date.now() ? 'error' : 'inherit'}/>
 
-                    <Typography variant={'subtitle1'}>{format(item.deadline, "dd.MM.yyyy")}</Typography>
+                    <Typography variant={'subtitle1'}>{format(item.deadline, "dd.MM.yyyy HH:mm")}</Typography>
                 </Box>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px'}}>
 
@@ -85,7 +87,7 @@ export const Task = ({item, color}: EventProps) => {
             </Box>
             {/*<TaskPopover anchorEl={anchorEl} setAnchorEl={setAnchorEl} open={open} task={item} color={color} />*/}
             <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} task={item}/>
-            <TaskModal open={openTaskModal} setOpen={setOpenTaskModal} task={item} />
+            <TaskModal open={openTaskModal} setOpen={setOpenTaskModal} task={item}/>
         </Paper>
     )
 }

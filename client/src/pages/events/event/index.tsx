@@ -214,7 +214,7 @@ export const Event = () => {
                         <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                             <Typography variant={'subtitle2'} color={'textSecondary'}>Рабочие документы</Typography>
                             <IconButton size={'small'} color={'primary'} onClick={() => setOpenAddDocumentModal(true)}>
-                                <AddIcon />
+                                <AddIcon/>
                             </IconButton>
                         </Box>
 
@@ -228,20 +228,20 @@ export const Event = () => {
                             paddingInline: '10px',
                             borderRadius: '20px',
                             gap: '20px',
-                            overflowY: 'scroll'
+                            overflowY: 'auto'
                         }}>
-                            <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                            <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                                 <Typography variant={'caption'}>Google</Typography>
-                                <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                                     {documents.google.map((doc) => {
                                             return <GoogleDocument doc={doc}/>
                                         }
                                     )}
                                 </Box>
                             </Box>
-                            <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                            <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                                 <Typography variant={'caption'}>Дополнительные файлы</Typography>
-                                <Box sx={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+                                <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                                     {documents.other.map((doc) => {
                                             return <OtherDocument doc={doc}/>
                                         }
@@ -293,7 +293,7 @@ export const Event = () => {
                                 flexWrap: 'wrap',
                                 gap: '0.5rem',
                                 maxHeight: '242px',
-                                overflowY: 'scroll',
+                                overflowY: 'auto',
                                 width: '420px'
                             }}
                                  onDoubleClick={() => setIsEditTeam(true)}
@@ -306,7 +306,8 @@ export const Event = () => {
                         </Box>}
                 </Box>
             </Box>
-            <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} control={control} name={'docs'} />
+            <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} control={control}
+                              name={'docs'}/>
         </Box>
     )
 };

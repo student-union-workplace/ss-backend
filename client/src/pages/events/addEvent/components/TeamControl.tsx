@@ -63,7 +63,7 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
                     limitTags={0}
                 />
 
-                <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '242px', overflowY: 'scroll'}}>
+                <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '242px', overflowY: 'auto'}}>
                     {usersValues.map((user) => {
                         return <Chip label={user.name} avatar={<Avatar>{user.name.split('')[0]}</Avatar>}
                                      onDelete={() => handleDelete(user.id)}  variant={'outlined'} style={{borderColor: '#1FD4E9'}}/>

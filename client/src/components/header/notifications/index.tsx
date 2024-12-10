@@ -37,7 +37,7 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
             anchorReference="anchorPosition"
             anchorPosition={{ top: 245, left: 1050 }}*/
         >
-            <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'scroll'}}>
+            <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'auto'}}>
                 {notificationsData.map((item) => {
                     return <NotificationItem item={item} key={item.title}/>
                 })}

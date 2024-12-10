@@ -2,7 +2,14 @@ import {Box, Paper, Typography} from "@mui/material";
 import {Task} from "./Task/Task.tsx";
 
 type ColumnProps = {
-    tasks: object[];
+    tasks: {
+        title: string;
+        user_id: string;
+        id: string;
+        deadline: Date;
+        status: 'open' | 'at_work' | 'review' | 'closed',
+        description?: ''
+    }[],
     title: string;
     color: string;
     titleColor: string
@@ -38,11 +45,11 @@ export const Column = ({title, color, tasks, titleColor}: ColumnProps) => {
                 flexDirection: 'column',
                 gap: '15px',
                 maxHeight: height-270,
-                overflowY: 'scroll',
+                overflowY: 'auto',
                 marginRight: '5px'
             }}>
                 {tasks.map((task) => {
-                    return <Task item={task} color={color}/>
+                    return <Task item={task} color={color} key={task.id}/>
                 })}
             </Box>
         </Box>

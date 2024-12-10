@@ -20,6 +20,7 @@ export const KanbanPage = () => {
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const tasks = useMemo(() => {
         return [{
+            id: '1',
             status: 'open',
             title: 'Сделать презу',
             user_id: '3',
@@ -30,51 +31,68 @@ export const KanbanPage = () => {
                 '1 слайд: вдыалывджалвы 2 слайд:фхзыщвзэжфлждыдюовьждлф\n' +
                 'флдыовлдфодл 3 слайд: флыдовдлфыо фдылвж жфдыов'
         }, {
+            id: '2',
             status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        },{
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        },{
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
+            title: 'Сделать гребаную большую презу ыыыы',
+            user_id: '2',
+            deadline: new Date('12-15-2024 11:13:00'),
+            description: 'Есть пару слов'
         }, {
+            id: '3',
+            status: 'open',
+            title: 'Сделать презу',
+            user_id: '4',
+            deadline: new Date('12-17-2024 11:13:00'),
+            description: 'А тут немного больше, чем пару слов, и еще чуть-чуть'
+        }, {
+            id: '4',
+            status: 'open',
+            title: 'Сделать презу',
+            user_id: '1',
+            deadline: new Date('12-19-2024 11:13:00')
+        }, {
+            id: '5',
             status: 'closed',
             title: 'Сделать презу',
             user_id: '3',
+            deadline: new Date('12-11-2024 11:13:00')
+        }, {
+            id: '6',
+            status: 'at_work',
+            title: 'Сделать презу',
+            user_id: '4',
             deadline: new Date('12-10-2024 11:13:00')
         }, {
+            id: '7',
+            status: 'open',
+            title: 'Сделать презу',
+            user_id: '1',
+            deadline: new Date('12-20-2024 11:13:00')
+        }, {
+            id: '8',
+            status: 'open',
+            title: 'Сделать презу',
+            user_id: '2',
+            deadline: new Date('12-10-2024 11:13:00')
+        }, {
+            id: '9',
             status: 'at_work',
             title: 'Сделать презу',
             user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
+            deadline: new Date('12-15-2024 11:13:00')
         }, {
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {
-            status: 'at_work',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {
+            id: '10',
             status: 'review',
             title: 'Сделать презу',
             user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {status: 'closed', title: 'Сделать презу', user_id: '3', deadline: new Date('12-10-2024 11:13:00')}]
+            deadline: new Date('12-19-2024 11:13:00')
+        }, {
+            id: '11',
+            status: 'closed',
+            title: 'Сделать презу',
+            user_id: '4',
+            deadline: new Date('12-30-2024 11:13:00')
+        }]
     }, [])
     return (
         <Box className={'content'}
@@ -109,12 +127,12 @@ export const KanbanPage = () => {
                     </IconButton>
                     <Typography>Выбрать пбшку</Typography>
                     <UsersPopover open={open} anchorEl={anchorEl}
-                                   setAnchorEl={setAnchorEl}/>
+                                  setAnchorEl={setAnchorEl}/>
                 </Box>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px', borderColor: '#1FD4E9'}}/>
                 <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '230px'}}
-                    onClick={() => setOpenAddTaskModal(true)}>Создать
+                        onClick={() => setOpenAddTaskModal(true)}>Создать
                     задачу</Button>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
@@ -133,7 +151,7 @@ export const KanbanPage = () => {
                 <Column tasks={tasks.filter((task) => task.status === 'closed')}
                         title={'Выполнена'} titleColor={'#01AF2D'} color={'#34C759'}/>
             </Box>
-            <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} />
+            <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal}/>
         </Box>
     )
 }
