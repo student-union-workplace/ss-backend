@@ -48,7 +48,7 @@ export const Task = ({item, color}: EventProps) => {
             variant={'outlined'}
             sx={{
                 borderColor: item.deadline.getTime() < Date.now() ? '#D32F2F' : color,
-                borderWidth: '3px',
+                borderWidth: '2px',
                 padding: '12px',
                 paddingTop: '0px',
                 display: 'flex',

@@ -32,7 +32,7 @@ export const Column = ({title, color, tasks, titleColor}: ColumnProps) => {
                 paddingLeft: '12px',
                 paddingBlock: '2px',
                 marginBottom: '20px',
-                width: '260px'
+                width: '256px'
             }}>
                 <Typography sx={{
                     color: titleColor,

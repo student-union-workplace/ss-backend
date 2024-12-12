@@ -5,7 +5,7 @@ import {NotificationItem} from "./components/NotificationItem.tsx";
 type NotificationsProps = {
     anchorEl: HTMLButtonElement | null;
     setAnchorEl: (anchorEl: HTMLButtonElement | null) => void;
-    open: boolean
+    open: boolean;
 }
 export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps) => {
     const id = open ? 'simple-popover' : undefined;
@@ -39,7 +39,7 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
         >
             <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'auto'}}>
                 {notificationsData.map((item) => {
-                    return <NotificationItem item={item} key={item.title}/>
+                    return <NotificationItem item={item} key={item.title} setAnchorEl={setAnchorEl}/>
                 })}
             </Box>
         </Popover>

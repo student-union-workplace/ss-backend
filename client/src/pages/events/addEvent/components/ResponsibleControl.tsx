@@ -50,6 +50,7 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
         multiple={true}
         onChange={onChangeResponsible}
         noOptionsText={'Ничего не найдено'}
+        disableCloseOnSelect
         renderTags={(value, getTagProps) => value.map((option, index) => {
           const {key, ...tagProps} = getTagProps({index})
           const label = option.name.split(' ')[0] + ' ' + option.name.split(' ')[1].split('')[0] + '.'

@@ -61,6 +61,7 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
                     onChange={onChangeTeam}
                     noOptionsText={'Ничего не найдено'}
                     limitTags={0}
+                    disableCloseOnSelect
                 />
 
                 <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '242px', overflowY: 'auto'}}>

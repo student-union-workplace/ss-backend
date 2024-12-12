@@ -71,7 +71,7 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
         }
     }, [id]);
     return (
-        <Modal open={open} onClose={handleClose} key={realTask?.id}>
+        <Modal open={open} onClose={handleClose} key={realTask?.id} disableEnforceFocus>
             <Box sx={style}>
                 <Box
                     sx={{

@@ -13,18 +13,22 @@ export type NotificationItemProps = {
         title: string,
         type: "event" | "deadline" | "activity" | "task",
         created_at: Date
-    }
+    },
+    setAnchorEl: () => void
 }
 
-export const NotificationItem = ({item}: NotificationItemProps) => {
+export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) => {
     const [openTaskModal, setOpenTaskModal] = useState(false)
     const nav = useNavigate()
 
     const handleRedirect = () => {
+
         if (item.type === 'task' || item.type === 'deadline') {
             nav(RoutesName.Kanban)
             setOpenTaskModal(true)
+
         } else {
+            setAnchorEl(null)
             nav(`${RoutesName.Event}1`)
         }
     }
