@@ -7,6 +7,8 @@ import { ActivitiesModule } from './activities/activities.module';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { GoogleSheetsModule } from './google-sheets/google-sheets.module';
+import { GoogleDocsModule } from './google-docs/google-docs.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { AuthModule } from './auth/auth.module';
     EventsModule,
     UsersModule,
     AuthModule,
+    GoogleSheetsModule,
+    GoogleDocsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
