@@ -59,6 +59,6 @@ export class GoogleSheetsService {
 
   async deleteSheet(fileId: string): Promise<{ message: string }> {
     await this.drive.files.delete({ fileId });
-    return { message: 'Google Sheet successfully deleted' };
+    return { message: 'Google Таблица удалена' };
   }
 }
