@@ -1,7 +1,5 @@
 import { IEvents } from '../interface/events.interface';
-// dto - data transfer object.
-// Цель: Файл-класс, описывающий данные, которые мы хотим принимать
-// implements наследует созданный интерфейс INotification
+
 export class CreateEventDto implements IEvents {
   name: string;
   description: string;

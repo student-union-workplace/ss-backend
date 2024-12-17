@@ -81,7 +81,6 @@ export class EventsService {
     const isArchivedFilter =
       isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
 
-    // Считаем общее количество записей для пагинации
     const itemCount = await this.prisma.events.count({
       where: {
         is_archived: isArchivedFilter,
@@ -90,7 +89,6 @@ export class EventsService {
       },
     });
 
-    // Получаем данные с учетом пагинации и фильтров
     const events = await this.prisma.events.findMany({
       where: {
         is_archived: isArchivedFilter,
@@ -121,15 +119,12 @@ export class EventsService {
       take: +query.take,
     });
 
-    // Создаем мета-данные для пагинации
     const pageMeta = new PageMetaDto({ pageOptionsDto: query, itemCount });
 
-    // Возвращаем результат в формате пагинации
     return new PageDto(events, pageMeta);
   }
 
   async findOne(id: string) {
-    // Основной запрос
     const event = await this.prisma.events.findUnique({
       where: { id },
       include: {
@@ -153,7 +148,6 @@ export class EventsService {
         },
       },
     });
-    // Если есть ID предыдущего мероприятия, делаем дополнительный запрос
     let prevSameEvent = null;
     if (event.prev_same_event_id) {
       prevSameEvent = await this.prisma.events.findUnique({
@@ -177,12 +171,10 @@ export class EventsService {
         },
       });
     }
-    // Возвращаем основной объект и данные о предыдущем мероприятии
     return { ...event, prev_same_event: prevSameEvent };
   }
 
   async update(eventId: string, updateEventDto: UpdateEventDto) {
-    // Обновление данных события
     const updatedEvent = await this.prisma.events.update({
       where: { id: eventId },
       data: {
@@ -195,13 +187,10 @@ export class EventsService {
       },
     });
 
-    // Обновление зависимостей
     if (updateEventDto.event_users) {
-      // Удаляем старые связи
       await this.prisma.events_users.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventUsers = updateEventDto.event_users.map((userId) => ({
         event_id: eventId,
         user_id: userId,
@@ -212,11 +201,9 @@ export class EventsService {
     }
 
     if (updateEventDto.event_managers) {
-      // Удаляем старые связи
       await this.prisma.events_managers.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventManagers = updateEventDto.event_managers.map((userId) => ({
         event_id: eventId,
         user_id: userId,
@@ -227,11 +214,9 @@ export class EventsService {
     }
 
     if (updateEventDto.event_locations) {
-      // Удаляем старые связи
       await this.prisma.events_locations.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventLocations = updateEventDto.event_locations.map((locId) => ({
         event_id: eventId,
         location_id: locId,
@@ -275,27 +260,22 @@ export class EventsService {
 
   async remove(id: string) {
     await this.prisma.$transaction(async () => {
-      // Удаляем связанные записи из events_locations
       await this.prisma.events_locations.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из events_managers
       await this.prisma.events_managers.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из events_users
       await this.prisma.events_users.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из notifications
       await this.prisma.notifications.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем сам event
       await this.prisma.events.delete({
         where: { id },
       });
@@ -312,12 +292,12 @@ export class EventsService {
       },
     });
 
-    const inversEvent = !currentEvent.is_archived;
+    const inverseEvent = !currentEvent.is_archived;
 
-    return await this.prisma.events.update({
+    return this.prisma.events.update({
       where: { id },
       data: {
-        is_archived: inversEvent,
+        is_archived: inverseEvent,
       },
     });
   }

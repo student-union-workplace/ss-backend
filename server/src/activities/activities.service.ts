@@ -50,7 +50,6 @@ export class ActivitiesService {
     let dateFilter = {};
 
     if (startDate && endDate) {
-      // Фильтр по диапазону дат
       dateFilter = {
         date: {
           gte: startDate,
@@ -58,7 +57,6 @@ export class ActivitiesService {
         },
       };
     } else if (year) {
-      // Фильтр по году
       dateFilter = {
         date: {
           gte: new Date(year, 0, 1),
@@ -67,7 +65,6 @@ export class ActivitiesService {
       };
     }
 
-    // Используем select, чтобы вернуть только нужные поля
     return this.prisma.activities.findMany({
       where: dateFilter,
       select: {
@@ -76,7 +73,7 @@ export class ActivitiesService {
         date: true,
       },
       orderBy: {
-        date: 'asc', // Сортировка по дате
+        date: 'asc',
       },
     });
   }
@@ -123,13 +120,10 @@ export class ActivitiesService {
       },
     });
     if (updateActivityDto.users) {
-      // Обновляем записи в таблице activities_users
-      // Удаляем старые связи
       await this.prisma.activities_users.deleteMany({
         where: { activity_id: id },
       });
 
-      // Создаем новые связи
       const newActivityUsers = updateActivityDto.users.map((userId) => ({
         activity_id: id,
         user_id: userId,
@@ -175,22 +169,19 @@ export class ActivitiesService {
 
   async remove(id: string) {
     await this.prisma.$transaction(async () => {
-      // Удаляем связанные записи из activities_users
       await this.prisma.activities_users.deleteMany({
         where: { activity_id: id },
       });
 
-      // Удаляем связанные записи из notifications
       await this.prisma.notifications.deleteMany({
         where: { activity_id: id },
       });
 
-      // Удаляем саму activity
       await this.prisma.activities.delete({
         where: { id },
       });
     });
 
-    return true; // Если транзакция прошла успешно, возвращаем true
+    return true;
   }
 }

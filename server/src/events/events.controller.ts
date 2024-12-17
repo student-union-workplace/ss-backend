@@ -20,14 +20,14 @@ import { users_role } from '@prisma/client';
 import { RolesGuard } from '../guards/roles.guard';
 import { AuthGuard } from '../auth/auth.guard';
 
-@UseGuards(AuthGuard, RolesGuard) // пример добавления обязательной авторизации ко всем запросам контроллера и ограничения ролей
+@UseGuards(AuthGuard, RolesGuard)
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  @Roles(users_role.member) // создавать мероприятия могут пользователи с уровнем доступа не менее member (песок не может)
+  @Roles(users_role.member)
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);
   }

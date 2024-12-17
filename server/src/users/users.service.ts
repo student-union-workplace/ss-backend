@@ -13,10 +13,8 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    // Хэширование пароля
     const hashedPassword = bcrypt.hashSync(createUserDto.password, 10);
 
-    // Создание пользователя в базе данных
     const user = await this.prisma.users.create({
       data: {
         name: createUserDto.name,
@@ -29,7 +27,6 @@ export class UsersService {
       },
     });
 
-    // Возвращаем созданного пользователя (скрывая пароль)
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
@@ -82,7 +79,6 @@ export class UsersService {
       orderBy: { name: 'asc' },
     });
 
-    // Запрашиваем все департаменты с полем head_user_id
     const departments = await this.prisma.departments.findMany({
       select: {
         id: true,
@@ -90,12 +86,10 @@ export class UsersService {
       },
     });
 
-    // Создаем карту департаментов для быстрого доступа
     const departmentHeadMap = new Map(
       departments.map((dept) => [dept.id, dept.head_user_id]),
     );
 
-    // Добавляем поле isDepartmentHead для каждого пользователя
     const result = users.map((user) => ({
       ...user,
       isDepartmentHead: departmentHeadMap.get(user.department_id) === user.id,
@@ -163,11 +157,10 @@ export class UsersService {
       where: { head_user_id: id },
     });
 
-    // Если департамент найден, обновляем head_user_id в этом департаменте
     if (department) {
       await this.prisma.departments.update({
         where: { id: department.id },
-        data: { head_user_id: null }, // Устанавливаем head_user_id в null
+        data: { head_user_id: null },
       });
     }
     return this.prisma.users.delete({
