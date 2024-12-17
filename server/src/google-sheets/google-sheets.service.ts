@@ -12,7 +12,7 @@ export class GoogleSheetsService {
     const keyFilePath = path.join(
       './',
       'config',
-      'google-service-account-key.json',
+      'google-service-account.json',
     );
     const auth = new google.auth.GoogleAuth({
       keyFile: keyFilePath,
