@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { PrismaService } from '../prisma.service';
+import { IRequestWithUser } from '../interfaces/Request.interface';
 
 @Injectable()
 export class NotificationsService {
@@ -12,8 +13,12 @@ export class NotificationsService {
     });
   }
 
-  findAll() {
-    return this.prisma.notifications.findMany();
+  findAll(req: IRequestWithUser) {
+    return this.prisma.notifications.findMany({
+      where: {
+        user_id: req.user.id,
+      },
+    });
   }
 
   remove(id: string) {

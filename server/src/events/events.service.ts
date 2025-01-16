@@ -18,14 +18,16 @@ export class EventsService {
         description: createEventDto.description,
         date: createEventDto.date,
         is_archived: createEventDto.is_archived,
-        prev_same_event_id: createEventDto.prev_same_event_id,
+        past_event_id: createEventDto.past_event_id,
         theme_id: createEventDto.theme_id,
       },
     });
-    const eventUsers = createEventDto.event_users.map((userId) => ({
-      event_id: event.id,
-      user_id: userId,
-    }));
+    const eventUsers = createEventDto.event_users
+      ? createEventDto.event_users.map((userId) => ({
+          event_id: event.id,
+          user_id: userId,
+        }))
+      : [];
 
     const eventManagers = createEventDto.event_managers.map((userId) => ({
       event_id: event.id,
@@ -41,7 +43,6 @@ export class EventsService {
       title: 'Вас добавили в мероприятие: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
-      date: new Date(),
       user_id: userId,
       event_id: event.id,
     }));
@@ -50,7 +51,6 @@ export class EventsService {
       title: 'Вы теперь руководитель мероприятия: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
-      date: new Date(),
       user_id: userId,
       event_id: event.id,
     }));
@@ -76,25 +76,24 @@ export class EventsService {
     query: PageOptionsDto,
     isArchived?: string,
     name?: string,
-    theme?: string,
+    theme_id?: string,
   ): Promise<PageDto<any>> {
-    const isArchivedFilter =
-      isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
-
+    const eventWhereCondition: any = {
+      is_archived:
+        isArchived === 'true'
+          ? true
+          : isArchived === 'false'
+            ? false
+            : undefined,
+      name: name ? { contains: name.toLowerCase() } : undefined,
+      theme_id: theme_id ? { contains: theme_id } : undefined,
+    };
     const itemCount = await this.prisma.events.count({
-      where: {
-        is_archived: isArchivedFilter,
-        name: name ? { contains: name } : undefined,
-        theme_id: theme ? { contains: theme } : undefined,
-      },
+      where: eventWhereCondition,
     });
 
     const events = await this.prisma.events.findMany({
-      where: {
-        is_archived: isArchivedFilter,
-        name: name ? { contains: name } : undefined,
-        theme_id: theme ? { contains: theme } : undefined,
-      },
+      where: eventWhereCondition,
       include: {
         events_users: {
           select: {
@@ -149,10 +148,15 @@ export class EventsService {
       },
     });
     let prevSameEvent = null;
-    if (event.prev_same_event_id) {
+    if (event.past_event_id) {
       prevSameEvent = await this.prisma.events.findUnique({
-        where: { id: event.prev_same_event_id },
-        include: {
+        where: { id: event.past_event_id },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+        /*include: {
           events_users: {
             select: {
               users: { select: { id: true, name: true } },
@@ -168,7 +172,7 @@ export class EventsService {
               locations: { select: { id: true, name: true, address: true } },
             },
           },
-        },
+        },*/
       });
     }
     return { ...event, prev_same_event: prevSameEvent };
@@ -182,7 +186,7 @@ export class EventsService {
         description: updateEventDto.description,
         date: updateEventDto.date,
         is_archived: updateEventDto.is_archived,
-        prev_same_event_id: updateEventDto.prev_same_event_id,
+        past_event_id: updateEventDto.past_event_id,
         theme_id: updateEventDto.theme_id,
       },
     });
@@ -292,12 +296,10 @@ export class EventsService {
       },
     });
 
-    const inverseEvent = !currentEvent.is_archived;
-
     return this.prisma.events.update({
       where: { id },
       data: {
-        is_archived: inverseEvent,
+        is_archived: !currentEvent.is_archived,
       },
     });
   }

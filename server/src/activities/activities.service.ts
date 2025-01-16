@@ -15,7 +15,7 @@ export class ActivitiesService {
         description: createActivityDto.description,
         date: createActivityDto.date,
         location_id: createActivityDto.location_id,
-        created_by_id: createActivityDto.created_by_id,
+        created_by_user_id: createActivityDto.created_by_user_id,
         is_completed: createActivityDto.is_completed,
       },
     });
@@ -34,7 +34,7 @@ export class ActivitiesService {
     }));
 
     await Promise.all([
-      this.prisma.activities_users.createMany({
+      this.prisma.activity_users.createMany({
         data: userActivityEntries,
       }),
       this.prisma.notifications.createMany({
@@ -115,12 +115,12 @@ export class ActivitiesService {
         description: updateActivityDto.description,
         date: updateActivityDto.date,
         location_id: updateActivityDto.location_id,
-        created_by_id: updateActivityDto.created_by_id,
+        created_by_user_id: updateActivityDto.created_by_user_id,
         is_completed: updateActivityDto.is_completed,
       },
     });
     if (updateActivityDto.users) {
-      await this.prisma.activities_users.deleteMany({
+      await this.prisma.activity_users.deleteMany({
         where: { activity_id: id },
       });
 
@@ -129,7 +129,7 @@ export class ActivitiesService {
         user_id: userId,
       }));
 
-      await this.prisma.activities_users.createMany({
+      await this.prisma.activity_users.createMany({
         data: newActivityUsers,
       });
 
@@ -169,7 +169,7 @@ export class ActivitiesService {
 
   async remove(id: string) {
     await this.prisma.$transaction(async () => {
-      await this.prisma.activities_users.deleteMany({
+      await this.prisma.activity_users.deleteMany({
         where: { activity_id: id },
       });
 

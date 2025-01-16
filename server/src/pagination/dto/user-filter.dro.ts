@@ -1,5 +1,6 @@
 import { PageOptionsDto } from './page-options.dto';
 import { IsOptional, IsString } from 'class-validator';
+import { users_role } from '@prisma/client';
 
 export class GetUsersFilterDto extends PageOptionsDto {
   @IsOptional()
@@ -12,5 +13,5 @@ export class GetUsersFilterDto extends PageOptionsDto {
 
   @IsOptional()
   @IsString()
-  readonly role?: string;
+  readonly role?: users_role;
 }

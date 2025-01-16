@@ -8,7 +8,7 @@ export class CreateEventDto implements IEvents {
   event_managers?: string[];
   event_users?: string[];
   event_locations?: string[];
-  prev_same_event_id?: string;
+  past_event_id?: string;
   theme_id?: string;
   created_at: Date;
   updated_at: Date;

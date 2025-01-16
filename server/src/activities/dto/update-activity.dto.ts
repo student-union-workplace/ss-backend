@@ -6,7 +6,7 @@ export class UpdateActivityDto extends PartialType(CreateActivityDto) {
   description?: string;
   date?: Date;
   location_id?: string;
-  created_by_id?: string;
+  created_by_user_id?: string;
   is_completed?: boolean;
   created_at: Date;
   updated_at: Date;

@@ -27,6 +27,7 @@ export class UsersService {
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
@@ -45,26 +46,27 @@ export class UsersService {
       throw new Error('Неверный пароль');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 
   async findAll(filterDto: GetUsersFilterDto): Promise<PageDto<any>> {
-    const { name, departmentName, role, skip, take } = filterDto;
+    const { name, departmentName, role, skip, take, order } = filterDto;
     const where: any = {
       AND: [
         name ? { name: { contains: name } } : undefined,
         role ? { role: { equals: role } } : undefined,
         departmentName
           ? {
-              department: {
+              users_departments: {
                 name: { contains: departmentName },
               },
             }
           : undefined,
       ].filter(Boolean),
     };
-
+    // TODO: комиссия возвращается только у замов
     const users = await this.prisma.users.findMany({
       where,
       skip,
@@ -75,8 +77,16 @@ export class UsersService {
         email: true,
         role: true,
         department_id: true,
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
-      orderBy: { name: 'asc' },
+      orderBy: {
+        created_at: order,
+      },
     });
 
     const departments = await this.prisma.departments.findMany({
@@ -92,7 +102,10 @@ export class UsersService {
 
     const result = users.map((user) => ({
       ...user,
-      isDepartmentHead: departmentHeadMap.get(user.department_id) === user.id,
+      isDepartmentHead:
+        departmentHeadMap.get(
+          user.department[0] ? user.department[0].id : '',
+        ) === user.id,
     }));
 
     const totalCount = await this.prisma.users.count({ where });
@@ -105,8 +118,8 @@ export class UsersService {
     return new PageDto(result, meta);
   }
 
-  findOne(id: string) {
-    return this.prisma.users.findUnique({
+  async findOne(id: string) {
+    const user = await this.prisma.users.findUnique({
       where: { id },
       select: {
         id: true,
@@ -116,11 +129,22 @@ export class UsersService {
         vk_link: true,
         tg_link: true,
         role: true,
-        department_id: true,
         created_at: true,
         updated_at: true,
+        department_id: true,
+        department: {
+          select: {
+            id: true,
+            name: true,
+            head_user_id: true,
+          },
+        },
       },
     });
+    return {
+      ...user,
+      isDepartmentHead: user.department[0].head_user_id === user.id,
+    };
   }
 
   findOneEmail(email: string) {
@@ -146,6 +170,12 @@ export class UsersService {
         tg_link: true,
         role: true,
         department_id: true,
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         created_at: true,
         updated_at: true,
       },
@@ -154,7 +184,8 @@ export class UsersService {
 
   async remove(id: string) {
     const department = await this.prisma.departments.findUnique({
-      where: { head_user_id: id },
+      // TODO: заменить id на head_user_id
+      where: { id: id },
     });
 
     if (department) {

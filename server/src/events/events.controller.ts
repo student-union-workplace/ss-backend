@@ -37,7 +37,7 @@ export class EventsController {
     @Query() pageOptionsDto: PageOptionsDto,
     @Query('isArchived') isArchived?: string,
     @Query('name') name?: string,
-    @Query('theme') theme?: string,
+    @Query('theme_id') theme?: string,
   ): Promise<PageDto<any>> {
     return this.eventsService.findAll(pageOptionsDto, isArchived, name, theme);
   }
