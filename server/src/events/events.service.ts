@@ -18,14 +18,16 @@ export class EventsService {
         description: createEventDto.description,
         date: createEventDto.date,
         is_archived: createEventDto.is_archived,
-        prev_same_event_id: createEventDto.prev_same_event_id,
+        past_event_id: createEventDto.past_event_id,
         theme_id: createEventDto.theme_id,
       },
     });
-    const eventUsers = createEventDto.event_users.map((userId) => ({
-      event_id: event.id,
-      user_id: userId,
-    }));
+    const eventUsers = createEventDto.event_users
+      ? createEventDto.event_users.map((userId) => ({
+          event_id: event.id,
+          user_id: userId,
+        }))
+      : [];
 
     const eventManagers = createEventDto.event_managers.map((userId) => ({
       event_id: event.id,
@@ -41,7 +43,6 @@ export class EventsService {
       title: 'Вас добавили в мероприятие: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
-      date: new Date(),
       user_id: userId,
       event_id: event.id,
     }));
@@ -50,7 +51,6 @@ export class EventsService {
       title: 'Вы теперь руководитель мероприятия: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
-      date: new Date(),
       user_id: userId,
       event_id: event.id,
     }));
@@ -76,27 +76,24 @@ export class EventsService {
     query: PageOptionsDto,
     isArchived?: string,
     name?: string,
-    theme?: string,
+    theme_id?: string,
   ): Promise<PageDto<any>> {
-    const isArchivedFilter =
-      isArchived === 'true' ? true : isArchived === 'false' ? false : undefined;
-
-    // Считаем общее количество записей для пагинации
+    const eventWhereCondition: any = {
+      is_archived:
+        isArchived === 'true'
+          ? true
+          : isArchived === 'false'
+            ? false
+            : undefined,
+      name: name ? { contains: name.toLowerCase() } : undefined,
+      theme_id: theme_id ? { contains: theme_id } : undefined,
+    };
     const itemCount = await this.prisma.events.count({
-      where: {
-        is_archived: isArchivedFilter,
-        name: name ? { contains: name } : undefined,
-        theme_id: theme ? { contains: theme } : undefined,
-      },
+      where: eventWhereCondition,
     });
 
-    // Получаем данные с учетом пагинации и фильтров
     const events = await this.prisma.events.findMany({
-      where: {
-        is_archived: isArchivedFilter,
-        name: name ? { contains: name } : undefined,
-        theme_id: theme ? { contains: theme } : undefined,
-      },
+      where: eventWhereCondition,
       include: {
         events_users: {
           select: {
@@ -121,15 +118,12 @@ export class EventsService {
       take: +query.take,
     });
 
-    // Создаем мета-данные для пагинации
     const pageMeta = new PageMetaDto({ pageOptionsDto: query, itemCount });
 
-    // Возвращаем результат в формате пагинации
     return new PageDto(events, pageMeta);
   }
 
   async findOne(id: string) {
-    // Основной запрос
     const event = await this.prisma.events.findUnique({
       where: { id },
       include: {
@@ -153,12 +147,16 @@ export class EventsService {
         },
       },
     });
-    // Если есть ID предыдущего мероприятия, делаем дополнительный запрос
     let prevSameEvent = null;
-    if (event.prev_same_event_id) {
+    if (event.past_event_id) {
       prevSameEvent = await this.prisma.events.findUnique({
-        where: { id: event.prev_same_event_id },
-        include: {
+        where: { id: event.past_event_id },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+        /*include: {
           events_users: {
             select: {
               users: { select: { id: true, name: true } },
@@ -174,15 +172,13 @@ export class EventsService {
               locations: { select: { id: true, name: true, address: true } },
             },
           },
-        },
+        },*/
       });
     }
-    // Возвращаем основной объект и данные о предыдущем мероприятии
     return { ...event, prev_same_event: prevSameEvent };
   }
 
   async update(eventId: string, updateEventDto: UpdateEventDto) {
-    // Обновление данных события
     const updatedEvent = await this.prisma.events.update({
       where: { id: eventId },
       data: {
@@ -190,18 +186,15 @@ export class EventsService {
         description: updateEventDto.description,
         date: updateEventDto.date,
         is_archived: updateEventDto.is_archived,
-        prev_same_event_id: updateEventDto.prev_same_event_id,
+        past_event_id: updateEventDto.past_event_id,
         theme_id: updateEventDto.theme_id,
       },
     });
 
-    // Обновление зависимостей
     if (updateEventDto.event_users) {
-      // Удаляем старые связи
       await this.prisma.events_users.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventUsers = updateEventDto.event_users.map((userId) => ({
         event_id: eventId,
         user_id: userId,
@@ -212,11 +205,9 @@ export class EventsService {
     }
 
     if (updateEventDto.event_managers) {
-      // Удаляем старые связи
       await this.prisma.events_managers.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventManagers = updateEventDto.event_managers.map((userId) => ({
         event_id: eventId,
         user_id: userId,
@@ -227,11 +218,9 @@ export class EventsService {
     }
 
     if (updateEventDto.event_locations) {
-      // Удаляем старые связи
       await this.prisma.events_locations.deleteMany({
         where: { event_id: eventId },
       });
-      // Добавляем новые связи
       const eventLocations = updateEventDto.event_locations.map((locId) => ({
         event_id: eventId,
         location_id: locId,
@@ -275,27 +264,22 @@ export class EventsService {
 
   async remove(id: string) {
     await this.prisma.$transaction(async () => {
-      // Удаляем связанные записи из events_locations
       await this.prisma.events_locations.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из events_managers
       await this.prisma.events_managers.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из events_users
       await this.prisma.events_users.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем связанные записи из notifications
       await this.prisma.notifications.deleteMany({
         where: { event_id: id },
       });
 
-      // Удаляем сам event
       await this.prisma.events.delete({
         where: { id },
       });
@@ -312,12 +296,10 @@ export class EventsService {
       },
     });
 
-    const inversEvent = !currentEvent.is_archived;
-
-    return await this.prisma.events.update({
+    return this.prisma.events.update({
       where: { id },
       data: {
-        is_archived: inversEvent,
+        is_archived: !currentEvent.is_archived,
       },
     });
   }

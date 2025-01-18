@@ -15,7 +15,7 @@ export class ActivitiesService {
         description: createActivityDto.description,
         date: createActivityDto.date,
         location_id: createActivityDto.location_id,
-        created_by_id: createActivityDto.created_by_id,
+        created_by_user_id: createActivityDto.created_by_user_id,
         is_completed: createActivityDto.is_completed,
       },
     });
@@ -34,7 +34,7 @@ export class ActivitiesService {
     }));
 
     await Promise.all([
-      this.prisma.activities_users.createMany({
+      this.prisma.activity_users.createMany({
         data: userActivityEntries,
       }),
       this.prisma.notifications.createMany({
@@ -50,7 +50,6 @@ export class ActivitiesService {
     let dateFilter = {};
 
     if (startDate && endDate) {
-      // Фильтр по диапазону дат
       dateFilter = {
         date: {
           gte: startDate,
@@ -58,7 +57,6 @@ export class ActivitiesService {
         },
       };
     } else if (year) {
-      // Фильтр по году
       dateFilter = {
         date: {
           gte: new Date(year, 0, 1),
@@ -67,7 +65,6 @@ export class ActivitiesService {
       };
     }
 
-    // Используем select, чтобы вернуть только нужные поля
     return this.prisma.activities.findMany({
       where: dateFilter,
       select: {
@@ -76,7 +73,7 @@ export class ActivitiesService {
         date: true,
       },
       orderBy: {
-        date: 'asc', // Сортировка по дате
+        date: 'asc',
       },
     });
   }
@@ -118,24 +115,21 @@ export class ActivitiesService {
         description: updateActivityDto.description,
         date: updateActivityDto.date,
         location_id: updateActivityDto.location_id,
-        created_by_id: updateActivityDto.created_by_id,
+        created_by_user_id: updateActivityDto.created_by_user_id,
         is_completed: updateActivityDto.is_completed,
       },
     });
     if (updateActivityDto.users) {
-      // Обновляем записи в таблице activities_users
-      // Удаляем старые связи
-      await this.prisma.activities_users.deleteMany({
+      await this.prisma.activity_users.deleteMany({
         where: { activity_id: id },
       });
 
-      // Создаем новые связи
       const newActivityUsers = updateActivityDto.users.map((userId) => ({
         activity_id: id,
         user_id: userId,
       }));
 
-      await this.prisma.activities_users.createMany({
+      await this.prisma.activity_users.createMany({
         data: newActivityUsers,
       });
 
@@ -175,22 +169,19 @@ export class ActivitiesService {
 
   async remove(id: string) {
     await this.prisma.$transaction(async () => {
-      // Удаляем связанные записи из activities_users
-      await this.prisma.activities_users.deleteMany({
+      await this.prisma.activity_users.deleteMany({
         where: { activity_id: id },
       });
 
-      // Удаляем связанные записи из notifications
       await this.prisma.notifications.deleteMany({
         where: { activity_id: id },
       });
 
-      // Удаляем саму activity
       await this.prisma.activities.delete({
         where: { id },
       });
     });
 
-    return true; // Если транзакция прошла успешно, возвращаем true
+    return true;
   }
 }

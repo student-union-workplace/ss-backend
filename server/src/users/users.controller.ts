@@ -15,12 +15,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersFilterDto } from 'src/pagination/dto/user-filter.dro';
 import { PageDto } from 'src/pagination/dto/page.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { users_role } from '@prisma/client';
 
+@UseGuards(AuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles(users_role.admin)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -47,6 +52,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(users_role.admin)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

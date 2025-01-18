@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { LocationsService } from './locations.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
+@UseGuards(AuthGuard, RolesGuard)
 @Controller('locations')
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
