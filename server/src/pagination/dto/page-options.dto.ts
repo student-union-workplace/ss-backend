@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Prisma } from '@prisma/client'; // Для работы с Prisma
+import { Prisma } from '@prisma/client';
 
 export enum Order {
   ASC = 'asc',
@@ -9,10 +9,16 @@ export enum Order {
 }
 
 export class PageOptionsDto {
+  constructor(params: Pick<PageOptionsDto, 'take' | 'page' | 'order'>) {
+    this.order = params.order;
+    this.take = params.take;
+    this.page = params.page;
+  }
+
   @ApiPropertyOptional({ enum: Order, default: Order.ASC })
   @IsEnum(Order)
   @IsOptional()
-  readonly order?: Prisma.SortOrder = Order.ASC; // Связь с Prisma
+  readonly order?: Prisma.SortOrder = Order.ASC;
 
   @ApiPropertyOptional({
     minimum: 1,

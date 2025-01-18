@@ -7,6 +7,7 @@ import { GetUsersFilterDto } from 'src/pagination/dto/user-filter.dro';
 import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import * as bcrypt from 'bcrypt';
+import { PageOptionsDto } from '../pagination/dto/page-options.dto';
 
 @Injectable()
 export class UsersService {
@@ -52,7 +53,10 @@ export class UsersService {
   }
 
   async findAll(filterDto: GetUsersFilterDto): Promise<PageDto<any>> {
-    const { name, departmentName, role, skip, take, order } = filterDto;
+    const { name, departmentName, role, page, take, order } = filterDto;
+
+    const pageOptions = new PageOptionsDto({ page, take, order });
+
     const where: any = {
       AND: [
         name ? { name: { contains: name } } : undefined,
@@ -69,8 +73,8 @@ export class UsersService {
     // TODO: комиссия возвращается только у замов
     const users = await this.prisma.users.findMany({
       where,
-      skip,
-      take: +take,
+      skip: +pageOptions.skip,
+      take: +pageOptions.take,
       select: {
         id: true,
         name: true,
@@ -85,7 +89,7 @@ export class UsersService {
         },
       },
       orderBy: {
-        created_at: order,
+        created_at: pageOptions.order,
       },
     });
 
@@ -111,7 +115,7 @@ export class UsersService {
     const totalCount = await this.prisma.users.count({ where });
 
     const meta = new PageMetaDto({
-      pageOptionsDto: filterDto,
+      pageOptionsDto: pageOptions,
       itemCount: totalCount,
     });
 

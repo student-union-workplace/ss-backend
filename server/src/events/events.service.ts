@@ -73,11 +73,13 @@ export class EventsService {
   }
 
   async findAll(
-    query: PageOptionsDto,
+    pageOptionsDTO: PageOptionsDto,
     isArchived?: string,
     name?: string,
     theme_id?: string,
   ): Promise<PageDto<any>> {
+    const pageOptions = new PageOptionsDto(pageOptionsDTO);
+
     const eventWhereCondition: any = {
       is_archived:
         isArchived === 'true'
@@ -112,14 +114,16 @@ export class EventsService {
         },
       },
       orderBy: {
-        date: 'asc',
+        date: pageOptions.order,
       },
-      skip: query.skip,
-      take: +query.take,
+      skip: +pageOptions.skip,
+      take: +pageOptions.take,
     });
 
-    const pageMeta = new PageMetaDto({ pageOptionsDto: query, itemCount });
-
+    const pageMeta = new PageMetaDto({
+      pageOptionsDto: pageOptions,
+      itemCount,
+    });
     return new PageDto(events, pageMeta);
   }
 
