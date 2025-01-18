@@ -1,6 +1,6 @@
 import {
     Avatar,
-    Box, Chip, IconButton, Table,
+    Box, Chip, CircularProgress, IconButton, Table,
     TableBody,
     TableCell,
     TableContainer,
@@ -25,6 +25,9 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import {StatusPopover} from "./components/StatusPopover.tsx";
 import {getChipFontColor, getChipStatusColor} from "./utils.ts";
+import {useQuery} from "react-query";
+import {EventsApi} from "../../../api/events";
+import {EventData} from "../../../types/events";
 
 export const Events = () => {
     const [page, setPage] = useState(0);
@@ -46,106 +49,28 @@ export const Events = () => {
         setPage(0);
     };
 
-    const data = useMemo(() => {
-        return [{
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'Завершено'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'Архив'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'Архив'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'Архив'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'Завершено'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {
-            title: 'Козырный втуз',
-            theme: 'Музыкалка',
-            date: new Date(),
-            responsible: ['4', '6'],
-            status: 'В работе'
-        }, {title: 'Козырный втуз', theme: 'Музыкалка', date: new Date(), responsible: ['4', '6'], status: 'В работе'}]
-    }, [])
+    const { data: events, isLoading } = useQuery(
+        ['events', page, rowsPerPage],
+        () => EventsApi.get({page: page + 1, take: rowsPerPage}),
+        { refetchOnWindowFocus: false }
+    );
 
     const columns = useMemo(() => {
         return [{id: 'title', name: 'Название', sorting: false, filter: false}, {
-            id: 'theme',
+            id: 'theme_id',
             name: 'Тема',
             sorting: false,
             filter: false
         }, {
             id: 'date',
             name: 'Дата и время', sorting: true, filter: false
-        }, {id: 'responsible', name: 'Ответственный', sorting: false, filter: false}, {
+        }, {id: 'events_managers', name: 'Ответственный', sorting: false, filter: false}, {
             id: 'status',
             name: 'Статус',
             sorting: false,
             filter: true
         }]
     }, [])
-
-    const users = useMemo(() => {
-        return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {
-            name: 'Максим Живцов',
-            id: '3'
-        }, {name: 'Роман Гареев', id: '4'}, {name: 'Екатерина Поварнина', id: '5'}, {
-            name: 'Анастасия Бахарева',
-            id: '6'
-        }, {name: 'Алексей Задевалов', id: '7'}, {name: 'Валерия Карпенкова', id: '8'}, {
-            name: 'Арсений Виноградов',
-            id: '9'
-        }]
-    }, []);
-
 
     return (
         <Box className={'content'} sx={{marginInline: '150px'}}>
@@ -166,7 +91,11 @@ export const Events = () => {
                         onClick={() => nav(RoutesName.AddEvent)}>Создать
                     мероприятие</Button>
             </Box>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center',}}>
+            {isLoading ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <CircularProgress />
+                </Box>
+            ) : <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center',}}>
                 <TableContainer sx={{minWidth: '1024'}}>
                     <Table stickyHeader aria-label="sticky table" size="small">
                         <TableHead>
@@ -204,11 +133,11 @@ export const Events = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
+                            {events?.data?.data
+
+                                .map((row: EventData) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.title} sx={{
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.name} sx={{
                                             "& .MuiTableRow-root:hover": {
                                                 backgroundColor: "primary.light"
                                             }
@@ -222,12 +151,12 @@ export const Events = () => {
                                                     cursor: 'pointer'
                                                 }} onClick={() => nav(`${RoutesName.Event}1`)}>
                                                     <Typography
-                                                        variant={'subtitle1'}>{row.title}</Typography>
+                                                        variant={'subtitle1'}>{row.name}</Typography>
                                                     <OpenInNewIcon fontSize={'small'}/>
                                                 </Box>
                                             </TableCell>
                                             <TableCell><Typography
-                                                variant={'subtitle1'}>{row.theme}</Typography></TableCell>
+                                                variant={'subtitle1'}>{row.theme_id}</Typography></TableCell>
                                             <TableCell align={'left'}><Typography
                                                 variant={'subtitle1'}>{fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru})}</Typography></TableCell>
                                             <TableCell>
@@ -238,19 +167,21 @@ export const Events = () => {
                                                     flexWrap: 'wrap',
                                                     maxWidth: '130px'
                                                 }}>
-                                                    {users.filter(user => row.responsible.indexOf(user.id) !== -1).map((user) => {
-                                                        const label = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].split('')[0] + '.'
-                                                        return <Chip label={label}
-                                                                     avatar={<Avatar>{"ОР"}</Avatar>}
-                                                                     variant={'outlined'} size={'small'}
-                                                        />
-                                                    })}
+                                                    {
+                                                        row.events_managers.map(user => {
+                                                            const label = user.users.name.split(' ')[0] + ' ' + user.users.name.split(' ')[1].split('')[0] + '.'
+                                                            return <Chip label={label}
+                                                                         avatar={<Avatar>{"ОР"}</Avatar>}
+                                                                         variant={'outlined'} size={'small'}
+                                                            />
+                                                        })
+                                                    }
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip label={row.status} sx={{
-                                                    backgroundColor: getChipStatusColor(row.status),
-                                                    color: getChipFontColor(row.status)
+                                                <Chip label={row.is_archived ? 'В работе': 'Архив'} sx={{
+                                                    backgroundColor: getChipStatusColor(row.is_archived ? 'В работе': 'Архив'),
+                                                    color: getChipFontColor(row.is_archived ? 'В работе': 'Архив')
                                                 }}
                                                       size={'small'}/>
                                             </TableCell>
@@ -264,7 +195,7 @@ export const Events = () => {
                 </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
-                    count={data.length}
+                    count={events?.data?.meta.itemCount}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -276,7 +207,7 @@ export const Events = () => {
                         }
                     }
                 />
-            </Box>
+            </Box>}
         </Box>
     )
 }

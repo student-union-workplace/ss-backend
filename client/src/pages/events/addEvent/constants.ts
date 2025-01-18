@@ -1,13 +1,13 @@
 import { EventFormValues} from "../../../types/events";
 
 export const ADD_EVENT_INITIAL_VALUE: EventFormValues = {
-    lastEvent: '',
-    title: '',
-    theme: '',
+    past_event_id: '',
+    name: '',
+    theme_id: '',
     description: '',
     date: null,
-    place: [],
-    responsible: [],
-    team: [],
-    status: false
+    event_locations: [],
+    event_managers: [],
+    event_users: [],
+    is_archived: false
 }

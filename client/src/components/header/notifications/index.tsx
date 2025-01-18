@@ -1,6 +1,8 @@
 import {Box, Popover} from "@mui/material";
-import {useMemo} from "react";
 import {NotificationItem} from "./components/NotificationItem.tsx";
+import {NotificationsApi} from "../../../api/notifications";
+import {useQuery} from "react-query";
+import {Notification} from "../../../types/notifications";
 
 type NotificationsProps = {
     anchorEl: HTMLButtonElement | null;
@@ -13,16 +15,11 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
         setAnchorEl(null);
     };
 
-    const notificationsData = useMemo(() => {
-        return [
-            {title: "Козырный втуз", type: "event", created_at: new Date()},
-            {title: "Сделать презентацию", type: "deadline", created_at: new Date()},
-            {title: "Общая планерка ПБ", type: "activity", created_at: new Date()},
-            {title: "Придумать 1000 названий для меро", type: "task", created_at: new Date()},
-            {title: "Козырный втуз", type: "event", created_at: new Date()},
-            {title: "Сделать презентацию", type: "deadline", created_at: new Date()},
-        ]
-    }, [])
+    const { data: notificationsData, isLoading } = useQuery(
+        'notifications',
+        () => NotificationsApi.get(),
+        { refetchOnWindowFocus: false }
+    );
 
     return (<Popover
             id={id}
@@ -33,15 +30,12 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
                 horizontal: 'left',
             }}
             anchorEl={anchorEl}
-            /*sx={{position: 'absolute', top: "-10rem", left: "120px"}}
-            anchorReference="anchorPosition"
-            anchorPosition={{ top: 245, left: 1050 }}*/
         >
-            <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'auto'}}>
-                {notificationsData.map((item) => {
+            {!isLoading && <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'auto'}}>
+                {notificationsData && notificationsData.data.map((item: Notification) => {
                     return <NotificationItem item={item} key={item.title} setAnchorEl={setAnchorEl}/>
                 })}
-            </Box>
+            </Box>}
         </Popover>
 
     )

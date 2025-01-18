@@ -37,7 +37,7 @@ export const PasswordInput = memo<PasswordInputProps>(
                         fullWidth
                         label={label}
                         type={type}
-                        variant={'standard'}
+                        variant={'outlined'}
                         autoComplete='new-password'
                         aria-autocomplete='none'
                         aria-readonly='true'

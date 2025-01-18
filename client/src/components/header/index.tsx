@@ -3,11 +3,14 @@ import {Navbar} from "./nav";
 import {UserPanel} from "./userPanel";
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../enums/routes";
+import {QueryClient, QueryClientProvider} from "react-query";
+
+const queryClient = new QueryClient();
 
 export const Header = () => {
     const navigate = useNavigate()
     return (
-        <Box className={'content'} sx={{
+        <QueryClientProvider client={queryClient}><Box className={'content'} sx={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -19,6 +22,6 @@ export const Header = () => {
             </Box>
             <Navbar/>
             <UserPanel/>
-        </Box>
+        </Box></QueryClientProvider>
     )
 }

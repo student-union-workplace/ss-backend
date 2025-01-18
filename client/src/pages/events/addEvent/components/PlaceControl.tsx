@@ -2,6 +2,9 @@ import React, {useMemo} from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import {Chip, TextField} from '@mui/material';
+import {useQuery} from "react-query";
+import {LocationsApi} from "../../../../api/locations";
+import {LocationData} from "../../../../types/locations";
 
 
 export type AutocompleteControlProps = {
@@ -13,12 +16,16 @@ export type AutocompleteControlProps = {
 
 export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteControlProps) => {
 
-    const places = useMemo(() => {
-        return [{title: 'Р-044', id: '1'}, {title: 'Р-025', id: '2'}, {title: 'Р-325', id: '3'}]
-    }, []);
+    const {data: places} = useQuery(
+        ['places'],
+        () => LocationsApi.get(),
+        {refetchOnWindowFocus: false}
+    );
 
     const placesValues = useMemo(() => {
-        return places.filter(place => value.indexOf(place.id) !== -1) ?? [];
+        if (places?.data) {
+            return places.data.filter((place: LocationData) => value.indexOf(place.id) !== -1) ?? [];
+        }
     }, [places, value]);
 
     const onChangePlaces = (_: React.SyntheticEvent, newValue: {title: string, id: string}[]) => {
@@ -42,8 +49,8 @@ export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteContr
                         onBlur={onBlur}
                     />
                 )}
-                options={places ?? []}
-                getOptionLabel={(option) => option.title}
+                options={places?.data ?? []}
+                getOptionLabel={(option) => option.name}
                 value={placesValues}
                 size={'small'}
                 fullWidth
@@ -53,7 +60,7 @@ export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteContr
                 renderTags={(value, getTagProps) => value.map((option, index) => {
                     const {key, ...tagProps} = getTagProps({index})
                     return (
-                        <Chip variant={'outlined'} label={option.title} key={key} {...tagProps} size={'small'}/>
+                        <Chip variant={'outlined'} label={option.name} key={key} {...tagProps} size={'small'}/>
                     )
                 })}
 

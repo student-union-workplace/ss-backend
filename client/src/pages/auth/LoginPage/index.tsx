@@ -11,6 +11,8 @@ import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
 import {useState} from "react";
 import {ErrorSnackbar} from "../../../components/snackbars/ErrorSnackbar.tsx";
+import axios from "axios";
+import {BASE_URL} from "../../../api";
 
 export const LoginPage = () => {
     const validation = useValidation();
@@ -24,7 +26,14 @@ export const LoginPage = () => {
     const loginHandler = async (values: Login) => {
         try {
             console.log(values)
-            navigate(RoutesName.Main)
+            const response = await axios.post(`${BASE_URL}/auth/login`, {
+                email: values.email,
+                password: values.password
+            })
+            if (response.status === 200) {
+                localStorage.setItem('token', response.data.access_token)
+                navigate(RoutesName.Kanban)
+            }
         } catch (error) {
             console.log(error)
             setOpenErrorSnackbar(true)

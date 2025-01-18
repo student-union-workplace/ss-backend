@@ -55,7 +55,6 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
     }, [])
 
     useEffect(() => {
-        console.log(task)
         if (task) {
             reset({
                 title: task.title,

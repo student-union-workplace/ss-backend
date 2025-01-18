@@ -12,14 +12,17 @@ import {Events} from "./pages/events/events";
 import {CalendarPage} from "./pages/calendar";
 import {UserPage} from "./pages/users/user";
 import {UsersPage} from "./pages/users/users";
+import {QueryClient, QueryClientProvider} from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-    const auth = true
+    const auth = !!localStorage.getItem('token')
 
     return (
         <>
             {auth && <Header/>}
-            <Routes>
+            <QueryClientProvider client={queryClient}><Routes>
                 <Route path={RoutesName.Kanban} element={<AuthRouter isAuth={auth}><KanbanPage/></AuthRouter>}/>
                 <Route path={RoutesName.Calendar} element={<AuthRouter isAuth={auth}><CalendarPage/></AuthRouter>}/>
                 <Route path={RoutesName.Login} element={<NotAuthRouter isAuth={auth}><LoginPage/></NotAuthRouter>}/>
@@ -29,7 +32,7 @@ function App() {
                 <Route path={RoutesName.Events} element={<AuthRouter isAuth={auth}><Events /></AuthRouter>}/>
                 <Route path={`${RoutesName.User}:id`} element={<AuthRouter isAuth={auth}><UserPage /></AuthRouter>}/>
                 <Route path={RoutesName.Users} element={<AuthRouter isAuth={auth}><UsersPage /></AuthRouter>}/>
-            </Routes>
+            </Routes></QueryClientProvider>
         </>
     )
 }
