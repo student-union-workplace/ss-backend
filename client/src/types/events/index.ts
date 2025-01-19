@@ -1,27 +1,41 @@
 export type EventFormValues = {
     "name": string,
     "description": string,
-    "date": string,
+    "date": string | null,
     "is_archived": boolean,
     "past_event_id": string,
     "theme_id": string,
-    "event_managers": string[],
-    "event_users": string[],
-    "event_locations": string[]
+    "managers": string[],
+    "users": string[],
+    "locations": string[]
 }
 
-export type EventsUsers = {
-    "users": {
-        "id": string,
-        "name": string
-    }
+export type EventUpdateFormValues = {
+    "name"?: string,
+    "description"?: string,
+    "date"?: string | null,
+    "is_archived"?: boolean,
+    "past_event_id"?: string,
+    "theme_id"?: string,
+    "managers"?: string[],
+    "users"?: string[],
+    "locations"?: string[]
 }
 
-export type EventsLocations = {
-    "locations": {
-        "id": string,
-        "name": string
-    }
+export type User = {
+    "id": string,
+    "name": string
+}
+
+export type Theme = {
+    "id": string,
+    "name": string
+}
+
+export type Location = {
+    "id": string,
+    "name": string,
+    "address": string
 }
 
 export type EventData = {
@@ -34,7 +48,8 @@ export type EventData = {
     "updated_at": string,
     "past_event_id": string | null,
     "theme_id": string,
-    "events_users": EventsUsers[],
-    "events_managers": EventsUsers[],
-    "events_locations": EventsLocations[]
+    "users": User[],
+    "managers": User[],
+    "locations": Location[]
+    "theme": Theme
 }

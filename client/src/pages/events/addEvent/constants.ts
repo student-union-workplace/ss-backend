@@ -6,8 +6,8 @@ export const ADD_EVENT_INITIAL_VALUE: EventFormValues = {
     theme_id: '',
     description: '',
     date: null,
-    event_locations: [],
-    event_managers: [],
-    event_users: [],
+    locations: [],
+    managers: [],
+    users: [],
     is_archived: false
 }

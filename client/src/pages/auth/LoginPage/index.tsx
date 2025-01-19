@@ -32,7 +32,10 @@ export const LoginPage = () => {
             })
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.access_token)
-                navigate(RoutesName.Kanban)
+
+                setTimeout(() => {
+                    navigate(RoutesName.Kanban)
+                }, 1000)
             }
         } catch (error) {
             console.log(error)

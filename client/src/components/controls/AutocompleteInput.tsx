@@ -28,6 +28,7 @@ export const AutocompleteInput = memo<AutocompleteProps>(
       return <TextField disabled fullWidth label={label} value='Загрузка списка...' />;
     }
 
+      console.log(options)
     return (
       <Controller
         name={name}

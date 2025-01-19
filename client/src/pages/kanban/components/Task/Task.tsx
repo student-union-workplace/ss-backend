@@ -1,5 +1,5 @@
 import {Avatar, Box, Chip, IconButton, Paper, Typography} from "@mui/material";
-import {useMemo, useState} from "react";
+import { useState} from "react";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined';
@@ -7,28 +7,16 @@ import {format} from "date-fns";
 import {getStatus} from "../../utils.ts";
 import {AddTaskModal} from "../AddTask/AddTaskModal.tsx";
 import {TaskModal} from "./TaskModal.tsx";
+import {TaskData} from "../../../../types/tasks";
 
 type EventProps = {
-    item: {
-        title: string;
-        user_id: string;
-        id: string;
-        deadline: Date;
-        status: 'open' | 'at_work' | 'review' | 'closed'
-    },
+    item: TaskData,
     color: string;
 }
 
 export const Task = ({item, color}: EventProps) => {
-    const users = useMemo(() => {
-        return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {
-            name: 'Максим Живцов',
-            id: '3'
-        }, {name: 'Роман Гареев', id: '4'}]
-    }, []);
-    const user = users.filter((user) => item.user_id === user.id)[0]
-    const labelChip = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].split('')[0] + '.'
-    const labelAvatar = user.name.split(' ')[0].split('')[0] + user.name.split(' ')[1].split('')[0]
+    const labelChip = item?.user?.name.split(' ')[0] + ' ' + item?.user?.name.split(' ')[1].split('')[0] + '.'
+    const labelAvatar = item?.user?.name.split(' ')[0].split('')[0] + item?.user?.name.split(' ')[1].split('')[0]
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const [openTaskModal, setOpenTaskModal] = useState(false)
 
@@ -47,7 +35,7 @@ export const Task = ({item, color}: EventProps) => {
         <Paper
             variant={'outlined'}
             sx={{
-                borderColor: item.deadline.getTime() < Date.now() ? '#D32F2F' : color,
+                borderColor: new Date(item.deadline).getTime() < Date.now() ? '#D32F2F' : color,
                 borderWidth: '2px',
                 padding: '12px',
                 paddingTop: '0px',
@@ -60,7 +48,7 @@ export const Task = ({item, color}: EventProps) => {
                 maxWidth: '230px'
             }}>
             <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Typography sx={{fontWeight: '500'}}>{item.title}</Typography>
+                <Typography sx={{fontWeight: '500'}}>{item.name}</Typography>
                 <IconButton onClick={(e: React.MouseEvent<HTMLElement>) => handleClickEdit(e)}>
                     <EditOutlinedIcon/>
                 </IconButton>
@@ -74,7 +62,7 @@ export const Task = ({item, color}: EventProps) => {
                 <Chip variant={'outlined'} label={labelChip} avatar={<Avatar>{labelAvatar}</Avatar>} size={'small'}/>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px'}}>
 
-                    <CalendarMonthOutlinedIcon color={item.deadline.getTime() < Date.now() ? 'error' : 'inherit'}/>
+                    <CalendarMonthOutlinedIcon color={new Date(item.deadline).getTime() < Date.now() ? 'error' : 'inherit'}/>
 
                     <Typography variant={'subtitle1'}>{format(item.deadline, "dd.MM.yyyy HH:mm")}</Typography>
                 </Box>

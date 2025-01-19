@@ -2,7 +2,7 @@ import {Box, Modal, Typography} from "@mui/material";
 import {TextInput} from "../../../../components/controls/TextInput.tsx";
 import {useForm} from "react-hook-form";
 import {ADD_TASK_INITIAL_VALUE} from "../../constants.ts";
-import {TaskFormValues} from "../../../../types/tasks";
+import {TaskData, TaskFormValues} from "../../../../types/tasks";
 import {CustomControl} from "../../../../components/controls/CustomControl";
 import {ResponsibleControl} from "./ResponsibleControl.tsx";
 import {DateControl} from "./DateControl.tsx";
@@ -28,13 +28,7 @@ const style = {
 type AddTaskModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    task?: {
-        title: string;
-        user_id: string;
-        deadline: Date;
-        status: 'open' | 'at_work' | 'review' | 'closed',
-        description?: ''
-    },
+    task?: TaskData,
 }
 
 export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
@@ -48,16 +42,16 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
     const statusOptions = useMemo(() => {
         return [
             {label: 'Открыта', value: 'open'},
-            {label: 'Открыта', value: 'open'},
-            {label: 'Открыта', value: 'open'},
-            {label: 'Открыта', value: 'open'},
+            {label: 'В работе', value: 'at_work'},
+            {label: 'На проверке', value: 'review'},
+            {label: 'Выполнена', value: 'closed'},
         ]
     }, [])
 
     useEffect(() => {
         if (task) {
             reset({
-                title: task.title,
+                title: task.name,
                 description: task.description,
                 deadline: task.deadline,
                 status: task.status,

@@ -39,8 +39,10 @@ export const AddEvent = () => {
 
     const themeOptions = useMemo(() => {
         return [
+            {label: 'Слет', value: '0111a2d3-d3e6-11ef-aa2a-50ebf6992398'},
+            {label: 'Квиз', value: '94a1eb6c-d3e0-11ef-aa2a-50ebf6992398'},
             {label: 'Квест', value: 'a15ad887-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Музыкалка', value: '2'},
+            {label: 'Знакомка', value: 'ac4cf8f7-d3e0-11ef-aa2a-50ebf6992398'},
         ]
     }, [])
 
@@ -55,9 +57,9 @@ export const AddEvent = () => {
             const response = await creatwMutation.mutateAsync({
                 name: values.name,
                 date: values.date,
-                event_locations: values.event_locations,
-                event_managers: values.event_managers,
-                event_users: values.event_users,
+                locations: values.locations.map(location => location.id),
+                managers: values.managers.map(user => user.id),
+                users: values.users.map(user => user.id),
                 past_event_id: values.past_event_id,
                 description: values.description,
                 is_archived: values.is_archived,
@@ -109,19 +111,19 @@ export const AddEvent = () => {
                                 Component={DateControl}
                             />
                             <CustomControl
-                                name={'event_locations'}
+                                name={'locations'}
                                 control={control}
                                 Component={PlaceControl}
                                 label={'Место'}
                             />
                             <CustomControl
-                                name={'event_managers'}
+                                name={'managers'}
                                 control={control}
                                 Component={ResponsibleControl}
                                 label={"Ответственный*"}
                             />
                             <CustomControl
-                                name={'event_users'}
+                                name={'users'}
                                 control={control}
                                 Component={TeamControl}
                                 label={"Команда*"}

@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import {Avatar, Chip, TextField} from '@mui/material';
 import {useQuery} from "react-query";
 import {UsersApi} from "../../../../api/users";
-import {UserData} from "../../../../types/users";
+import {User} from "../../../../types/events";
 
 
 export type AutocompleteControlProps = {
@@ -24,7 +24,7 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
 
   const usersValues = useMemo(() => {
     if (users?.data?.data) {
-      return users?.data?.data?.filter((user: UserData) => value.indexOf(user.id) !== -1) ?? [];
+      return users?.data?.data.filter((user: User) => value.map((val) => val.id).indexOf(user.id) !== -1) ?? [];
     }
   }, [users, value]);
 
@@ -34,7 +34,7 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
     }
 
     value = newValue.map(user => user.id);
-    onChange(value);
+    onChange(newValue);
   };
 
   return (
@@ -57,7 +57,6 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
         multiple={true}
         onChange={onChangeResponsible}
         noOptionsText={'Ничего не найдено'}
-        disableCloseOnSelect
         renderTags={(value, getTagProps) => value.map((option, index) => {
           const {key, ...tagProps} = getTagProps({index})
           const label = option.name.split(' ')[0] + ' ' + option.name.split(' ')[1].split('')[0] + '.'

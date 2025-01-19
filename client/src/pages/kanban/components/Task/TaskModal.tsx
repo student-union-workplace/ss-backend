@@ -5,6 +5,7 @@ import {getStatus, getStatusColor} from "../../utils.ts";
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import {AddTaskModal} from "../AddTask/AddTaskModal.tsx";
+import {TaskData} from "../../../../types/tasks";
 
 const style = {
     position: 'absolute',
@@ -25,14 +26,7 @@ const style = {
 type TaskModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    task?: {
-        id: string;
-        title: string;
-        user_id: string;
-        deadline: Date;
-        status: 'open' | 'at_work' | 'review' | 'closed',
-        description?: ''
-    },
+    task?: TaskData,
     id?: string
 }
 
@@ -94,7 +88,7 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
                                 fontWeight: '500',
                                 margin: 0,
                                 padding: 0
-                            }}>{realTask?.title}</Typography>
+                            }}>{realTask?.name}</Typography>
                         <IconButton onClick={handleEditClick}>
                             <EditOutlinedIcon/>
                         </IconButton>

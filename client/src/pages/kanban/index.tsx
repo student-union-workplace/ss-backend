@@ -7,6 +7,9 @@ import Button from "@mui/material/Button";
 import {Column} from "./components/Column.tsx";
 import {UsersPopover} from "./components/UsersPopover.tsx";
 import {AddTaskModal} from "./components/AddTask/AddTaskModal.tsx";
+import {useQuery} from "react-query";
+import {TasksApi} from "../../api/tasks";
+import {TaskData} from "../../types/tasks";
 
 export const KanbanPage = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -18,82 +21,13 @@ export const KanbanPage = () => {
         return [{id: '1', title: 'Козырный втуз'}, {id: '2', title: 'Зона 32'}]
     }, [])
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
-    const tasks = useMemo(() => {
-        return [{
-            id: '1',
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-10-2024 11:13:00'),
-            description: 'Нужно создать презу где есть 18 слайдов\n' +
-                '1 слайд: вдыалывджалвы 2 слайд:фхзыщвзэжфлждыдюовьждлф\n' +
-                'флдыовлдфодл 3 слайд: флыдовдлфыо фдылвж жфдыов' + 'Нужно создать презу где есть 18 слайдов\n' +
-                '1 слайд: вдыалывджалвы 2 слайд:фхзыщвзэжфлждыдюовьждлф\n' +
-                'флдыовлдфодл 3 слайд: флыдовдлфыо фдылвж жфдыов'
-        }, {
-            id: '2',
-            status: 'open',
-            title: 'Сделать гребаную большую презу ыыыы',
-            user_id: '2',
-            deadline: new Date('12-15-2024 11:13:00'),
-            description: 'Есть пару слов'
-        }, {
-            id: '3',
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '4',
-            deadline: new Date('12-17-2024 11:13:00'),
-            description: 'А тут немного больше, чем пару слов, и еще чуть-чуть'
-        }, {
-            id: '4',
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '1',
-            deadline: new Date('12-19-2024 11:13:00')
-        }, {
-            id: '5',
-            status: 'closed',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-11-2024 11:13:00')
-        }, {
-            id: '6',
-            status: 'at_work',
-            title: 'Сделать презу',
-            user_id: '4',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {
-            id: '7',
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '1',
-            deadline: new Date('12-20-2024 11:13:00')
-        }, {
-            id: '8',
-            status: 'open',
-            title: 'Сделать презу',
-            user_id: '2',
-            deadline: new Date('12-10-2024 11:13:00')
-        }, {
-            id: '9',
-            status: 'at_work',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-15-2024 11:13:00')
-        }, {
-            id: '10',
-            status: 'review',
-            title: 'Сделать презу',
-            user_id: '3',
-            deadline: new Date('12-19-2024 11:13:00')
-        }, {
-            id: '11',
-            status: 'closed',
-            title: 'Сделать презу',
-            user_id: '4',
-            deadline: new Date('12-30-2024 11:13:00')
-        }]
-    }, [])
+
+    const { data: tasks } = useQuery(
+        ['tasks'],
+        () => TasksApi.get(),
+        { refetchOnWindowFocus: false }
+    )
+
     return (
         <Box className={'content'}
              sx={{
@@ -136,19 +70,19 @@ export const KanbanPage = () => {
                     задачу</Button>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
-                <Column tasks={tasks.filter((task) => task.status === 'open')}
+                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'open')}
                         title={'Открыта'} titleColor={'#069AAB'} color={'#1DB8CA'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks.filter((task) => task.status === 'at_work')}
+                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'at_work')}
                         title={'В работе'} titleColor={'#7E1AB0'} color={'#AF52DE'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks.filter((task) => task.status === 'review')}
+                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'review')}
                         title={'На проверке'} titleColor={'#CC7C0B'} color={'#FF9500'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks.filter((task) => task.status === 'closed')}
+                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'closed')}
                         title={'Выполнена'} titleColor={'#01AF2D'} color={'#34C759'}/>
             </Box>
             <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal}/>

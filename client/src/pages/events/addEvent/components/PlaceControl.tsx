@@ -22,9 +22,10 @@ export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteContr
         {refetchOnWindowFocus: false}
     );
 
+    console.log(value)
     const placesValues = useMemo(() => {
         if (places?.data) {
-            return places.data.filter((place: LocationData) => value.indexOf(place.id) !== -1) ?? [];
+            return places.data.filter((place: LocationData) => value.map((val) => val.id).indexOf(place.id) !== -1) ?? [];
         }
     }, [places, value]);
 
@@ -34,7 +35,7 @@ export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteContr
         }
 
         value = newValue.map(number => number.id);
-        onChange(value);
+        onChange(newValue);
     };
 
     return (

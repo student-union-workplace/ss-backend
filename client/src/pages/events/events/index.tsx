@@ -134,7 +134,6 @@ export const Events = () => {
                         </TableHead>
                         <TableBody>
                             {events?.data?.data
-
                                 .map((row: EventData) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.name} sx={{
@@ -149,7 +148,7 @@ export const Events = () => {
                                                     alignItems: 'center',
                                                     gap: '3px',
                                                     cursor: 'pointer'
-                                                }} onClick={() => nav(`${RoutesName.Event}1`)}>
+                                                }} onClick={() => nav(`${RoutesName.Event}${row.id}`)}>
                                                     <Typography
                                                         variant={'subtitle1'}>{row.name}</Typography>
                                                     <OpenInNewIcon fontSize={'small'}/>
@@ -168,8 +167,8 @@ export const Events = () => {
                                                     maxWidth: '130px'
                                                 }}>
                                                     {
-                                                        row.events_managers.map(user => {
-                                                            const label = user.users.name.split(' ')[0] + ' ' + user.users.name.split(' ')[1].split('')[0] + '.'
+                                                        row.managers.map(user => {
+                                                            const label = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].split('')[0] + '.'
                                                             return <Chip label={label}
                                                                          avatar={<Avatar>{"ОР"}</Avatar>}
                                                                          variant={'outlined'} size={'small'}
