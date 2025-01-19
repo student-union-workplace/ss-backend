@@ -89,9 +89,9 @@ model activities {
   updated_at         DateTime         @updatedAt @db.DateTime(6)
   location_id        String?          @db.VarChar(190)
   created_by_user_id String?          @db.VarChar(190)
-  users              users?           @relation(fields: [created_by_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_CREATED_BY_USER")
-  locations          locations?       @relation(fields: [location_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_LOCATION")
-  activity_users     activity_users[]
+  created_by_user    users?           @relation(fields: [created_by_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_CREATED_BY_USER")
+  location           locations?       @relation(fields: [location_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_ACTIVITY_LOCATION")
+  users              activity_users[]
   notifications      notifications[]
 
   @@index([created_by_user_id], map: "FK_ACTIVITY_CREATED_BY_USER")
@@ -99,24 +99,24 @@ model activities {
 }
 
 model events {
-  id               String             @id @default(uuid())
-  name             String?            @db.VarChar(190)
-  description      String?            @db.VarChar(255)
-  date             DateTime?          @db.DateTime(0)
-  is_archived      Boolean?           @default(false)
-  created_at       DateTime           @default(now()) @db.DateTime(6)
-  updated_at       DateTime           @updatedAt @db.DateTime(6)
-  past_event_id    String?            @db.VarChar(190)
-  theme_id         String?            @db.VarChar(190)
-  event_themes     themes?            @relation(fields: [theme_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_THEME")
-  events           events?            @relation("eventsToevents", fields: [past_event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_PREVIOUS_EVENT")
-  other_events     events[]           @relation("eventsToevents")
-  events_locations events_locations[]
-  events_managers  events_managers[]
-  events_users     events_users[]
-  files            files[]
-  notifications    notifications[]
-  tasks            tasks[]
+  id            String             @id @default(uuid())
+  name          String?            @db.VarChar(190)
+  description   String?            @db.VarChar(255)
+  date          DateTime?          @db.DateTime(0)
+  is_archived   Boolean?           @default(false)
+  created_at    DateTime           @default(now()) @db.DateTime(6)
+  updated_at    DateTime           @updatedAt @db.DateTime(6)
+  past_event_id String?            @db.VarChar(190)
+  theme_id      String?            @db.VarChar(190)
+  theme         themes?            @relation(fields: [theme_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_THEME")
+  events        events?            @relation("eventsToevents", fields: [past_event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_PREVIOUS_EVENT")
+  other_events  events[]           @relation("eventsToevents")
+  locations     events_locations[]
+  managers      events_managers[]
+  users         events_users[]
+  files         files[]
+  notifications notifications[]
+  tasks         tasks[]
 
   @@index([past_event_id], map: "fk_past_event_id_idx")
   @@index([theme_id], map: "fk_theme_id_idx")
@@ -187,6 +187,7 @@ model files {
 
 model tasks {
   id            String          @id @default(uuid())
+  name          String?         @db.VarChar(255)
   priority      Int?            @default(3) @db.TinyInt
   description   String?         @db.VarChar(255)
   deadline      DateTime?       @db.DateTime(0)
@@ -196,8 +197,8 @@ model tasks {
   event_id      String?         @db.VarChar(190)
   user_id       String?         @db.VarChar(190)
   notifications notifications[]
-  events        events?         @relation(fields: [event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_TASK")
-  users         users?          @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_USER_TASK")
+  event         events?         @relation(fields: [event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_TASK")
+  user          users?          @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_USER_TASK")
 
   @@index([event_id], map: "FK_EVENT_TASK")
   @@index([user_id], map: "FK_USER_TASK")

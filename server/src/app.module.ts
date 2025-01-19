@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GoogleSheetsModule } from './google-sheets/google-sheets.module';
 import { GoogleDocsModule } from './google-docs/google-docs.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GoogleDocsModule } from './google-docs/google-docs.module';
     AuthModule,
     GoogleSheetsModule,
     GoogleDocsModule,
+    TasksModule,
   ],
 })
 export class AppModule {}

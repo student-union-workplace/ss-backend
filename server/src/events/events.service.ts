@@ -17,29 +17,31 @@ export class EventsService {
         name: createEventDto.name,
         description: createEventDto.description,
         date: createEventDto.date,
-        is_archived: createEventDto.is_archived,
+        is_archived: createEventDto.is_archived
+          ? createEventDto.is_archived
+          : false,
         past_event_id: createEventDto.past_event_id,
         theme_id: createEventDto.theme_id,
       },
     });
-    const eventUsers = createEventDto.event_users
-      ? createEventDto.event_users.map((userId) => ({
+    const eventUsers = createEventDto.users
+      ? createEventDto.users.map((userId) => ({
           event_id: event.id,
           user_id: userId,
         }))
       : [];
 
-    const eventManagers = createEventDto.event_managers.map((userId) => ({
+    const eventManagers = createEventDto.managers.map((userId) => ({
       event_id: event.id,
       user_id: userId,
     }));
 
-    const eventLocations = createEventDto.event_locations.map((locId) => ({
+    const eventLocations = createEventDto.locations.map((locId) => ({
       event_id: event.id,
       location_id: locId,
     }));
 
-    const userNotification = createEventDto.event_users.map((userId) => ({
+    const userNotification = createEventDto.users.map((userId) => ({
       title: 'Вас добавили в мероприятие: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
@@ -47,7 +49,7 @@ export class EventsService {
       event_id: event.id,
     }));
 
-    const managerNotification = createEventDto.event_managers.map((userId) => ({
+    const managerNotification = createEventDto.managers.map((userId) => ({
       title: 'Вы теперь руководитель мероприятия: ' + createEventDto.name,
       description: 'Описание мероприятия: ' + createEventDto.description,
       type: notifications_type.event,
@@ -95,21 +97,26 @@ export class EventsService {
     });
 
     const events = await this.prisma.events.findMany({
-      where: eventWhereCondition,
       include: {
-        events_users: {
+        users: {
           select: {
             users: { select: { id: true, name: true } },
           },
         },
-        events_managers: {
+        managers: {
           select: {
             users: { select: { id: true, name: true } },
           },
         },
-        events_locations: {
+        locations: {
           select: {
             locations: { select: { id: true, name: true } },
+          },
+        },
+        theme: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
@@ -120,41 +127,57 @@ export class EventsService {
       take: +pageOptions.take,
     });
 
+    const transformedEvents = events.map((event) => ({
+      ...event,
+      users: event.users.map((eu) => eu.users),
+      managers: event.managers.map((em) => em.users),
+      locations: event.locations.map((em) => em.locations),
+    }));
+
     const pageMeta = new PageMetaDto({
       pageOptionsDto: pageOptions,
       itemCount,
     });
-    return new PageDto(events, pageMeta);
+
+    return new PageDto(transformedEvents, pageMeta);
   }
 
   async findOne(id: string) {
     const event = await this.prisma.events.findUnique({
       where: { id },
       include: {
-        events_users: {
+        users: {
           select: {
             users: { select: { id: true, name: true } },
           },
         },
-        events_managers: {
+        managers: {
           select: {
             users: { select: { id: true, name: true } },
           },
         },
-        events_locations: {
+        locations: {
           select: {
             locations: { select: { id: true, name: true, address: true } },
           },
         },
-        event_themes: {
+        theme: {
           select: { id: true, name: true },
         },
       },
     });
+
+    const transformedEvent = {
+      ...event,
+      users: event.users.map((eu) => eu.users),
+      managers: event.managers.map((em) => em.users),
+      locations: event.locations.map((em) => em.locations),
+    };
+
     let prevSameEvent = null;
-    if (event.past_event_id) {
+    if (transformedEvent.past_event_id) {
       prevSameEvent = await this.prisma.events.findUnique({
-        where: { id: event.past_event_id },
+        where: { id: transformedEvent.past_event_id },
         select: {
           id: true,
           name: true,
@@ -179,7 +202,7 @@ export class EventsService {
         },*/
       });
     }
-    return { ...event, prev_same_event: prevSameEvent };
+    return { ...transformedEvent, prev_same_event: prevSameEvent };
   }
 
   async update(eventId: string, updateEventDto: UpdateEventDto) {

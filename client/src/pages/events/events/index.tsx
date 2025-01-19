@@ -194,7 +194,7 @@ export const Events = () => {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
+                    rowsPerPageOptions={[3, 5, 10, 25, 100]}
                     count={events?.data?.meta.itemCount}
                     rowsPerPage={rowsPerPage}
                     page={page}
