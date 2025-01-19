@@ -7,19 +7,23 @@ import {
   Param,
   Delete,
   Query,
-  BadRequestException,
+  BadRequestException, Req, UseGuards,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
+import { IRequestWithUser } from '../interfaces/Request.interface';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
+@UseGuards(AuthGuard, RolesGuard)
 @Controller('activities')
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post()
-  create(@Body() createActivityDto: CreateActivityDto) {
-    return this.activitiesService.create(createActivityDto);
+  create(@Body() createActivityDto: CreateActivityDto, @Req() req: IRequestWithUser) {
+    return this.activitiesService.create(createActivityDto, req);
   }
 
   @Get()
@@ -35,8 +39,8 @@ export class ActivitiesController {
     }
     {
       return this.activitiesService.findAll({
-        startDate: startDate ? new Date(parseInt(startDate)) : undefined,
-        endDate: endDate ? new Date(parseInt(endDate)) : undefined,
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
         year: year ? parseInt(year) : undefined,
       });
     }

@@ -14,7 +14,7 @@ export interface IActivities {
   created_by_user_id?: string;
   is_completed?: boolean;
   users: string[];
-  locations?: locations;
+  location?: locations;
   activity_users?: activity_users[];
   notifications?: notifications[];
 }

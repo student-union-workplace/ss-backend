@@ -18,7 +18,7 @@ export class PageOptionsDto {
   @ApiPropertyOptional({ enum: Order, default: Order.ASC })
   @IsEnum(Order)
   @IsOptional()
-  readonly order?: Prisma.SortOrder = Order.ASC;
+  readonly order?: Prisma.SortOrder = Order.DESC;
 
   @ApiPropertyOptional({
     minimum: 1,

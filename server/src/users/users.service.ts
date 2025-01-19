@@ -106,6 +106,7 @@ export class UsersService {
 
     const result = users.map((user) => ({
       ...user,
+      department: user.department[0] ? user.department[0] : {},
       isDepartmentHead:
         departmentHeadMap.get(
           user.department[0] ? user.department[0].id : '',
@@ -147,6 +148,7 @@ export class UsersService {
     });
     return {
       ...user,
+      department: user.department[0] ? user.department[0] : {},
       isDepartmentHead: user.department[0].head_user_id === user.id,
     };
   }

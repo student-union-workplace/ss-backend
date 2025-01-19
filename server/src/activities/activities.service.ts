@@ -3,19 +3,20 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { PrismaService } from '../prisma.service';
 import { notifications_type } from '@prisma/client';
+import { IRequestWithUser } from '../interfaces/Request.interface';
 
 @Injectable()
 export class ActivitiesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createActivityDto: CreateActivityDto) {
+  async create(createActivityDto: CreateActivityDto, req: IRequestWithUser) {
     const activity = await this.prisma.activities.create({
       data: {
         name: createActivityDto.name,
         description: createActivityDto.description,
         date: createActivityDto.date,
         location_id: createActivityDto.location_id,
-        created_by_user_id: createActivityDto.created_by_user_id,
+        created_by_user_id: req.user.id,
         is_completed: createActivityDto.is_completed,
       },
     });
@@ -28,7 +29,7 @@ export class ActivitiesService {
       title: 'Вас добавили к событию: ' + createActivityDto.name,
       description: createActivityDto.description,
       type: notifications_type.activity,
-      date: new Date(),
+      deadline: createActivityDto.date,
       user_id: userId,
       activity_id: activity.id,
     }));
@@ -46,7 +47,6 @@ export class ActivitiesService {
 
   async findAll(params: { startDate?: Date; endDate?: Date; year?: number }) {
     const { startDate, endDate, year } = params;
-
     let dateFilter = {};
 
     if (startDate && endDate) {
@@ -79,7 +79,7 @@ export class ActivitiesService {
   }
 
   async findOne(id: string) {
-    return this.prisma.activities.findUnique({
+    const activity = await this.prisma.activities.findUnique({
       where: { id },
       select: {
         id: true,
@@ -89,7 +89,7 @@ export class ActivitiesService {
         created_at: true,
         updated_at: true,
         is_completed: true,
-        locations: {
+        location: {
           select: {
             id: true,
             name: true,
@@ -99,12 +99,29 @@ export class ActivitiesService {
         },
         users: {
           select: {
+            users: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        created_by_user: {
+          select: {
             id: true,
             name: true,
           },
         },
       },
     });
+
+    return {
+      ...activity,
+      users: activity.users.map((el) => ({
+        ...el.users,
+      })),
+    };
   }
 
   async update(id: string, updateActivityDto: UpdateActivityDto) {
