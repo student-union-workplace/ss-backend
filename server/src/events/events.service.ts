@@ -218,24 +218,25 @@ export class EventsService {
       },
     });
 
-    if (updateEventDto.event_users) {
+    if (updateEventDto.users) {
       await this.prisma.events_users.deleteMany({
         where: { event_id: eventId },
       });
-      const eventUsers = updateEventDto.event_users.map((userId) => ({
+      const eventUsers = updateEventDto.users.map((userId) => ({
         event_id: eventId,
         user_id: userId,
       }));
+      console.log(eventUsers);
       await this.prisma.events_users.createMany({
         data: eventUsers,
       });
     }
 
-    if (updateEventDto.event_managers) {
+    if (updateEventDto.managers) {
       await this.prisma.events_managers.deleteMany({
         where: { event_id: eventId },
       });
-      const eventManagers = updateEventDto.event_managers.map((userId) => ({
+      const eventManagers = updateEventDto.managers.map((userId) => ({
         event_id: eventId,
         user_id: userId,
       }));
@@ -244,11 +245,11 @@ export class EventsService {
       });
     }
 
-    if (updateEventDto.event_locations) {
+    if (updateEventDto.locations) {
       await this.prisma.events_locations.deleteMany({
         where: { event_id: eventId },
       });
-      const eventLocations = updateEventDto.event_locations.map((locId) => ({
+      const eventLocations = updateEventDto.locations.map((locId) => ({
         event_id: eventId,
         location_id: locId,
       }));

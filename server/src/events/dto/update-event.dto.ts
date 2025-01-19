@@ -6,9 +6,9 @@ export class UpdateEventDto extends PartialType(CreateEventDto) {
   description?: string;
   date?: Date;
   is_archived?: boolean;
-  event_managers?: string[];
-  event_users?: string[];
-  event_locations?: string[];
+  managers?: string[];
+  users?: string[];
+  locations?: string[];
   prev_same_event_id?: string;
   theme_id?: string;
   created_at: Date;
