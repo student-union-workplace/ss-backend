@@ -1,9 +1,9 @@
 export type TaskFormValues = {
-    title: string;
-    description: string;
-    deadline: Date | null;
-    user_id: string;
-    status: 'open' | 'at_work' | 'review' | 'closed'
+    name?: string;
+    description?: string;
+    deadline?: string | null;
+    user_id?: string;
+    status?: 'open' | 'at_work' | 'review' | 'closed'
 }
 
 export type TaskData = {

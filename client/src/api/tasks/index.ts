@@ -1,5 +1,5 @@
 import {instance} from "../index.ts";
-import {UserFormValues} from "../../types/users";
+import {TaskFormValues} from "../../types/tasks";
 
 export class TasksApi {
     static get() {
@@ -10,12 +10,12 @@ export class TasksApi {
         return instance.get(`/tasks/${body.id}`);
     }
 
-    static create(body: UserFormValues) {
+    static create(body: TaskFormValues) {
         return instance.post(`/tasks`, body);
     }
 
-    static update(body: {id: string}) {
-        return instance.post(`/tasks/${body.id}`, body);
+    static update(body: {id: string, data: TaskFormValues}) {
+        return instance.patch(`/tasks/${body.id}`, body.data);
     }
 
     static delete(body: {id: string}) {

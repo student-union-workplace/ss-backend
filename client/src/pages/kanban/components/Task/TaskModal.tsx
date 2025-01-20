@@ -1,5 +1,5 @@
 import {Avatar, Box, Chip, IconButton, Modal, Typography} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {format} from "date-fns";
 import {getStatus, getStatusColor} from "../../utils.ts";
 
@@ -26,20 +26,13 @@ const style = {
 type TaskModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    task?: TaskData,
+    task: TaskData,
     id?: string
 }
 
 export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
-    const users = useMemo(() => {
-        return [{name: 'Ксения Попова', id: '1'}, {name: 'Вера Богорад', id: '2'}, {
-            name: 'Максим Живцов',
-            id: '3'
-        }, {name: 'Роман Гареев', id: '4'}]
-    }, []);
-    const user = users.filter((user) => task?.user_id === user.id)[0]
-    const labelChip = user?.name.split(' ')[0] + ' ' + user?.name.split(' ')[1]
-    const labelAvatar = user?.name.split(' ')[0].split('')[0] + user?.name.split(' ')[1].split('')[0]
+    const labelChip = task?.user?.name.split(' ')[0] + ' ' + task?.user?.name.split(' ')[1]
+    const labelAvatar = task?.user?.name?.split(' ')[0]?.split('')[0] + task?.user?.name.split(' ')[1].split('')[0]
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const [realTask, setRealTask] = useState(task)
 
