@@ -1,5 +1,5 @@
 import {Avatar, Box, Divider, IconButton, Typography} from "@mui/material";
-import {getIcons, getStartPhrase, getTitle} from "./utils.tsx";
+import {getIcons, getTitle} from "./utils.tsx";
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import {format} from "date-fns";
 import {ru} from 'date-fns/locale';
@@ -29,7 +29,7 @@ export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) =>
 
         } else {
             setAnchorEl(null)
-            nav(`${RoutesName.Event}1`)
+            nav(`${RoutesName.Event}${item.event_id}`)
         }
     }
 
@@ -69,8 +69,7 @@ export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) =>
                         width: '90%'
                     }}>
                         <Typography sx={{fontWeight: '600', fontSize: '17px'}}>{getTitle(item.type)}</Typography>
-                        <Typography variant={'subtitle1'} sx={{padding: '0', margin: '0'}}>{getStartPhrase(item.type)}<span
-                            style={{fontWeight: 'bold', cursor: 'pointer'}} onClick={handleRedirect}>{item.title}</span></Typography>
+                        <Typography variant={'subtitle1'} style={{ cursor: 'pointer'}} onClick={handleRedirect}>{item.title}</Typography>
                     </Box>
                     <Box sx={{
                         display: 'flex',

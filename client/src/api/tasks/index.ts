@@ -1,9 +1,11 @@
 import {instance} from "../index.ts";
 import {TaskFormValues} from "../../types/tasks";
+import { stringify } from 'qs';
 
 export class TasksApi {
-    static get() {
-        return instance.get(`/tasks`);
+    static get(body: {event_name?: string | null, user_name?: string | null, is_mine?: boolean}) {
+        const queryParams = stringify(body);
+        return instance.get(`/tasks?${queryParams}`);
     }
 
     static getTask(body: {id: string}) {
