@@ -1,5 +1,5 @@
 import {instance} from "../index.ts";
-import {EventFormValues, EventUpdateFormValues} from "../../types/events";
+import {ActivityFormValues} from "../../types/activities";
 
 export class ActivitiesApi {
     static get(body: {year: string}) {
@@ -14,11 +14,11 @@ export class ActivitiesApi {
         return instance.patch(`/activities/${body.id}/changeStatus`);
     }
 
-    static create(body: EventFormValues) {
+    static create(body: ActivityFormValues) {
         return instance.post(`/activities`, body);
     }
 
-    static update(body: {id : string, data: EventUpdateFormValues}) {
+    static update(body: {id : string, data: ActivityFormValues}) {
         return instance.patch(`/activities/${body.id}`, body.data);
     }
 

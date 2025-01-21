@@ -6,8 +6,12 @@ import {useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
 
+type CalendarProps = {
+    open: boolean;
+    setOpen: (open: boolean) => void;
+}
 
-export const Calendar = () => {
+export const Calendar = ({ setOpen}: CalendarProps) => {
 
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
@@ -35,8 +39,6 @@ export const Calendar = () => {
          }
      }, [activities?.data, events?.data?.data])
 
-    console.log(INITIAL_EVENTS)
-
     const isLoading = isLoadingEvents || isLoadingActivities
 
     return (!isLoading && <FullCalendar
@@ -60,9 +62,7 @@ export const Calendar = () => {
         customButtons={{
             addActivity: {
                 text: 'Добавить событие',
-                click: function() {
-                    alert('clicked the custom button!');
-                },
+                click: () => setOpen(true),
 
             }
         }}
@@ -70,20 +70,6 @@ export const Calendar = () => {
             left: 'dayGridMonth,timeGridWeek,timeGridDay',
             center: 'title',
             right: 'prev,next addActivity'
-        }}
-        views={{
-            dayGridMonth: { // name of view
-                titleFormat: {year: 'numeric', month: '2-digit', day: '2-digit'}
-                // other view-specific options here
-            },
-            timeGridWeek: { // name of view
-                titleFormat: {year: 'numeric', month: '2-digit', day: '2-digit'}
-                // other view-specific options here
-            },
-            timeGridDay: { // name of view
-                titleFormat: {year: 'numeric', month: '2-digit', day: '2-digit'}
-                // other view-specific options here
-            }
         }}
     />)
 }
