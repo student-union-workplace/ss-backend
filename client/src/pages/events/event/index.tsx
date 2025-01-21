@@ -13,7 +13,6 @@ import {CustomControl} from "../../../components/controls/CustomControl";
 import {PlaceControl} from "../addEvent/components/PlaceControl.tsx";
 import {ResponsibleControl} from "../addEvent/components/ResponsibleControl.tsx";
 import {TeamControl} from "../addEvent/components/TeamControl.tsx";
-import {SwitchControl} from "../../../components/controls/SwitchControl.tsx";
 import {GoogleDocument} from "./components/GoogleDocument.tsx";
 import {OtherDocument} from "./components/OtherDocument.tsx";
 import {AddDocumentModal} from "./components/AddDocumentModal.tsx";
@@ -21,6 +20,7 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {EventsApi} from "../../../api/events";
 import {format} from "date-fns";
 import {useParams} from "react-router-dom";
+import Switch from "@mui/material/Switch";
 
 export const Event = () => {
     const queryClient = useQueryClient();
@@ -105,6 +105,16 @@ export const Event = () => {
             queryClient.invalidateQueries('events');
         }
     });
+
+    const changeStatusMutation = useMutation(EventsApi.changeStatus, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('event');
+        }
+    });
+
+    const changeStatusHandler = async() => {
+        await changeStatusMutation.mutateAsync({id: eventId as string});
+    }
 
     const updateTitleHandler = async () => {
         try {
@@ -218,6 +228,7 @@ export const Event = () => {
         }
     };
 
+    console.log(watch('is_archived'))
     return (
         isLoading ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <CircularProgress/>
@@ -237,8 +248,9 @@ export const Event = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <SwitchControl name={'status'} control={control} label={''}/>
-                <Typography>{watch('is_archived') ? 'В работе' : 'Завершено'}</Typography>
+                <Switch checked={watch('is_archived')}
+                        onChange={() => changeStatusHandler()}/>
+                <Typography>{watch('is_archived') ? 'Завершено' : 'В работе'}</Typography>
             </Box>
 
         </Box>

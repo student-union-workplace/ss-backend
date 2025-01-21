@@ -10,6 +10,10 @@ export class EventsApi {
         return instance.get(`/events/${body.id}`);
     }
 
+    static changeStatus(body: {id: string}) {
+        return instance.patch(`/events/${body.id}/changeStatus`);
+    }
+
     static create(body: EventFormValues) {
         return instance.post(`/events`, body);
     }

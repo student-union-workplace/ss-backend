@@ -32,7 +32,7 @@ export const Column = ({title, color, tasks, titleColor}: ColumnProps) => {
                     color: titleColor,
                     fontSize: '14px',
                     fontWeight: '500'
-                }}>{title}{`(${tasks?.length})`}</Typography>
+                }}>{title}{`(${tasks?.length ?? '0'})`}</Typography>
             </Paper>
             <Box sx={{
                 display: 'flex',

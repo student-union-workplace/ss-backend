@@ -40,7 +40,7 @@ export const Events = () => {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -70,6 +70,15 @@ export const Events = () => {
             sorting: false,
             filter: true
         }]
+    }, [])
+
+    const themeOptions = useMemo(() => {
+        return [
+            {label: 'Слет', value: '0111a2d3-d3e6-11ef-aa2a-50ebf6992398'},
+            {label: 'Квиз', value: '94a1eb6c-d3e0-11ef-aa2a-50ebf6992398'},
+            {label: 'Квест', value: 'a15ad887-d3e0-11ef-aa2a-50ebf6992398'},
+            {label: 'Знакомка', value: 'ac4cf8f7-d3e0-11ef-aa2a-50ebf6992398'},
+        ]
     }, [])
 
     return (
@@ -139,7 +148,7 @@ export const Events = () => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.name} sx={{
                                             "& .MuiTableRow-root:hover": {
                                                 backgroundColor: "primary.light"
-                                            }
+                                            },
                                         }}>
                                             <TableCell>
                                                 <Box sx={{
@@ -155,7 +164,7 @@ export const Events = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell><Typography
-                                                variant={'subtitle1'}>{row.theme_id}</Typography></TableCell>
+                                                variant={'subtitle1'}>{themeOptions.filter(theme => theme.value === row.theme_id)[0].label}</Typography></TableCell>
                                             <TableCell align={'left'}><Typography
                                                 variant={'subtitle1'}>{fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru})}</Typography></TableCell>
                                             <TableCell>
@@ -178,9 +187,9 @@ export const Events = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip label={row.is_archived ? 'В работе': 'Архив'} sx={{
-                                                    backgroundColor: getChipStatusColor(row.is_archived ? 'В работе': 'Архив'),
-                                                    color: getChipFontColor(row.is_archived ? 'В работе': 'Архив')
+                                                <Chip label={row.is_archived ? 'Архив': 'В работе'} sx={{
+                                                    backgroundColor: getChipStatusColor(row.is_archived ? 'Архив': 'В работе'),
+                                                    color: getChipFontColor(row.is_archived  ? 'Архив': 'В работе')
                                                 }}
                                                       size={'small'}/>
                                             </TableCell>
