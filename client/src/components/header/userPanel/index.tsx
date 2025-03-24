@@ -32,8 +32,8 @@ export const UserPanel = () => {
             <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '7px'}}>
 
                 <Avatar sx={{bgcolor: '#1DB8CA', width: '35px', height: '35px', cursor: 'pointer'}}
-                        onClick={() => nav(`${RoutesName.User}1`)}>ДБ</Avatar>
-                <Typography variant={'body2'} sx={{fontSize: '24px'}}>Даша Б.</Typography>
+                        onClick={() => nav(`${RoutesName.User}1`)}>РГ</Avatar>
+                <Typography variant={'body2'} sx={{fontSize: '24px'}}>Рома Г.</Typography>
             </Box>
             <Notifications open={open} anchorEl={anchorEl} setAnchorEl={setAnchorEl}/>
         </Box>

@@ -1,11 +1,13 @@
-import {Avatar, Box, Chip, IconButton, Modal, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {Avatar, Box, Chip, CircularProgress, IconButton, Modal, Typography} from "@mui/material";
+import { useState} from "react";
 import {format} from "date-fns";
 import {getStatus, getStatusColor} from "../../utils.ts";
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import {AddTaskModal} from "../AddTask/AddTaskModal.tsx";
 import {TaskData} from "../../../../types/tasks";
+import {useQuery} from "react-query";
+import {TasksApi} from "../../../../api/tasks";
 
 const style = {
     position: 'absolute',
@@ -31,10 +33,11 @@ type TaskModalProps = {
 }
 
 export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
-    const labelChip = task?.user?.name.split(' ')[0] + ' ' + task?.user?.name.split(' ')[1]
-    const labelAvatar = task?.user?.name?.split(' ')[0]?.split('')[0] + task?.user?.name.split(' ')[1].split('')[0]
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const [realTask, setRealTask] = useState(task)
+    const labelChip = realTask?.user?.name.split(' ')[0] + ' ' + realTask?.user?.name.split(' ')[1]
+    const labelAvatar = realTask?.user?.name?.split(' ')[0]?.split('')[0] + realTask?.user?.name.split(' ')[1].split('')[0]
+
 
     const handleClose = () => {
         setOpen(false)
@@ -45,21 +48,34 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
         /*setOpen(false)*/
     }
 
-    useEffect(() => {
-        if (id) {
-            setRealTask({
-                id: '1',
-                status: 'open',
-                title: 'Сделать презу',
-                user_id: '3',
-                deadline: new Date('12-10-2024 11:13:00'),
-                description: "Нужно создать презу где есть 18 слайдов"
-            })
-        }
-    }, [id]);
+    const { isLoading } = useQuery('task', () => TasksApi.getTask({id: id}), {
+        onSuccess: res => {
+            {
+                setRealTask({
+                    id: res.data.id,
+                    status: res.data.status,
+                    name: res.data.name,
+                    user_id: res.data.user.id,
+                    event_id: res.data.event_id,
+                    description: res.data.description,
+                    deadline: res.data.deadline,
+                    created_at: res.data.created_at,
+                    event: res.data.event,
+                    priority: res.data.priority,
+                    updated_at: res.data.updated_at,
+                    user: res.data.user
+                });
+            }
+        },
+        refetchOnWindowFocus: false,
+        enabled: !!id
+    });
+
     return (
         <Modal open={open} onClose={handleClose} key={realTask?.id} disableEnforceFocus>
-            <Box sx={style}>
+            {isLoading ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <CircularProgress/>
+            </Box> : <Box sx={style}>
                 <Box
                     sx={{
                         display: 'flex',
@@ -91,7 +107,7 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Описание задачи</Typography>
                         <Box sx={{maxHeight: '100px', overflowY: 'auto'}}>
                             <Typography
-                                        color={'textPrimary'}>{realTask?.description ?? '-'}</Typography>
+                                color={'textPrimary'}>{realTask?.description ?? '-'}</Typography>
                         </Box>
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: '5px'}}>
@@ -114,7 +130,7 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
                     </Box>
                     <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} task={realTask}/>
                 </Box>
-            </Box>
+            </Box>}
         </Modal>
     )
 }

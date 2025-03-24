@@ -33,7 +33,7 @@ const style = {
 type AddActivityModal = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    activity?: ActivityData,
+    activity?: ActivityData;
 }
 
 export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) => {
@@ -114,7 +114,6 @@ export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) =>
             })
         }
     }, [reset, activity]);
-
 
     return (
         <Modal

@@ -13,7 +13,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     --body1: 24px;
-    --primary: #1DB8CA
+    --primary: #1DB8CA;
+    --secondary: #EBFDFF
 }
 
 a {

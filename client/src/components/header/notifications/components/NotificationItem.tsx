@@ -18,6 +18,7 @@ export type NotificationItemProps = {
 
 export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) => {
     const [openTaskModal, setOpenTaskModal] = useState(false)
+    const [taskId, setTaskId] = useState(null)
     const nav = useNavigate()
     const queryClient = useQueryClient();
 
@@ -26,7 +27,7 @@ export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) =>
         if (item.type === 'task' || item.type === 'deadline') {
             nav(RoutesName.Kanban)
             setOpenTaskModal(true)
-
+            setTaskId(item.task_id)
         } else {
             setAnchorEl(null)
             nav(`${RoutesName.Event}${item.event_id}`)
@@ -89,7 +90,7 @@ export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) =>
             </Box>
             <Divider orientation="horizontal" flexItem
                      sx={{borderWidth: '1px',}}/>
-            <TaskModal open={openTaskModal} setOpen={setOpenTaskModal}  id={'1'}/>
+            <TaskModal open={openTaskModal} setOpen={setOpenTaskModal} id={taskId}/>
         </Box>
 
     )

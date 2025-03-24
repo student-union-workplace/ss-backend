@@ -1,10 +1,13 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import multiMonthPlugin from '@fullcalendar/multimonth'
 import {useQuery} from "react-query";
 import {EventsApi} from "../../../api/events";
 import {useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
+import './style.css'
 
 type CalendarProps = {
     open: boolean;
@@ -28,11 +31,11 @@ export const Calendar = ({ setOpen}: CalendarProps) => {
      const INITIAL_EVENTS = useMemo(() => {
          if (events?.data?.data && activities?.data) {
              const eventsData = events?.data?.data?.map((event: EventData) => (
-                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', borderColor: '#1DB8CA', display: 'block'}
+                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', borderColor: '#1DB8CA', display: 'block', type: 'activity'}
              ))
 
              const activitiesData = activities?.data?.map((event: EventData) => (
-                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA'}
+                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', type: 'event'}
              ))
 
              return [...eventsData, ...activitiesData]
@@ -42,32 +45,39 @@ export const Calendar = ({ setOpen}: CalendarProps) => {
     const isLoading = isLoadingEvents || isLoadingActivities
 
     return (!isLoading && <FullCalendar
-        plugins={[ dayGridPlugin ]}
+        plugins={[ dayGridPlugin, timeGridPlugin, multiMonthPlugin ]}
         initialView="dayGridMonth"
         height={'35rem'}
         locale={'ru'}
+        now={new Date()}
+        nowIndicator={true}
+        initialDate={new Date()}
+        timeZone={'local'}
         firstDay={1}
         editable={true}
         selectable={true}
         selectMirror={true}
         dayMaxEvents={true}
         initialEvents={INITIAL_EVENTS}
+        /*eventClick={(info) => console.log(info.event.id)}*/
+        eventClick={() => setOpen(true)}
         buttonText={{
             today:    'Сегодня',
             month:    'Месяц',
             week:     'Неделя',
             day:      'День',
-            list:     'Лист'
+            year:       'Год',
+            list:     'Лист',
+            'all-day': ''
         }}
         customButtons={{
             addActivity: {
                 text: 'Добавить событие',
                 click: () => setOpen(true),
-
             }
         }}
         headerToolbar={{
-            left: 'dayGridMonth,timeGridWeek,timeGridDay',
+            left: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay',
             center: 'title',
             right: 'prev,next addActivity'
         }}
