@@ -11,5 +11,5 @@ export class FilterTasksDto {
 
   @IsBoolean()
   @IsOptional()
-  is_mine?: boolean;
+  is_mine?: string;
 }
