@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {CustomControl} from "../../../../components/controls/CustomControl";
 import {DateControl} from "./DateControl.tsx";
 import Button from "@mui/material/Button";
-import {useEffect, useMemo} from "react";
+import { useMemo} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import { ActivityFormValues} from "../../../../types/activities";
 import {ADD_ACTIVITY_INITIAL_VALUE} from "./constants.ts";
@@ -42,6 +42,11 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const queryClient = useQueryClient();
     const role = DecodedJwt()?.role;
 
+    if (role === Role.Old) {
+        setOpen(false)
+    }
+
+
     const handleClose = () => {
         setOpen(false)
         reset({})
@@ -53,6 +58,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const { isLoading } = useQuery(['activity', idActivity], () => ActivitiesApi.getActivity({id: idActivity as string}), {
         onSuccess: res => {
             {
+                reset({})
                 reset({
                     name: res.data.name,
                     description: res.data.description,
@@ -69,12 +75,14 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const createMutation = useMutation(ActivitiesApi.create, {
         onSuccess: () => {
             queryClient.invalidateQueries('activities');
+            queryClient.removeQueries('activities');
         }
     });
 
     const updateMutation = useMutation(ActivitiesApi.update, {
         onSuccess: () => {
             queryClient.invalidateQueries('activities');
+            queryClient.removeQueries('activities');
         }
     });
 
@@ -113,7 +121,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     name: values.name,
                     description: values.description,
                     date: values.date,
-                    users: values.users.map((user: UserData) => user.id),
+                    users: values.users?.map((user: UserData) => user.id),
                     location_id: values.location_id,
                 });
 
@@ -128,15 +136,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
         }
     };
 
-    useEffect(() => {
-        if (!idActivity) {
-            reset({})
-            if (role === Role.Admin) {
-                setOpen(false)
-            }
 
-        }
-    }, [idActivity, reset, role, setOpen])
 
     return (
         <Modal

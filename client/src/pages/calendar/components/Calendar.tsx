@@ -10,6 +10,8 @@ import {ActivitiesApi} from "../../../api/activities";
 import './style.css'
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
+import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
+import {Role} from "../../../enums/roles";
 type CalendarProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -19,6 +21,7 @@ type CalendarProps = {
 
 export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
     const nav = useNavigate();
+    const role = DecodedJwt()?.role;
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
         () => EventsApi.get({page: 1, take: 10000}),
@@ -64,8 +67,11 @@ export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
         initialEvents={INITIAL_EVENTS}
         eventClick={(info) => {
             if (info.event.extendedProps.type === 'activity') {
-                setOpen(true);
-                setIdActivity(info.event.id)
+                if (role !== Role.Old ) {
+                    setOpen(true);
+                    setIdActivity(info.event.id)
+                }
+
             } else {
                 nav(`${RoutesName.Event}${info.event.id}`)
             }

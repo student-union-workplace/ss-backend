@@ -21,8 +21,11 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
         {refetchOnWindowFocus: false}
     );
 
-    console.log(value)
     const usersValues = useMemo(() => {
+        if (!value) {
+            return []
+        }
+
         if (users?.data?.data) {
             return users?.data?.data.filter((user: User) => value?.map((val) => val.id).indexOf(user.id) !== -1) ?? [];
         }
@@ -38,7 +41,7 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
     };
 
     const handleDelete = (id: string) => {
-        value = value.filter((value) => value !== id)
+        value = value?.filter((value) => value !== id)
         onChange(value)
     }
 
