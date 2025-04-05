@@ -28,11 +28,11 @@ jobs:
             cd server
             npm install
             npx prisma generate
-            npm build
+            npm run build
             pm2 restart backend
 
             cd ../client
             npm install
-            npm build
+            npm run build
             pm2 restart frontend
           EOF
