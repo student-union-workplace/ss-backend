@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup SSH
@@ -19,20 +19,40 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VM_SSH_KEY }}
 
-      - name: Deploy to server
+      - name: Deploy project on remote server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            echo "Switching to project directory"
             cd ~/student_union_workplace
+
+            echo "PM2: Installing"
+            npm install -g pm2
+
+            echo "Pulling latest changes"
             git pull origin main
 
-            cd server
+            echo "Setting up environment"
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            nvm use 20.15.1
+
+            echo "Backend: installing and building"
+            cd backend
             npm install
             npx prisma generate
             npm run build
-            pm2 restart backend
 
+            echo "Restarting backend with PM2"
+            pm2 restart backend || pm2 start dist/main.js --name backend
+
+            echo "Frontend: installing and building"
             cd ../client
             npm install
             npm run build
-            pm2 restart frontend
+
+            echo "Restarting frontend with PM2"
+            pm2 delete frontend || true
+            pm2 serve dist 3000 --name frontend
+
+            echo "✅ Deployment finished"
           EOF
