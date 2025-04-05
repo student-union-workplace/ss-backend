@@ -1,0 +1,38 @@
+name: Deploy to VM
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            cd ~/student_union_workplace
+            git pull origin main
+
+            cd server
+            npm install
+            npx prisma generate
+            npm build
+            pm2 restart backend
+
+            cd ../client
+            npm install
+            npm build
+            pm2 restart frontend
+          EOF
