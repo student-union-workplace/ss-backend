@@ -25,7 +25,7 @@ export const PlaceControl = ({value, onChange, onBlur, label}: AutocompleteContr
     console.log(value)
     const placesValues = useMemo(() => {
         if (places?.data) {
-            return places.data.filter((place: LocationData) => value.map((val) => val.id).indexOf(place.id) !== -1) ?? [];
+            return places.data.filter((place: LocationData) => value?.map((val) => val.id).indexOf(place.id) !== -1) ?? [];
         }
     }, [places, value]);
 

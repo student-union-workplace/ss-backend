@@ -32,7 +32,7 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
             anchorEl={anchorEl}
         >
             {!isLoading && <Box sx={{paddingBlock: '10px', width: '450px', maxHeight: '270px', overflowY: 'auto'}}>
-                {notificationsData && notificationsData.data.map((item: Notification) => {
+                {notificationsData && notificationsData?.data?.map((item: Notification) => {
                     return <NotificationItem item={item} key={item.title} setAnchorEl={setAnchorEl}/>
                 })}
             </Box>}

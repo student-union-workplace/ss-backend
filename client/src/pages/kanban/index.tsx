@@ -57,7 +57,7 @@ export const KanbanPage = () => {
                         setEventName(newValue);
                         console.log(newValue)
                     }}
-                    options={events?.data?.data?.map(event => event.name)}
+                    options={events?.data?.data?.map(event => event.name) ?? []}
                     sx={{width: '350px'}}
                     /*getOptionLabel={(option: EventData) => option?.name}*/
                     value={eventName}
@@ -82,19 +82,19 @@ export const KanbanPage = () => {
                     задачу</Button>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
-                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'open')}
+                <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'open')}
                         title={'Открыта'} titleColor={'#069AAB'} color={'#1DB8CA'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'at_work')}
+                <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'at_work')}
                         title={'В работе'} titleColor={'#7E1AB0'} color={'#AF52DE'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'review')}
+                <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'review')}
                         title={'На проверке'} titleColor={'#CC7C0B'} color={'#FF9500'}/>
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px'}}/>
-                <Column tasks={tasks?.data.filter((task: TaskData) => task.status === 'closed')}
+                <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'closed')}
                         title={'Выполнена'} titleColor={'#01AF2D'} color={'#34C759'}/>
             </Box>
             <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal}/>

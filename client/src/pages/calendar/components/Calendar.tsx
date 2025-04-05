@@ -4,18 +4,21 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import {useQuery} from "react-query";
 import {EventsApi} from "../../../api/events";
-import {useMemo} from "react";
+import { useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
 import './style.css'
-
+import {useNavigate} from "react-router-dom";
+import {RoutesName} from "../../../enums/routes";
 type CalendarProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
+    idActivity?: string | null;
+    setIdActivity: (idActivity: string | null) => void;
 }
 
-export const Calendar = ({ setOpen}: CalendarProps) => {
-
+export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
+    const nav = useNavigate();
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
         () => EventsApi.get({page: 1, take: 10000}),
@@ -31,11 +34,11 @@ export const Calendar = ({ setOpen}: CalendarProps) => {
      const INITIAL_EVENTS = useMemo(() => {
          if (events?.data?.data && activities?.data) {
              const eventsData = events?.data?.data?.map((event: EventData) => (
-                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', borderColor: '#1DB8CA', display: 'block', type: 'activity'}
+                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', borderColor: '#1DB8CA', display: 'block', type: 'event'}
              ))
 
              const activitiesData = activities?.data?.map((event: EventData) => (
-                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', type: 'event'}
+                 {id: event.id, title: event.name, start: new Date(event.date), backgroundColor: '#1DB8CA', type: 'activity'}
              ))
 
              return [...eventsData, ...activitiesData]
@@ -59,8 +62,14 @@ export const Calendar = ({ setOpen}: CalendarProps) => {
         selectMirror={true}
         dayMaxEvents={true}
         initialEvents={INITIAL_EVENTS}
-        /*eventClick={(info) => console.log(info.event.id)}*/
-        eventClick={() => setOpen(true)}
+        eventClick={(info) => {
+            if (info.event.extendedProps.type === 'activity') {
+                setOpen(true);
+                setIdActivity(info.event.id)
+            } else {
+                nav(`${RoutesName.Event}${info.event.id}`)
+            }
+        }}
         buttonText={{
             today:    'Сегодня',
             month:    'Месяц',

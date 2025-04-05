@@ -1,4 +1,4 @@
-import {Box, Modal, Typography} from "@mui/material";
+import {Box, CircularProgress, Modal, Typography} from "@mui/material";
 import {TextInput} from "../../../../components/controls/TextInput.tsx";
 import {useForm} from "react-hook-form";
 import {CustomControl} from "../../../../components/controls/CustomControl";
@@ -6,7 +6,7 @@ import {DateControl} from "./DateControl.tsx";
 import Button from "@mui/material/Button";
 import {useEffect, useMemo} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
-import {ActivityData, ActivityFormValues} from "../../../../types/activities";
+import { ActivityFormValues} from "../../../../types/activities";
 import {ADD_ACTIVITY_INITIAL_VALUE} from "./constants.ts";
 import {TeamControl} from "./TeamControl.tsx";
 import {AutocompleteInput} from "../../../../components/controls/AutocompleteInput.tsx";
@@ -14,6 +14,8 @@ import {LocationsApi} from "../../../../api/locations";
 import {LocationData} from "../../../../types/locations";
 import {ActivitiesApi} from "../../../../api/activities";
 import {UserData} from "../../../../types/users";
+import {DecodedJwt} from "../../../../utils/jwt/DecodedJwt.tsx";
+import {Role} from "../../../../enums/roles";
 
 const style = {
     position: 'absolute',
@@ -33,16 +35,35 @@ const style = {
 type AddActivityModal = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    activity?: ActivityData;
+    idActivity?: string | null;
 }
 
-export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) => {
+export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) => {
     const queryClient = useQueryClient();
+    const role = DecodedJwt()?.role;
+
     const handleClose = () => {
         setOpen(false)
+        reset({})
     }
     const {control, reset, handleSubmit} = useForm<ActivityFormValues>({
         defaultValues: ADD_ACTIVITY_INITIAL_VALUE,
+    });
+
+    const { isLoading } = useQuery(['activity', idActivity], () => ActivitiesApi.getActivity({id: idActivity as string}), {
+        onSuccess: res => {
+            {
+                reset({
+                    name: res.data.name,
+                    description: res.data.description,
+                    date: res.data.date,
+                    location_id: res.data.location.id,
+                    users: res.data.users,
+                });
+            }
+        },
+        refetchOnWindowFocus: false,
+        enabled: !!idActivity
     });
 
     const createMutation = useMutation(ActivitiesApi.create, {
@@ -71,20 +92,21 @@ export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) =>
 
     const createHandler = async (values: ActivityFormValues) => {
         try {
-            if (activity) {
+            if (idActivity) {
                 const response = await updateMutation.mutateAsync({
-                    id: activity.id,
+                    id: idActivity,
                     data: {
                         name: values.name,
                         description: values.description,
                         date: values.date,
-                        users: values.users,
+                        users: values.users.map((user: UserData) => user.id),
                         location_id: values.location_id,
                     }
                 });
 
                 if (response.status === 200) {
                     setOpen(false)
+                    reset({})
                 }
             } else {
                 const response = await createMutation.mutateAsync({
@@ -97,6 +119,7 @@ export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) =>
 
                 if (response.status === 201) {
                     setOpen(false)
+                    reset({})
                 }
             }
 
@@ -106,23 +129,26 @@ export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) =>
     };
 
     useEffect(() => {
-        if (activity) {
-            reset({
-                id: activity.id,
-                name: activity.name,
-                date: activity.date,
-            })
+        if (!idActivity) {
+            reset({})
+            if (role === Role.Admin) {
+                setOpen(false)
+            }
+
         }
-    }, [reset, activity]);
+    }, [idActivity, reset, role, setOpen])
 
     return (
         <Modal
             open={open}
             onClose={handleClose}
         >
-            <form onSubmit={handleSubmit(createHandler)}>
+            {isLoading ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <CircularProgress />
+                </Box>
+            ) : <form onSubmit={handleSubmit(createHandler)}>
                 <Box sx={style}>
-
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -172,17 +198,18 @@ export const AddActivityModal = ({open, setOpen, activity}: AddActivityModal) =>
                                     control={control}
                                     Component={PlaceControl}
                                 />*/}
-                                <AutocompleteInput name={'location_id'} label={'Место'} control={control} options={placeOptions}/>
+                                <AutocompleteInput name={'location_id'} label={'Место'} control={control}
+                                                   options={placeOptions}/>
                             </Box>
 
                         </Box>
 
                         <Button variant={'contained'} sx={{width: '100%'}}
-                                type={'submit'}>{activity ? 'Сохранить' : 'Создать'}</Button>
+                                type={'submit'}>{idActivity ? 'Сохранить' : 'Создать'}</Button>
                     </Box>
 
-        </Box>
-            </form>
-</Modal>
-)
+                </Box>
+            </form>}
+        </Modal>
+    );
 }

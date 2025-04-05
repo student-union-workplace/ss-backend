@@ -9,6 +9,11 @@ const queryClient = new QueryClient();
 
 export const Header = () => {
     const navigate = useNavigate()
+    const auth = !!localStorage.getItem('token')
+
+    if (!auth) {
+        return null;
+    }
     return (
         <QueryClientProvider client={queryClient}><Box className={'content'} sx={{
             display: 'flex',

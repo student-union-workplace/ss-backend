@@ -28,6 +28,8 @@ import {getChipFontColor, getChipStatusColor} from "./utils.ts";
 import {useQuery} from "react-query";
 import {EventsApi} from "../../../api/events";
 import {EventData} from "../../../types/events";
+import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
+import {Role} from "../../../enums/roles";
 
 export const Events = () => {
     const [page, setPage] = useState(0);
@@ -36,6 +38,7 @@ export const Events = () => {
     const nav = useNavigate()
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
+    const role = DecodedJwt()?.role;
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -96,9 +99,9 @@ export const Events = () => {
                             <SearchIcon/>
                         </InputAdornment>
                 }}/>
-                <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '210px'}}
-                        onClick={() => nav(RoutesName.AddEvent)}>Создать
-                    мероприятие</Button>
+                { role !== Role.Old && <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '210px'}}
+                         onClick={() => nav(RoutesName.AddEvent)}>Создать
+                    мероприятие</Button>}
             </Box>
             {isLoading ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

@@ -6,7 +6,7 @@ export class ActivitiesApi {
         return instance.get(`/activities?year=${body.year}`);
     }
 
-    static getEvent(body: {id: string}) {
+    static getActivity(body: {id: string}) {
         return instance.get(`/activities/${body.id}`);
     }
 
@@ -19,7 +19,13 @@ export class ActivitiesApi {
     }
 
     static update(body: {id : string, data: ActivityFormValues}) {
-        return instance.patch(`/activities/${body.id}`, body.data);
+        return instance.patch(`/activities/${body.id}`, {
+            date: body.data.date,
+            name: body.data.name,
+            description: body.data.description,
+            location_id: body.data.location_id,
+            users: body.data.users,
+        });
     }
 
     static delete(body: {id: string}) {

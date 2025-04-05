@@ -7,8 +7,6 @@ import {useValidation} from "./use-validation.ts";
 import {TextInput} from "../../../components/controls/TextInput.tsx";
 import {PasswordInput} from "../../../components/controls/PasswordInput.tsx";
 import Button from "@mui/material/Button";
-import {useNavigate} from "react-router-dom";
-import {RoutesName} from "../../../enums/routes";
 import {useState} from "react";
 import {ErrorSnackbar} from "../../../components/snackbars/ErrorSnackbar.tsx";
 import axios from "axios";
@@ -16,26 +14,22 @@ import {BASE_URL} from "../../../api";
 
 export const LoginPage = () => {
     const validation = useValidation();
-    const navigate = useNavigate();
     const {handleSubmit, control} = useForm<Login>({
         defaultValues: LOGIN_INITIAL_VALUES,
         resolver: yupResolver(validation)
     });
-    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true)
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
 
     const loginHandler = async (values: Login) => {
         try {
-            console.log(values)
             const response = await axios.post(`${BASE_URL}/auth/login`, {
                 email: values.email,
                 password: values.password
             })
+            console.log(response)
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.access_token)
-
-                setTimeout(() => {
-                    navigate(RoutesName.Kanban)
-                }, 1000)
+                window.location.reload();
             }
         } catch (error) {
             console.log(error)

@@ -6,10 +6,14 @@ import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import './style.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export const Navbar = () => {
     const [activeItem, setActiveItem] = useState<RoutesName>(location.pathname as RoutesName)
+
+    useEffect(() => {
+        setActiveItem(location.pathname as RoutesName)
+    }, [location.pathname])
 
     return (
         <Box className={'menu'}>

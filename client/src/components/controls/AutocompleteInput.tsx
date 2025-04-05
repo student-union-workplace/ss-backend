@@ -39,7 +39,7 @@ export const AutocompleteInput = memo<AutocompleteProps>(
             disablePortal
             fullWidth
             size={'small'}
-            value={options.find(item => item.value == value) ?? null}
+            value={options?.find(item => item.value == value) ?? null}
             options={options}
             onChange={(_, newValue) => {
               onChange(newValue?.value ?? null);

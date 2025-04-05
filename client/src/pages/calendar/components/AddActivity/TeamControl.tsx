@@ -21,9 +21,10 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
         {refetchOnWindowFocus: false}
     );
 
+    console.log(value)
     const usersValues = useMemo(() => {
         if (users?.data?.data) {
-            return users?.data?.data.filter((user: User) => value.map((val) => val.id).indexOf(user.id) !== -1) ?? [];
+            return users?.data?.data.filter((user: User) => value?.map((val) => val.id).indexOf(user.id) !== -1) ?? [];
         }
     }, [users, value]);
 

@@ -21,11 +21,14 @@ import {EventsApi} from "../../../api/events";
 import {format} from "date-fns";
 import {useParams} from "react-router-dom";
 import Switch from "@mui/material/Switch";
+import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
+import {Role} from "../../../enums/roles";
 
 export const Event = () => {
     const queryClient = useQueryClient();
     const params = useParams();
     const eventId = params.id;
+    const role = DecodedJwt()?.role;
 
     const [isEditTitle, setIsEditTitle] = useState(false)
     const [isEditLastEvent, setIsEditLastEvent] = useState(false)
@@ -263,7 +266,7 @@ export const Event = () => {
             paddingTop: '40px'
         }}>
             <Box sx={{display: 'flex', flexDirection: 'column', gap: '40px', minWidth: '365px'}}>
-                {isEditTitle ? <TextInput name={'name'} control={control} label={'Название мероприятия'}
+                {isEditTitle && role !== Role.Old ? <TextInput name={'name'} control={control} label={'Название мероприятия'}
                                           onBlur={() => updateTitleHandler()}/> : <Box>
                     <Typography variant={'subtitle2'} color={'textSecondary'}>Название</Typography>
                     <Typography
@@ -277,7 +280,7 @@ export const Event = () => {
                     <Typography variant={'subtitle2'} color={'textSecondary'}>Канбан-доска</Typography>
                     <Button variant={'contained'} size={'small'} color={'primary'}>Перейти</Button>
                 </Box>
-                {isEditLastEvent ?
+                {isEditLastEvent && role !== Role.Old  ?
                     <AutocompleteInput name={'past_event_id'} label={'Прошлогоднее мероприятие'} control={control}
                                        options={lastEventOptions} onBlur={() => updatePastEventHandler()}/>
                     : <Box>
@@ -296,7 +299,7 @@ export const Event = () => {
                         <Typography>Тема была захватывающей</Typography>
                     </Box>
                 }
-                {isEditTheme ? <AutocompleteInput name={'theme_id'} label={'Тема мероприятия*'} control={control}
+                {isEditTheme && role !== Role.Old  ? <AutocompleteInput name={'theme_id'} label={'Тема мероприятия*'} control={control}
                                                   options={themeOptions} onBlur={() => updateThemeHandler()}/>
                     : <Box>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Тема мероприятия</Typography>
@@ -304,7 +307,7 @@ export const Event = () => {
                                     onDoubleClick={() => setIsEditTheme(true)}>{themeOptions.filter((theme) => theme.value === watch('theme_id'))[0]?.label ?? '-'}</Typography>
                     </Box>
                 }
-                {isEditDescription ?
+                {isEditDescription && role !== Role.Old  ?
                     <TextInput name={'description'} control={control} label={'Описание мероприятия'} multiline
                                rows={7} onBlur={() => updateDescriptionHandler()}/>
                     : <Box sx={{maxWidth: '327px'}}>
@@ -313,7 +316,7 @@ export const Event = () => {
                             onDoubleClick={() => setIsEditDescription(true)}>{watch('description')?.length ? watch('description') : '-'}</Typography>
                     </Box>
                 }
-                {isEditDate ? <CustomControl
+                {isEditDate && role !== Role.Old  ? <CustomControl
                     name={'date'}
                     control={control}
                     Component={DateControl}
@@ -322,7 +325,7 @@ export const Event = () => {
                     <Typography variant={'subtitle2'} color={'textSecondary'}>Дата и время проведения</Typography>
                     <Typography variant={'h6'} onDoubleClick={() => setIsEditDate(true)}>{format(watch('date'), 'dd.MM.yyyy HH:mm')}</Typography>
                 </Box>}
-                {isEditPlace ? <CustomControl
+                {isEditPlace && role !== Role.Old ? <CustomControl
                         name={'locations'}
                         control={control}
                         Component={PlaceControl}
@@ -385,7 +388,7 @@ export const Event = () => {
                         </Box>
                     </Box>
                 </Box>
-                {isEditResponsible ? <CustomControl
+                {isEditResponsible && role !== Role.Old  ? <CustomControl
                         name={'managers'}
                         control={control}
                         Component={ResponsibleControl}
@@ -413,7 +416,7 @@ export const Event = () => {
                         </Box>
 
                     </Box>}
-                {isEditTeam ? <CustomControl
+                {isEditTeam && role !== Role.Old ? <CustomControl
                         name={'users'}
                         control={control}
                         Component={TeamControl}
