@@ -226,7 +226,6 @@ export class EventsService {
         event_id: eventId,
         user_id: userId,
       }));
-      console.log(eventUsers);
       await this.prisma.events_users.createMany({
         data: eventUsers,
       });
