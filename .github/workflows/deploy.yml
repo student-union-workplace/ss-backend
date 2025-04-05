@@ -53,8 +53,8 @@ jobs:
             echo "____Stopping old frontend (if running)____"
             pm2 delete frontend || true
           
-            echo "____Starting frontend on port 4173____"
-            pm2 start "npm run preview -- --port 4173" --name frontend
+            echo "____Starting frontend on port 3000____"
+            pm2 start "npm run preview -- --host --port 3000" --name frontend
 
             echo "✅ Deployment finished"
           EOF
