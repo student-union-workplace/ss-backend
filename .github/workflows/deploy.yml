@@ -22,37 +22,39 @@ jobs:
       - name: Deploy project on remote server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
-            echo "Switching to project directory"
+            echo "____Switching to project directory____"
             cd ~/student_union_workplace
 
-            echo "PM2: Installing"
+            echo "____PM2: Installing____"
             npm install -g pm2
 
-            echo "Pulling latest changes"
+            echo "____Pulling latest changes____"
             git pull origin main
 
-            echo "Setting up environment"
+            echo "____Setting up environment____"
             export NVM_DIR="$HOME/.nvm"
             source "$NVM_DIR/nvm.sh"
             nvm use 20.15.1
 
-            echo "Backend: installing and building"
+            echo "____Backend: installing and building____"
             cd backend
             npm install
             npx prisma generate
             npm run build
 
-            echo "Restarting backend with PM2"
+            echo "____Restarting backend with PM2____"
             pm2 restart backend || pm2 start dist/main.js --name backend
 
-            echo "Frontend: installing and building"
+            echo "____Frontend: installing and building____"
             cd ../client
             npm install
             npm run build
 
-            echo "Restarting frontend with PM2"
+            echo "____Stopping old frontend (if running)____"
             pm2 delete frontend || true
-            pm2 serve dist 3000 --name frontend
+          
+            echo "____Starting frontend on port 4173____"
+            pm2 start "npm run preview -- --port 4173" --name frontend
 
             echo "✅ Deployment finished"
           EOF
