@@ -1,0 +1,45 @@
+name: Deploy Backend to VM
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Deploy backend on remote server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            echo "____PM2: Installing____"
+            npm install -g pm2
+
+            echo "____Pulling latest changes____"
+            git pull origin main
+
+            echo "____Setting up environment____"
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            nvm use 20.15.1
+
+            echo "____Backend: installing and building____"
+            npm install
+            npx prisma generate
+            npm run build
+
+            echo "____Restarting backend with PM2____"
+            pm2 restart backend || pm2 start dist/main.js --name backend
+
+            echo "✅ Backend deployment finished"
+          EOF
