@@ -22,6 +22,9 @@ jobs:
       - name: Deploy backend on remote server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            echo "____Switching to project directory____"
+            cd ~/ss-backend
+
             echo "____PM2: Installing____"
             npm install -g pm2
 
