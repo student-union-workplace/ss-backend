@@ -8,7 +8,6 @@ import { useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
 import './style.css'
-import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
 import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
 import {Role} from "../../../enums/roles";
@@ -20,7 +19,6 @@ type CalendarProps = {
 }
 
 export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
-    const nav = useNavigate();
     const role = DecodedJwt()?.role;
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
@@ -73,7 +71,7 @@ export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
                 }
 
             } else {
-                nav(`${RoutesName.Event}${info.event.id}`)
+                window.open(`${RoutesName.Event}${info.event.id}`, '_blank')
             }
         }}
         buttonText={{
