@@ -7,7 +7,9 @@ import {
   Param,
   Delete,
   Query,
-  BadRequestException, Req, UseGuards,
+  BadRequestException,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
@@ -22,7 +24,10 @@ export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post()
-  create(@Body() createActivityDto: CreateActivityDto, @Req() req: IRequestWithUser) {
+  create(
+    @Body() createActivityDto: CreateActivityDto,
+    @Req() req: IRequestWithUser,
+  ) {
     return this.activitiesService.create(createActivityDto, req);
   }
 
