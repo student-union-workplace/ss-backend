@@ -1,11 +1,26 @@
-import { Controller, Post, Get, Delete, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Delete,
+  Body,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { GoogleDocsService } from './google-docs.service';
 import { Roles } from '../decorators/roles.decorator';
 import { users_role } from '@prisma/client';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
-@Controller('api/google-docs')
+@UseGuards(AuthGuard, RolesGuard)
+@Controller('google-docs')
 export class GoogleDocsController {
   constructor(private googleDocsService: GoogleDocsService) {}
+  @Get('all')
+  async getAllDocuments() {
+    return this.googleDocsService.getAllDocuments();
+  }
 
   @Roles(users_role.member)
   @Post()

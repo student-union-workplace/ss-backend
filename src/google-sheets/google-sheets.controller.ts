@@ -1,11 +1,27 @@
-import { Controller, Post, Get, Body, Query, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { GoogleSheetsService } from './google-sheets.service';
 import { Roles } from '../decorators/roles.decorator';
 import { users_role } from '@prisma/client';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
-@Controller('api/google-sheets')
+@UseGuards(AuthGuard, RolesGuard)
+@Controller('google-sheets')
 export class GoogleSheetsController {
   constructor(private googleSheetsService: GoogleSheetsService) {}
+
+  @Get('all')
+  async getAllSheets() {
+    return this.googleSheetsService.getAllSheets();
+  }
 
   @Roles(users_role.member)
   @Post()
