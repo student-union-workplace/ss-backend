@@ -176,9 +176,8 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const department = await this.prisma.departments.findUnique({
-      // TODO: заменить id на head_user_id
-      where: { id: id },
+    const department = await this.prisma.departments.findFirst({
+      where: { head_user_id: id },
     });
 
     if (department) {
