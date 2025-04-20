@@ -39,7 +39,7 @@ export class TasksService {
   }
 
   async getAll(filters: FilterTasksDto, req: IRequestWithUser) {
-    const { event_name, user_name, is_mine = false } = filters;
+    const { event_name, user_name, user_id, is_mine = false } = filters;
     return this.prisma.tasks.findMany({
       where: {
         ...(event_name && {
@@ -47,6 +47,9 @@ export class TasksService {
         }),
         ...(user_name && {
           user: { name: { contains: user_name } },
+        }),
+        ...(user_id && {
+          user: { id: { equals: user_id } },
         }),
         ...(is_mine === 'true' && {
           user: { id: { equals: req.user.id } },
