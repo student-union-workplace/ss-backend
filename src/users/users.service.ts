@@ -63,14 +63,14 @@ export class UsersService {
         role ? { role: { equals: role } } : undefined,
         departmentName
           ? {
-              users_departments: {
+              department: {
                 name: { contains: departmentName },
               },
             }
           : undefined,
       ].filter(Boolean),
     };
-    // TODO: комиссия возвращается только у замов
+
     const users = await this.prisma.users.findMany({
       where,
       skip: +pageOptions.skip,
@@ -85,6 +85,7 @@ export class UsersService {
           select: {
             id: true,
             name: true,
+            head_user_id: true,
           },
         },
       },
@@ -93,24 +94,10 @@ export class UsersService {
       },
     });
 
-    const departments = await this.prisma.departments.findMany({
-      select: {
-        id: true,
-        head_user_id: true,
-      },
-    });
-
-    const departmentHeadMap = new Map(
-      departments.map((dept) => [dept.id, dept.head_user_id]),
-    );
-
     const result = users.map((user) => ({
       ...user,
-      department: user.department[0] ? user.department[0] : {},
-      isDepartmentHead:
-        departmentHeadMap.get(
-          user.department[0] ? user.department[0].id : '',
-        ) === user.id,
+      department: user.department || {},
+      isDepartmentHead: user.department?.head_user_id === user.id,
     }));
 
     const totalCount = await this.prisma.users.count({ where });
@@ -148,8 +135,8 @@ export class UsersService {
     });
     return {
       ...user,
-      department: user.department[0] ? user.department[0] : {},
-      isDepartmentHead: user.department[0].head_user_id === user.id,
+      department: user.department || {},
+      isDepartmentHead: user.department?.head_user_id === user.id,
     };
   }
 

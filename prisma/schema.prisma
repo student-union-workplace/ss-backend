@@ -43,27 +43,28 @@ model notifications {
 }
 
 model users {
-  id                String            @id @default(uuid())
-  name              String?           @db.VarChar(190)
-  phone_number      String?           @db.VarChar(20)
-  email             String?           @unique(map: "email") @db.VarChar(255)
-  vk_link           String?           @db.VarChar(255)
-  tg_link           String?           @db.VarChar(255)
-  avatar_path       String?           @db.VarChar(255)
-  role              users_role?       @default(old)
-  password          String?           @db.VarChar(255)
-  created_at        DateTime          @default(now()) @db.DateTime(6)
-  updated_at        DateTime          @updatedAt @db.DateTime(6)
-  department_id     String?           @db.VarChar(190)
-  activities        activities[]
-  activity_users    activity_users[]
-  department        departments[]     @relation("department_head_user_idTouser")
-  events_managers   events_managers[]
-  events_users      events_users[]
-  files             files[]
-  notifications     notifications[]
-  tasks             tasks[]
-  users_departments departments?      @relation("users_departmentTodepartments", fields: [department_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
+  id              String            @id @default(uuid())
+  name            String?           @db.VarChar(190)
+  phone_number    String?           @db.VarChar(20)
+  email           String?           @unique(map: "email") @db.VarChar(255)
+  vk_link         String?           @db.VarChar(255)
+  tg_link         String?           @db.VarChar(255)
+  avatar_path     String?           @db.VarChar(255)
+  role            users_role?       @default(old)
+  password        String?           @db.VarChar(255)
+  created_at      DateTime          @default(now()) @db.DateTime(6)
+  updated_at      DateTime          @updatedAt @db.DateTime(6)
+  department_id   String?           @db.VarChar(190)
+  activities      activities[]
+  activity_users  activity_users[]
+  department      departments?      @relation("users_departmentTodepartments", fields: [department_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
+  events_managers events_managers[]
+  events_users    events_users[]
+  files           files[]
+  notifications   notifications[]
+  tasks           tasks[]
+
+  head_of_department departments[] @relation("department_head_user_idTouser")
 
   @@index([department_id], map: "department_id_idx")
 }
