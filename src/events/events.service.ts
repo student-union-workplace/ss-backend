@@ -97,6 +97,7 @@ export class EventsService {
     });
 
     const events = await this.prisma.events.findMany({
+      where: eventWhereCondition,
       include: {
         users: {
           select: {
