@@ -9,6 +9,7 @@ import { GoogleSheetsModule } from './google-sheets/google-sheets.module';
 import { GoogleDocsModule } from './google-docs/google-docs.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ThemesModule } from './themes/themes.module';
+import { DepartmentsModule } from './departments/departments.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ThemesModule } from './themes/themes.module';
     GoogleDocsModule,
     TasksModule,
     ThemesModule,
+    DepartmentsModule,
   ],
 })
 export class AppModule {}
