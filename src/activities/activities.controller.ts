@@ -17,12 +17,15 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 import { IRequestWithUser } from '../interfaces/Request.interface';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { users_role } from '@prisma/client';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('activities')
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
+  @Roles(users_role.member)
   @Post()
   create(
     @Body() createActivityDto: CreateActivityDto,
@@ -31,6 +34,7 @@ export class ActivitiesController {
     return this.activitiesService.create(createActivityDto, req);
   }
 
+  @Roles(users_role.old)
   @Get()
   async findAll(
     @Query('startDate') startDate?: string,
@@ -51,11 +55,13 @@ export class ActivitiesController {
     }
   }
 
+  @Roles(users_role.old)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.activitiesService.findOne(id);
   }
 
+  @Roles(users_role.member)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -64,11 +70,13 @@ export class ActivitiesController {
     return this.activitiesService.update(id, updateActivityDto);
   }
 
+  @Roles(users_role.member)
   @Patch(':id/changeStatus')
   statusChanger(@Param('id') id: string) {
     return this.activitiesService.statusChanger(id);
   }
 
+  @Roles(users_role.member)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.activitiesService.remove(id);

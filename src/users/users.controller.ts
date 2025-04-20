@@ -24,13 +24,12 @@ import { users_role } from '@prisma/client';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
   @Roles(users_role.admin)
+  @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Query() filterDto: GetUsersFilterDto): Promise<PageDto<any>> {
     return this.usersService.findAll(filterDto);
@@ -51,8 +50,8 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
   @Roles(users_role.admin)
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

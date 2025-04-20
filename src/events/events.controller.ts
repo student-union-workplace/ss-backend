@@ -26,8 +26,8 @@ import { AuthGuard } from '../auth/auth.guard';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Post()
   @Roles(users_role.member)
+  @Post()
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);
   }
@@ -47,16 +47,19 @@ export class EventsController {
     return this.eventsService.findOne(id);
   }
 
+  @Roles(users_role.member)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(id, updateEventDto);
   }
 
+  @Roles(users_role.member)
   @Patch(':id/changeStatus')
   statusChange(@Param('id') id: string) {
     return this.eventsService.statusChange(id);
   }
 
+  @Roles(users_role.member)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventsService.remove(id);
