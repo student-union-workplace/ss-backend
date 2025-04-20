@@ -6,6 +6,7 @@ import { notifications_type } from '@prisma/client';
 import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
+import { IRequestWithUser } from '../interfaces/Request.interface';
 
 @Injectable()
 export class EventsService {
@@ -75,10 +76,12 @@ export class EventsService {
   }
 
   async findAll(
+    req: IRequestWithUser,
     pageOptionsDTO: PageOptionsDto,
     isArchived?: string,
     name?: string,
     theme_id?: string,
+    is_mine?: string,
   ): Promise<PageDto<any>> {
     const pageOptions = new PageOptionsDto(pageOptionsDTO);
 
@@ -91,6 +94,14 @@ export class EventsService {
             : undefined,
       name: name ? { contains: name.toLowerCase() } : undefined,
       theme_id: theme_id ? { contains: theme_id } : undefined,
+      users:
+        is_mine === 'true'
+          ? {
+              some: {
+                user_id: req.user.id,
+              },
+            }
+          : undefined,
     };
     const itemCount = await this.prisma.events.count({
       where: eventWhereCondition,

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EventsService } from './events.service';
@@ -19,6 +20,7 @@ import { Roles } from '../decorators/roles.decorator';
 import { users_role } from '@prisma/client';
 import { RolesGuard } from '../guards/roles.guard';
 import { AuthGuard } from '../auth/auth.guard';
+import { IRequestWithUser } from '../interfaces/Request.interface';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('events')
@@ -34,12 +36,21 @@ export class EventsController {
 
   @Get()
   async findAll(
+    @Req() req: IRequestWithUser,
     @Query() pageOptionsDto: PageOptionsDto,
     @Query('isArchived') isArchived?: string,
     @Query('name') name?: string,
     @Query('theme_id') theme?: string,
+    @Query('is_mine') is_mine?: string,
   ): Promise<PageDto<any>> {
-    return this.eventsService.findAll(pageOptionsDto, isArchived, name, theme);
+    return this.eventsService.findAll(
+      req,
+      pageOptionsDto,
+      isArchived,
+      name,
+      theme,
+      is_mine,
+    );
   }
 
   @Get(':id')
