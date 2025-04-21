@@ -23,6 +23,21 @@ export class GoogleDocsService {
     this.drive = google.drive({ version: 'v3', auth });
   }
 
+  async getAllDocuments(): Promise<
+    { id: string; name: string; url: string }[]
+  > {
+    const response = await this.drive.files.list({
+      q: "mimeType='application/vnd.google-apps.document'",
+      fields: 'files(id, name, webViewLink)',
+    });
+
+    return response.data.files.map((file) => ({
+      id: file.id,
+      name: file.name,
+      url: file.webViewLink,
+    }));
+  }
+
   async createDocument(title: string): Promise<{ name: string; url: string }> {
     const file = await this.drive.files.create({
       requestBody: {

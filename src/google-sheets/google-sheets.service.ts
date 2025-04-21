@@ -26,6 +26,19 @@ export class GoogleSheetsService {
     this.drive = google.drive({ version: 'v3', auth });
   }
 
+  async getAllSheets(): Promise<{ id: string; name: string; url: string }[]> {
+    const response = await this.drive.files.list({
+      q: "mimeType='application/vnd.google-apps.spreadsheet'",
+      fields: 'files(id, name, webViewLink)',
+    });
+
+    return response.data.files.map((file) => ({
+      id: file.id,
+      name: file.name,
+      url: file.webViewLink,
+    }));
+  }
+
   async createSheet(title: string): Promise<{ id: string; url: string }> {
     const response = await this.sheets.spreadsheets.create({
       requestBody: {

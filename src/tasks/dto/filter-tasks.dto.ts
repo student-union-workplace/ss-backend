@@ -9,6 +9,10 @@ export class FilterTasksDto {
   @IsOptional()
   user_name?: string;
 
+  @IsString()
+  @IsOptional()
+  user_id?: string;
+
   @IsBoolean()
   @IsOptional()
   is_mine?: string;
