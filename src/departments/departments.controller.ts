@@ -15,25 +15,21 @@ import { UpdateDepartmentDto } from './dto/update-department.dto';
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
-  // Создание нового отдела
   @Post()
   async create(@Body() createDepartmentDto: CreateDepartmentDto) {
     return this.departmentsService.create(createDepartmentDto);
   }
 
-  // Получение всех отделов
   @Get()
   async findAll() {
     return this.departmentsService.findAll();
   }
 
-  // Получение одного отдела по ID
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.departmentsService.findOne(id);
   }
 
-  // Обновление отдела
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -42,7 +38,6 @@ export class DepartmentsController {
     return this.departmentsService.update(id, updateDepartmentDto);
   }
 
-  // Удаление отдела
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.departmentsService.remove(id);

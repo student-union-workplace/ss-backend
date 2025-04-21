@@ -19,25 +19,21 @@ import { RolesGuard } from '../guards/roles.guard';
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
 
-  // Создание новой темы
   @Post()
   async create(@Body() createThemeDto: CreateThemeDto) {
     return this.themesService.create(createThemeDto);
   }
 
-  // Получение всех тем
   @Get()
   async findAll() {
     return this.themesService.findAll();
   }
 
-  // Получение одной темы по ID
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.themesService.findOne(id);
   }
 
-  // Обновление темы
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -46,7 +42,6 @@ export class ThemesController {
     return this.themesService.update(id, updateThemeDto);
   }
 
-  // Удаление темы
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.themesService.remove(id);
