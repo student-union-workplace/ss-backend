@@ -20,6 +20,7 @@ export class ActivitiesService {
         is_completed: createActivityDto.is_completed,
       },
     });
+    // TODO если участники не добавлены, то запрос ломается
     const userActivityEntries = createActivityDto.users.map((userId) => ({
       activity_id: activity.id,
       user_id: userId,
