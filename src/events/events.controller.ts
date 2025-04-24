@@ -42,6 +42,7 @@ export class EventsController {
     @Query('name') name?: string,
     @Query('theme_id') theme?: string,
     @Query('is_mine') is_mine?: string,
+    @Query('user_id') user_id?: string,
   ): Promise<PageDto<any>> {
     return this.eventsService.findAll(
       req,
@@ -50,6 +51,7 @@ export class EventsController {
       name,
       theme,
       is_mine,
+      user_id,
     );
   }
 
