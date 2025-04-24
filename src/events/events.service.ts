@@ -134,11 +134,13 @@ export class EventsService {
           },
         },
       },
-      orderBy: {
-        date: pageOptions.order,
-      },
-      skip: +pageOptions.skip,
-      take: +pageOptions.take,
+      ...(pageOptions.order && {
+        orderBy: {
+          date: pageOptions.order,
+        },
+      }),
+      ...(pageOptions.skip && { skip: +pageOptions.skip }),
+      ...(pageOptions.take && { take: +pageOptions.take }),
     });
 
     const transformedEvents = events.map((event) => ({
