@@ -82,6 +82,7 @@ export class EventsService {
     name?: string,
     theme_id?: string,
     is_mine?: string,
+    user_id?: string,
   ): Promise<PageDto<any>> {
     const pageOptions = new PageOptionsDto(pageOptionsDTO);
 
@@ -94,15 +95,16 @@ export class EventsService {
             : undefined,
       name: name ? { contains: name.toLowerCase() } : undefined,
       theme_id: theme_id ? { contains: theme_id } : undefined,
-      users:
-        is_mine === 'true'
-          ? {
-              some: {
-                user_id: req.user.id,
-              },
-            }
-          : undefined,
+      users: {
+        ...(is_mine === 'true' && {
+          some: { user_id: req.user.id },
+        }),
+        ...(user_id && {
+          some: { user_id },
+        }),
+      },
     };
+
     const itemCount = await this.prisma.events.count({
       where: eventWhereCondition,
     });
@@ -132,11 +134,13 @@ export class EventsService {
           },
         },
       },
-      orderBy: {
-        date: pageOptions.order,
-      },
-      skip: +pageOptions.skip,
-      take: +pageOptions.take,
+      ...(pageOptions.order && {
+        orderBy: {
+          date: pageOptions.order,
+        },
+      }),
+      ...(pageOptions.skip && { skip: +pageOptions.skip }),
+      ...(pageOptions.take && { take: +pageOptions.take }),
     });
 
     const transformedEvents = events.map((event) => ({
