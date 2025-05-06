@@ -10,6 +10,7 @@ import { GoogleDocsModule } from './google-docs/google-docs.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ThemesModule } from './themes/themes.module';
 import { DepartmentsModule } from './departments/departments.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DepartmentsModule } from './departments/departments.module';
     TasksModule,
     ThemesModule,
     DepartmentsModule,
+    FilesModule,
   ],
 })
 export class AppModule {}

@@ -180,14 +180,44 @@ export class EventsService {
         theme: {
           select: { id: true, name: true },
         },
+        files: {
+          select: {
+            id: true,
+            name: true,
+            google_file_id: true,
+            type: true,
+            created_at: true,
+            users: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'desc',
+          },
+        },
       },
     });
+
+    const filesWithUrls = event.files.map((file) => ({
+      ...file,
+      url:
+        file.type === 'doc'
+          ? `https://docs.google.com/document/d/${file.google_file_id}`
+          : `https://docs.google.com/spreadsheets/d/${file.google_file_id}`,
+      created_by: file.users,
+    }));
+
+    const transformedFiles = filesWithUrls.map(({ users, ...file }) => file);
 
     const transformedEvent = {
       ...event,
       users: event.users.map((eu) => eu.users),
       managers: event.managers.map((em) => em.users),
       locations: event.locations.map((em) => em.locations),
+      files: transformedFiles,
     };
 
     let prevSameEvent = null;

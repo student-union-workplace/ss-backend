@@ -74,4 +74,18 @@ export class GoogleSheetsService {
     await this.drive.files.delete({ fileId });
     return { message: 'Google Таблица удалена' };
   }
+
+  async renameSheet(
+    fileId: string,
+    newName: string,
+  ): Promise<{ message: string }> {
+    await this.drive.files.update({
+      fileId,
+      requestBody: {
+        name: newName,
+      },
+    });
+
+    return { message: 'Таблица успешно переименована' };
+  }
 }

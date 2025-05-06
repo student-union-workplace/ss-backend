@@ -38,7 +38,9 @@ export class GoogleDocsService {
     }));
   }
 
-  async createDocument(title: string): Promise<{ name: string; url: string }> {
+  async createDocument(
+    title: string,
+  ): Promise<{ id: string; name: string; url: string }> {
     const file = await this.drive.files.create({
       requestBody: {
         name: title,
@@ -58,6 +60,7 @@ export class GoogleDocsService {
     });
 
     return {
+      id: file.data.id,
       name: file.data.name,
       url: `https://docs.google.com/document/d/${fileId}`,
     };
@@ -78,5 +81,19 @@ export class GoogleDocsService {
   async deleteDocument(fileId: string): Promise<{ message: string }> {
     await this.drive.files.delete({ fileId });
     return { message: 'Google документ удален' };
+  }
+
+  async renameDocument(
+    fileId: string,
+    newName: string,
+  ): Promise<{ message: string }> {
+    await this.drive.files.update({
+      fileId,
+      requestBody: {
+        name: newName,
+      },
+    });
+
+    return { message: 'Документ успешно переименован' };
   }
 }
