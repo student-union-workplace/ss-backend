@@ -10,9 +10,11 @@ export enum Order {
 
 export class PageOptionsDto {
   constructor(params: Pick<PageOptionsDto, 'take' | 'page' | 'order'>) {
-    this.order = params.order;
-    this.take = params.take;
-    this.page = params.page;
+    if (params) {
+      this.order = params.order ?? this.order;
+      this.take = params.take ?? this.take;
+      this.page = params.page ?? this.page;
+    }
   }
 
   @ApiPropertyOptional({ enum: Order, default: Order.ASC })
