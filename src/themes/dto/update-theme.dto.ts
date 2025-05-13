@@ -1,7 +1,3 @@
-import { IsString, IsOptional } from 'class-validator';
+import { CreateThemeDto } from './create-theme.dto';
 
-export class UpdateThemeDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
-}
+export class UpdateThemeDto extends CreateThemeDto {}
