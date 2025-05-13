@@ -29,14 +29,16 @@ export class CreateUserDto implements IUsers {
     example: users_role.old,
     description: 'Роль пользователя',
     enum: users_role,
+    default: users_role.old,
+    required: false,
   })
   @IsEnum(users_role)
+  @IsOptional()
   role: users_role;
 
   @ApiProperty({
     example: 'user_password',
     description: 'Пароль пользователя',
-    enum: users_role,
   })
   @IsString()
   @IsNotEmpty()

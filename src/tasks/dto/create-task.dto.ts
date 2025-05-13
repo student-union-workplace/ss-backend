@@ -34,6 +34,7 @@ export class CreateTaskDto implements ITask {
     required: false,
   })
   @IsDate()
+  @IsOptional()
   @Type(() => Date)
   deadline?: Date;
 
@@ -49,6 +50,8 @@ export class CreateTaskDto implements ITask {
     example: tasks_status.open,
     description: 'Статус задачи (по дефолту "open")',
     enum: tasks_status,
+    required: false,
+    default: tasks_status.open,
   })
   @IsEnum(tasks_status)
   @IsOptional()

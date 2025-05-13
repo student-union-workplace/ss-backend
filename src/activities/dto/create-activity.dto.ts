@@ -26,7 +26,7 @@ export class CreateActivityDto implements IActivities {
 
   @ApiProperty({
     example: '2025-05-13T06:24:28.000Z',
-    description: 'Описание события',
+    description: 'Дата события',
   })
   @IsDate()
   @Type(() => Date)
@@ -47,7 +47,7 @@ export class CreateActivityDto implements IActivities {
       '4a76ed16-0656-45f2-9768-94990d3e7679',
       '73b55bd5-c93d-4676-a712-da62673194aa',
     ],
-    description: 'массив uuid пользователей',
+    description: 'массив uuid пользователей события',
   })
   @IsString({ each: true })
   users: string[];
