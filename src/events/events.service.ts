@@ -210,6 +210,7 @@ export class EventsService {
       created_by: file.users,
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const transformedFiles = filesWithUrls.map(({ users, ...file }) => file);
 
     const transformedEvent = {

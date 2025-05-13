@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { GetUsersFilterDto } from 'src/pagination/dto/user-filter.dro';
@@ -8,6 +7,7 @@ import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import * as bcrypt from 'bcrypt';
 import { PageOptionsDto } from '../pagination/dto/page-options.dto';
+import { AuthDto } from '../auth/auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -33,7 +33,7 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  async login(loginUserDto: AuthDto) {
     const user = await this.prisma.users.findUnique({
       where: { email: loginUserDto.email },
     });

@@ -1,7 +1,11 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateThemeDto {
+  @ApiProperty({
+    example: 'Квест',
+    description: 'Название темы мероприятия',
+  })
   @IsString()
-  @IsOptional()
-  name?: string;
+  name: string;
 }
