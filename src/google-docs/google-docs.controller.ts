@@ -58,9 +58,9 @@ export class GoogleDocsController {
   ) {
     const doc = await this.googleDocsService.createDocument(title);
 
-    await this.filesService.createFileForEvent({
+    await this.filesService.createGoogleFileForEvent({
       name: doc.name,
-      googleFileId: doc.id,
+      path: doc.id,
       eventId,
       userId: req.user.id,
       type: file_type.doc,
@@ -77,7 +77,7 @@ export class GoogleDocsController {
   ) {
     const file = await this.filesService.getFile(fileId);
 
-    await this.googleDocsService.renameDocument(file.google_file_id, name);
+    await this.googleDocsService.renameDocument(file.path, name);
 
     return this.filesService.renameFile(fileId, name);
   }

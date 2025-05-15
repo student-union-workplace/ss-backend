@@ -17,6 +17,9 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { IRequestWithUser } from '../interfaces/Request.interface';
+
+type FolderType = 'events' | 'users';
 
 @Injectable()
 export class FilesService {
@@ -27,9 +30,9 @@ export class FilesService {
     @Inject('S3_CLIENT') private readonly s3: S3Client,
   ) {}
 
-  async createFileForEvent(data: {
+  async createGoogleFileForEvent(data: {
     name: string;
-    googleFileId: string;
+    path: string;
     eventId: string;
     userId: string;
     type: file_type;
@@ -37,17 +40,16 @@ export class FilesService {
     return this.prisma.files.create({
       data: {
         name: data.name,
-        google_file_id: data.googleFileId,
+        path: data.path,
         event_id: data.eventId,
         created_by_user_id: data.userId,
-        date: new Date(),
         type: data.type === file_type.doc ? file_type.doc : file_type.sheet,
       },
     });
   }
 
   async getFilesForEvent(eventId: string) {
-    return this.prisma.files.findMany({
+    const files = await this.prisma.files.findMany({
       where: {
         event_id: eventId,
       },
@@ -56,6 +58,7 @@ export class FilesService {
         name: true,
         path: true,
         type: true,
+        size: true,
         created_at: true,
         users: {
           select: {
@@ -67,6 +70,31 @@ export class FilesService {
         created_at: 'desc',
       },
     });
+
+    return Promise.all(
+      files.map(async (file) => {
+        let url = '';
+        if (file.type === file_type.doc) {
+          url = `https://docs.google.com/document/d/${file.path}`;
+        }
+        if (file.type === file_type.sheet) {
+          url = `https://docs.google.com/spreadsheets/d/${file.path}`;
+        }
+        if (file.type === file_type.other && file.path) {
+          url = await this.generateDownloadUrl(file.path);
+        }
+
+        return {
+          id: file.id,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          created_at: file.created_at,
+          users: file.users,
+          url,
+        };
+      }),
+    );
   }
 
   async deleteFile(fileId: string) {
@@ -74,26 +102,47 @@ export class FilesService {
       where: { id: fileId },
       select: {
         id: true,
-        google_file_id: true,
+        path: true,
         type: true,
       },
     });
 
     if (!file) {
-      throw new NotFoundException('File not found');
+      throw new NotFoundException('Файл не найден');
     }
 
     try {
-      if (file.type === 'doc') {
-        await this.googleDocsService.deleteDocument(file.google_file_id);
-      } else if (file.type === 'sheet') {
-        await this.googleSheetsService.deleteSheet(file.google_file_id);
+      if (file.type === file_type.doc) {
+        await this.googleDocsService.deleteDocument(file.path);
       }
     } catch (error) {
-      console.error('Error deleting file from Google Drive:', error);
+      console.error('Ошибка удаления из Google Drive:', error);
       throw new InternalServerErrorException(
         'Ошибка удаления файла из Google Drive',
       );
+    }
+
+    try {
+      if (file.type === file_type.sheet) {
+        await this.googleSheetsService.deleteSheet(file.path);
+      }
+    } catch (error) {
+      console.error('Ошибка удаления из Google Sheets:', error);
+      throw new InternalServerErrorException(
+        'Ошибка удаления файла из Google Sheets',
+      );
+    }
+
+    try {
+      if (file.type === file_type.other && file.path) {
+        const bucket = process.env.S3_BUCKET;
+        await this.s3.send(
+          new DeleteObjectCommand({ Bucket: bucket, Key: file.path }),
+        );
+      }
+    } catch (error) {
+      console.error('Ошибка удаления из s3', error);
+      throw new InternalServerErrorException('Ошибка удаления из s3');
     }
 
     return this.prisma.files.delete({
@@ -106,7 +155,7 @@ export class FilesService {
       where: { id: fileId },
       select: {
         id: true,
-        google_file_id: true,
+        path: true,
         type: true,
         name: true,
       },
@@ -123,32 +172,49 @@ export class FilesService {
     });
   }
 
+  async getUserAvatar(userId: string) {
+    const file = await this.prisma.files.findFirst({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+    });
+    if (!file) throw new NotFoundException();
+    return {
+      id: file.id,
+      name: file.name,
+      size: file.size,
+      downloadUrl: await this.generateDownloadUrl(file.path),
+    };
+  }
+
   async generateUploadUrl(
-    eventId: string,
+    folder: FolderType,
+    ownerId: string,
     fileName: string,
     contentType: string,
     size: number,
+    req: IRequestWithUser,
   ) {
     if (size > 1024 * 1024 * 1024) {
-      throw new BadRequestException('File too large');
+      throw new BadRequestException('Файл слишком большой');
     }
 
-    const key = `${eventId}/${uuid()}-${fileName}`;
+    const key = `${folder}/${ownerId}/${uuid()}-${fileName}`;
     const bucket = process.env.S3_BUCKET;
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: key,
       ContentType: contentType,
-      ContentLength: size,
     });
     const url = await getSignedUrl(this.s3, command, { expiresIn: 300 });
 
     const fileRecord = await this.prisma.files.create({
       data: {
-        event_id: eventId,
         name: fileName,
         path: key,
         size,
+        event_id: folder === 'events' ? ownerId : null,
+        user_id: folder === 'users' ? ownerId : null,
+        created_by_user_id: req.user.id,
         type: 'other',
       },
     });
@@ -160,10 +226,5 @@ export class FilesService {
     const bucket = process.env.S3_BUCKET;
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });
     return getSignedUrl(this.s3, command, { expiresIn: 300 });
-  }
-
-  async deleteBucketFile(key: string) {
-    const bucket = process.env.S3_BUCKET;
-    await this.s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
   }
 }

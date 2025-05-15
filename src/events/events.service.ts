@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PrismaService } from '../prisma.service';
-import { notifications_type } from '@prisma/client';
+import { file_type, notifications_type } from '@prisma/client';
 import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
@@ -184,7 +184,7 @@ export class EventsService {
           select: {
             id: true,
             name: true,
-            google_file_id: true,
+            path: true,
             type: true,
             created_at: true,
             users: {
@@ -204,9 +204,9 @@ export class EventsService {
     const filesWithUrls = event.files.map((file) => ({
       ...file,
       url:
-        file.type === 'doc'
-          ? `https://docs.google.com/document/d/${file.google_file_id}`
-          : `https://docs.google.com/spreadsheets/d/${file.google_file_id}`,
+        file.type === file_type.doc
+          ? `https://docs.google.com/document/d/${file.path}`
+          : `https://docs.google.com/spreadsheets/d/${file.path}`,
       created_by: file.users,
     }));
 

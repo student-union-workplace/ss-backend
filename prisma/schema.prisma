@@ -60,9 +60,11 @@ model users {
   department      departments?      @relation("users_departmentTodepartments", fields: [department_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_USER_DEPARTMENT")
   events_managers events_managers[]
   events_users    events_users[]
-  files           files[]
   notifications   notifications[]
   tasks           tasks[]
+
+  files      files[] @relation(name: "FileCreatedBy")
+  ownedFiles files[] @relation(name: "FileOwnedBy")
 
   head_of_department departments[] @relation("department_head_user_idTouser")
 
@@ -172,20 +174,20 @@ model files {
   name               String?    @db.VarChar(190)
   path               String?    @db.VarChar(250)
   size               Int?
-  date               DateTime?  @db.DateTime(0)
   type               file_type? @default(other)
-  google_file_id     String?    @db.VarChar(190)
   created_at         DateTime   @default(now()) @db.DateTime(6)
   updated_at         DateTime   @updatedAt @db.DateTime(6)
   created_by_user_id String?    @db.VarChar(190)
   event_id           String?    @db.VarChar(190)
-  events             events?    @relation(fields: [event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_FILE")
-  users              users?     @relation(fields: [created_by_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_FILE_CREATED_BY_USER")
+  user_id            String?    @db.VarChar(190)
 
-  @@index([created_by_user_id], map: "fk_created_by_user_id_idx")
-  @@index([event_id], map: "fk_event_id_idx")
-  @@index([event_id], map: "fk_eventfile_id_idx")
-  @@index([created_by_user_id], map: "fk_user_id_idx")
+  events events? @relation(fields: [event_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EVENT_FILE")
+  users  users?  @relation(name: "FileCreatedBy", fields: [created_by_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_FILE_CREATED_BY_USER")
+  owner  users?  @relation(name: "FileOwnedBy", fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_FILE_USER")
+
+  @@index([created_by_user_id], map: "fk_files_created_by_user_id_idx")
+  @@index([event_id], map: "fk_files_event_id_idx")
+  @@index([user_id], map: "fk_files_user_id_idx")
 }
 
 model tasks {
