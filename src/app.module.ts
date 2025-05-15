@@ -11,9 +11,11 @@ import { TasksModule } from './tasks/tasks.module';
 import { ThemesModule } from './themes/themes.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { FilesModule } from './files/files.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     NotificationsModule,
     LocationsModule,
     ActivitiesModule,

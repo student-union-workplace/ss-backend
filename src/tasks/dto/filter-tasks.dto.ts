@@ -31,7 +31,8 @@ export class FilterTasksDto {
 
   @ApiProperty({
     example: 'true',
-    description: 'boolean статус для получения задач авторизованного пользователя',
+    description:
+      'boolean статус для получения задач авторизованного пользователя',
     required: false,
   })
   @IsBooleanString()

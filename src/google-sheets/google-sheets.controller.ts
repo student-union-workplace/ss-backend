@@ -59,9 +59,9 @@ export class GoogleSheetsController {
   ) {
     const sheet = await this.googleSheetsService.createSheet(title);
 
-    await this.filesService.createFileForEvent({
+    await this.filesService.createGoogleFileForEvent({
       name: title,
-      googleFileId: sheet.id,
+      path: sheet.id,
       eventId,
       userId: req.user.id,
       type: file_type.sheet,
@@ -78,7 +78,7 @@ export class GoogleSheetsController {
   ) {
     const file = await this.filesService.getFile(fileId);
 
-    await this.googleSheetsService.renameSheet(file.google_file_id, name);
+    await this.googleSheetsService.renameSheet(file.path, name);
 
     return this.filesService.renameFile(fileId, name);
   }

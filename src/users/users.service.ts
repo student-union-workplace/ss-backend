@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -8,10 +8,14 @@ import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import * as bcrypt from 'bcrypt';
 import { PageOptionsDto } from '../pagination/dto/page-options.dto';
 import { AuthDto } from '../auth/auth.dto';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private filesService: FilesService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = bcrypt.hashSync(createUserDto.password, 10);
@@ -133,8 +137,17 @@ export class UsersService {
         },
       },
     });
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    let userAvatarPath = '';
+    await this.filesService.getUserAvatar(user.id).then((data) => {
+      userAvatarPath = data.downloadUrl;
+    });
     return {
       ...user,
+      avatarUrl: userAvatarPath ?? null,
       department: user.department || {},
       isDepartmentHead: user.department?.head_user_id === user.id,
     };
