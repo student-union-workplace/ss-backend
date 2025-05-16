@@ -7,10 +7,14 @@ import { PageDto } from 'src/pagination/dto/page.dto';
 import { PageMetaDto } from 'src/pagination/dto/page-meta.dto';
 import { PageOptionsDto } from 'src/pagination/dto/page-options.dto';
 import { IRequestWithUser } from '../interfaces/Request.interface';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private filesService: FilesService,
+  ) {}
 
   async create(createEventDto: CreateEventDto) {
     const event = await this.prisma.events.create({
@@ -201,24 +205,32 @@ export class EventsService {
       },
     });
 
-    const filesWithUrls = event.files.map((file) => ({
-      ...file,
-      url:
-        file.type === file_type.doc
-          ? `https://docs.google.com/document/d/${file.path}`
-          : `https://docs.google.com/spreadsheets/d/${file.path}`,
-      created_by: file.users,
-    }));
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const transformedFiles = filesWithUrls.map(({ users, ...file }) => file);
+    const filesWithUrls = Promise.all(
+      event.files.map(async (file) => {
+        let url = '';
+        if (file.type === file_type.doc) {
+          url = `https://docs.google.com/document/d/${file.path}`;
+        }
+        if (file.type === file_type.sheet) {
+          url = `https://docs.google.com/spreadsheets/d/${file.path}`;
+        }
+        if (file.type === file_type.other && file.path) {
+          url = await this.filesService.generateDownloadUrl(file.path);
+        }
+        return {
+          ...file,
+          url,
+          created_by: file.users,
+        };
+      }),
+    );
 
     const transformedEvent = {
       ...event,
       users: event.users.map((eu) => eu.users),
       managers: event.managers.map((em) => em.users),
       locations: event.locations.map((em) => em.locations),
-      files: transformedFiles,
+      files: await filesWithUrls,
     };
 
     let prevSameEvent = null;
@@ -230,23 +242,6 @@ export class EventsService {
           name: true,
           description: true,
         },
-        /*include: {
-          events_users: {
-            select: {
-              users: { select: { id: true, name: true } },
-            },
-          },
-          events_managers: {
-            select: {
-              users: { select: { id: true, name: true } },
-            },
-          },
-          events_locations: {
-            select: {
-              locations: { select: { id: true, name: true, address: true } },
-            },
-          },
-        },*/
       });
     }
     return { ...transformedEvent, prev_same_event: prevSameEvent };
