@@ -177,7 +177,25 @@ export class FilesService {
       where: { user_id: userId },
       orderBy: { created_at: 'desc' },
     });
-    if (!file) throw new NotFoundException();
+    if (!file) throw new NotFoundException('Аватар не найден');
+    return {
+      id: file.id,
+      name: file.name,
+      size: file.size,
+      downloadUrl: await this.generateDownloadUrl(file.path),
+    };
+  }
+
+  async getUserAvatarInQuery(userId: string) {
+    const file = await this.prisma.files.findFirst({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+    });
+    if (!file) {
+      return {
+        message: 'Аватар не найден',
+      };
+    }
     return {
       id: file.id,
       name: file.name,

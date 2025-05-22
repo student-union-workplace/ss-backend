@@ -142,7 +142,7 @@ export class UsersService {
     }
 
     let userAvatarPath = '';
-    await this.filesService.getUserAvatar(user.id).then((data) => {
+    await this.filesService.getUserAvatarInQuery(user.id).then((data) => {
       userAvatarPath = data.downloadUrl;
     });
     return {
