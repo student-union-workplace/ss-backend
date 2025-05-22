@@ -1,8 +1,8 @@
 export interface IEvents {
   id?: string;
-  name: string;
-  description: string;
-  date: Date;
+  name?: string;
+  description?: string;
+  date?: Date;
   is_archived: boolean;
   managers?: string[];
   users?: string[];
