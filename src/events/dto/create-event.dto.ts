@@ -18,7 +18,7 @@ export class CreateEventDto implements IEvents {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  name: string;
+  name?: string;
 
   @ApiProperty({
     example: 'Традиционное мероприятия день студента',
@@ -27,7 +27,7 @@ export class CreateEventDto implements IEvents {
   })
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @ApiProperty({
     example: '2025-05-13T06:24:28.000Z',
@@ -37,7 +37,7 @@ export class CreateEventDto implements IEvents {
   @IsDate()
   @Type(() => Date)
   @IsOptional()
-  date: Date;
+  date?: Date;
 
   @ApiProperty({
     example: ['4a76ed16-0656-45f2-9768-94990d3e7679'],
