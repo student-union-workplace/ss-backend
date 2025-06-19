@@ -45,7 +45,7 @@ export class CreateEventDto implements IEvents {
   })
   @IsArray()
   @IsString({ each: true })
-  managers?: string[];
+  managers: string[];
 
   @ApiProperty({
     example: ['4a76ed16-0656-45f2-9768-94990d3e7679'],
@@ -53,7 +53,7 @@ export class CreateEventDto implements IEvents {
   })
   @IsArray()
   @IsString({ each: true })
-  users?: string[];
+  users: string[];
 
   @ApiProperty({
     example: ['2d87dc12-d351-11ef-82a3-50ebf6992398'],

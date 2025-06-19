@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +19,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { users_role } from '@prisma/client';
+import { IRequestWithUser } from '../interfaces/Request.interface';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('users')
@@ -46,8 +48,12 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: IRequestWithUser,
+  ) {
+    return this.usersService.update(id, updateUserDto, req.user);
   }
 
   @Roles(users_role.admin)
