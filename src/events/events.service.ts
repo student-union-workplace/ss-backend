@@ -41,10 +41,13 @@ export class EventsService {
       user_id: userId,
     }));
 
-    const eventLocations = createEventDto.locations.map((locId) => ({
-      event_id: event.id,
-      location_id: locId,
-    }));
+    let eventLocations = [];
+    if (eventLocations && eventLocations.length > 0) {
+      eventLocations = createEventDto.locations.map((locId) => ({
+        event_id: event.id,
+        location_id: locId,
+      }));
+    }
 
     const userNotification = createEventDto.users.map((userId) => ({
       title: 'Вас добавили в мероприятие: ' + createEventDto.name,
