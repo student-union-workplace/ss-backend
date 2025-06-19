@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -9,6 +13,8 @@ import * as bcrypt from 'bcrypt';
 import { PageOptionsDto } from '../pagination/dto/page-options.dto';
 import { AuthDto } from '../auth/auth.dto';
 import { FilesService } from '../files/files.service';
+import { IUsers } from './interfaces/users.interface';
+import { users_role } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -159,7 +165,14 @@ export class UsersService {
     });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserDto, user: IUsers) {
+    if (
+      user.role !== users_role.admin &&
+      (updateUserDto.role || updateUserDto.department_id)
+    ) {
+      throw new ForbiddenException('Нет прав для редактирования данных полей');
+    }
+
     if (updateUserDto.password) {
       updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10);
     }
