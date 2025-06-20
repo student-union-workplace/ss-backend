@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { PrismaService } from '../prisma.service';
@@ -10,6 +10,31 @@ export class ActivitiesService {
   constructor(private prisma: PrismaService) {}
 
   async create(createActivityDto: CreateActivityDto, req: IRequestWithUser) {
+    if (createActivityDto.location_id) {
+      const eventLocations = await this.prisma.locations.findFirst({
+        where: { id: createActivityDto.location_id },
+      });
+
+      if (!eventLocations)
+        throw new BadRequestException(
+          'Не найдено места проведения с указанным id не найдено',
+        );
+    }
+
+    if (createActivityDto.users && createActivityDto.users.length > 0) {
+      const usersCount = await this.prisma.users.count({
+        where: {
+          id: { in: createActivityDto.users },
+        },
+      });
+
+      if (usersCount !== createActivityDto.users.length) {
+        throw new BadRequestException(
+          'Один или несколько пользователей события не найдены',
+        );
+      }
+    }
+
     const activity = await this.prisma.activities.create({
       data: {
         name: createActivityDto.name,

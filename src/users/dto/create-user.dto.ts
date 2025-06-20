@@ -1,12 +1,6 @@
 import { users_role } from '@prisma/client';
 import { IUsers } from '../interfaces/users.interface';
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto implements IUsers {
@@ -23,6 +17,7 @@ export class CreateUserDto implements IUsers {
     description: 'Почта пользователя',
   })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty({
@@ -30,10 +25,8 @@ export class CreateUserDto implements IUsers {
     description: 'Роль пользователя',
     enum: users_role,
     default: users_role.old,
-    required: false,
   })
   @IsEnum(users_role)
-  @IsOptional()
   role: users_role;
 
   @ApiProperty({
@@ -48,7 +41,7 @@ export class CreateUserDto implements IUsers {
     example: '3abaa420-7d4a-47a1-a87a-de51e1e957d6',
     description: 'uuid комиссии',
   })
-  @IsString()
+  @IsUUID()
   department_id: string;
 
   created_at: Date;

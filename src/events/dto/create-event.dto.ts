@@ -1,10 +1,12 @@
 import { IEvents } from '../interface/events.interface';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsDate,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -44,7 +46,8 @@ export class CreateEventDto implements IEvents {
     description: 'Массив uuid ответственных пользователей мероприятия',
   })
   @IsArray()
-  @IsString({ each: true })
+  @ArrayNotEmpty()
+  @IsUUID('all', { each: true })
   managers: string[];
 
   @ApiProperty({
@@ -52,7 +55,8 @@ export class CreateEventDto implements IEvents {
     description: 'Массив uuid пользователей рабочей команд мероприятия',
   })
   @IsArray()
-  @IsString({ each: true })
+  @ArrayNotEmpty()
+  @IsUUID('all', { each: true })
   users: string[];
 
   @ApiProperty({
@@ -62,7 +66,8 @@ export class CreateEventDto implements IEvents {
   })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @ArrayNotEmpty()
+  @IsUUID('all', { each: true })
   locations?: string[];
 
   @ApiProperty({
@@ -71,14 +76,14 @@ export class CreateEventDto implements IEvents {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsUUID()
   past_event_id?: string;
 
   @ApiProperty({
     example: 'c4cf8f7-d3e0-11ef-aa2a-50ebf6992398',
     description: 'uuid темы мероприятия',
   })
-  @IsString()
+  @IsUUID()
   theme_id?: string;
 
   created_at: Date;

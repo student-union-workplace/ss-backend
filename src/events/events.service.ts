@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PrismaService } from '../prisma.service';
@@ -17,6 +17,60 @@ export class EventsService {
   ) {}
 
   async create(createEventDto: CreateEventDto) {
+    if (createEventDto.past_event_id) {
+      const pastEvent = await this.prisma.events.findFirst({
+        where: { id: createEventDto.past_event_id },
+      });
+
+      if (!pastEvent)
+        throw new BadRequestException(
+          'Прошлогоднего мероприятия с указанным id не найдено',
+        );
+    }
+
+    if (createEventDto.theme_id) {
+      const theme = await this.prisma.themes.findFirst({
+        where: { id: createEventDto.theme_id },
+      });
+
+      if (!theme)
+        throw new BadRequestException(
+          'Темы мероприятия с указанным id не найдено',
+        );
+    }
+
+    if (createEventDto.users && createEventDto.users.length > 0) {
+      const usersCount = await this.prisma.users.count({
+        where: {
+          id: { in: createEventDto.users },
+        },
+      });
+
+      if (usersCount !== createEventDto.users.length) {
+        throw new BadRequestException(
+          'Один или несколько пользователей из рабочки не найдены',
+        );
+      }
+    }
+
+    if (createEventDto.managers && createEventDto.managers.length > 0) {
+      const managersCount = await this.prisma.users.count({
+        where: {
+          id: { in: createEventDto.managers },
+        },
+      });
+
+      if (managersCount !== createEventDto.managers.length) {
+        throw new BadRequestException(
+          'Один или несколько ответственных не найдены',
+        );
+      }
+    } else {
+      throw new BadRequestException(
+        'Необходимо указать хотя бы одного ответственного мероприятия',
+      );
+    }
+
     const event = await this.prisma.events.create({
       data: {
         name: createEventDto.name,
@@ -29,6 +83,7 @@ export class EventsService {
         theme_id: createEventDto.theme_id,
       },
     });
+
     const eventUsers = createEventDto.users
       ? createEventDto.users.map((userId) => ({
           event_id: event.id,
@@ -42,20 +97,32 @@ export class EventsService {
     }));
 
     let eventLocations = [];
-    if (eventLocations && eventLocations.length > 0) {
+    if (createEventDto.locations && createEventDto.locations.length > 0) {
+      const locationsCount = await this.prisma.locations.count({
+        where: {
+          id: { in: createEventDto.locations },
+        },
+      });
+
+      if (locationsCount !== createEventDto.locations.length) {
+        throw new BadRequestException('Одна или несколько локаций не найдены');
+      }
+
       eventLocations = createEventDto.locations.map((locId) => ({
         event_id: event.id,
         location_id: locId,
       }));
     }
 
-    const userNotification = createEventDto.users.map((userId) => ({
-      title: 'Вас добавили в мероприятие: ' + createEventDto.name,
-      description: 'Описание мероприятия: ' + createEventDto.description,
-      type: notifications_type.event,
-      user_id: userId,
-      event_id: event.id,
-    }));
+    const userNotification = createEventDto.users
+      ? createEventDto.users.map((userId) => ({
+          title: 'Вас добавили в мероприятие: ' + createEventDto.name,
+          description: 'Описание мероприятия: ' + createEventDto.description,
+          type: notifications_type.event,
+          user_id: userId,
+          event_id: event.id,
+        }))
+      : [];
 
     const managerNotification = createEventDto.managers.map((userId) => ({
       title: 'Вы теперь руководитель мероприятия: ' + createEventDto.name,
@@ -75,7 +142,7 @@ export class EventsService {
       this.prisma.events_locations.createMany({
         data: eventLocations,
       }),
-      await this.prisma.notifications.createMany({
+      this.prisma.notifications.createMany({
         data: [...userNotification, ...managerNotification],
       }),
     ]);
