@@ -1,10 +1,12 @@
 import { IActivities } from '../interface/activities.interface';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsDate,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -37,11 +39,10 @@ export class CreateActivityDto implements IActivities {
     description: 'uuid места проведения',
     required: false,
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   location_id: string;
 
-  @IsArray()
   @ApiProperty({
     example: [
       '4a76ed16-0656-45f2-9768-94990d3e7679',
@@ -49,7 +50,9 @@ export class CreateActivityDto implements IActivities {
     ],
     description: 'массив uuid пользователей события',
   })
-  @IsString({ each: true })
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID('all', { each: true })
   users: string[];
 
   is_completed?: boolean;

@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -25,6 +27,26 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = bcrypt.hashSync(createUserDto.password, 10);
+
+    if (createUserDto.department_id) {
+      const department = await this.prisma.departments.findFirst({
+        where: { id: createUserDto.department_id },
+      });
+
+      if (!department)
+        throw new BadRequestException('Комиссии с указанным id не найдено');
+    }
+
+    if (createUserDto.email) {
+      const email = await this.prisma.users.findFirst({
+        where: { email: createUserDto.email },
+      });
+
+      if (email)
+        throw new ConflictException(
+          'Пользователь с таким email уже зарегистрирован',
+        );
+    }
 
     const user = await this.prisma.users.create({
       data: {
